@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-$:.unshift(File.dirname(__FILE__) + '/../lib/') unless $:.include?(File.dirname(__FILE__) + '/../lib/')
-require 'cucumber/cli'
 
-require File.expand_path(File.dirname(__FILE__) + "/../temp/queue_server")
-require File.expand_path(File.dirname(__FILE__) + "/../temp/queueing_executor")
+rails_root = ARGV.shift
+
+require File.join(rails_root, "/vendor/plugins/cucumber/lib/cucumber")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/queue_server")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/queueing_executor")
 
 module Cucumber
   old_verbose, $VERBOSE = $VERBOSE, nil

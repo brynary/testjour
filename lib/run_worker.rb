@@ -1,6 +1,8 @@
+rails_root = ARGV.shift
+
 require File.dirname(__FILE__) + "/drb_formatter"
 require File.dirname(__FILE__) + "/queue_server"
-require File.dirname(__FILE__) + "/../lib/cucumber"
+require File.join(rails_root, "/vendor/plugins/cucumber/lib/cucumber")
 
 # Trick Cucumber into not runing anything itself
 module Cucumber
@@ -51,8 +53,8 @@ parser = Cucumber::TreetopParser::FeatureParser.new
 loop do
   begin
     file = ro.take_work
-    puts File.expand_path("~/p/weplay/" + file)
-    features = parser.parse_feature(File.expand_path("~/p/weplay/" + file))
+    puts File.expand_path(file)
+    features = parser.parse_feature(File.expand_path(file))
     $executor.visit_features(features)
   rescue QueueServer::NoWorkUnitsAvailableError
     # If no work, ignore and keep looping
