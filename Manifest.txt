@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/testjour
+lib/testjour.rb
+test/test_testjour.rb
