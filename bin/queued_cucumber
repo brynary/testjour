@@ -1,19 +1,19 @@
 #!/usr/bin/env ruby
 
-rails_root = ARGV.shift
-
-require File.join(rails_root, "/vendor/plugins/cucumber/lib/cucumber")
+require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/queue_server")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/queueing_executor")
 
 module Cucumber
-  old_verbose, $VERBOSE = $VERBOSE, nil
-  Executor = QueueingExecutor
-  $VERBOSE = old_verbose
+  silence_warnings do
+    Executor = QueueingExecutor
+  end
 end
 
+QueueServer.start
+
 DRb.start_service
-ro = DRbObject.new(nil, 'druby://0.0.0.0:1337')  
+ro = DRbObject.new(nil, Testjour::DRB_URL)
 ro.reset
 
 Cucumber::CLI.execute

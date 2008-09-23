@@ -1,8 +1,8 @@
-rails_root = ARGV.shift
+#!/usr/bin/env ruby
 
 require File.dirname(__FILE__) + "/drb_formatter"
 require File.dirname(__FILE__) + "/queue_server"
-require File.join(rails_root, "/vendor/plugins/cucumber/lib/cucumber")
+require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 
 # Trick Cucumber into not runing anything itself
 module Cucumber
@@ -47,7 +47,7 @@ ActiveRecord::Base.establish_connection(
 load File.join(RAILS_ROOT, "db", "schema.rb")
 
 DRb.start_service
-ro = DRbObject.new(nil, 'druby://0.0.0.0:1337')
+ro = DRbObject.new(nil, Testjour::DRB_URL)
 parser = Cucumber::TreetopParser::FeatureParser.new
 
 loop do

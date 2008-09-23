@@ -9,7 +9,7 @@ class QueueingExecutor
 
   def initialize(formatter, step_mother)
     DRb.start_service
-    @ro = DRbObject.new(nil, 'druby://0.0.0.0:1337')
+    @ro = DRbObject.new(nil, Testjour::DRB_URL)
     @step_count = 0
   end
   
