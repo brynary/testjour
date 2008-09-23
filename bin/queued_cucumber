@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib/') unless $:.include?(File.dirname(__FILE__) + '/../lib/')
+require 'cucumber/cli'
+
+require File.expand_path(File.dirname(__FILE__) + "/../temp/queue_server")
+require File.expand_path(File.dirname(__FILE__) + "/../temp/queueing_executor")
+
+module Cucumber
+  old_verbose, $VERBOSE = $VERBOSE, nil
+  Executor = QueueingExecutor
+  $VERBOSE = old_verbose
+end
+
+DRb.start_service
+ro = DRbObject.new(nil, 'druby://0.0.0.0:1337')  
+ro.reset
+
+Cucumber::CLI.execute
+
+$executor.step_count.times do
+  print ro.take_result
+  $stdout.flush
+end
