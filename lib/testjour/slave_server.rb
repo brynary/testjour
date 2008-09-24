@@ -24,7 +24,12 @@ module Testjour
     
       Thread.new do
         Thread.current.abort_on_exception = true
-        systemu "runner #{queue_server_url}"
+        
+        runner_path = File.expand_path(File.dirname(__FILE__) + "/runner.rb")
+        cmd = "#{runner_path} #{queue_server_url}"
+        
+        puts cmd
+        systemu cmd
       end
     end
 

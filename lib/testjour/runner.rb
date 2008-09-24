@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
+require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
 # Trick Cucumber into not runing anything itself
 module Cucumber
