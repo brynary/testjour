@@ -55,8 +55,8 @@ module Testjour
       end
     end
 
-    def write_error(error)
-      @error_queue.push error
+    def write_error(message, backtrace)
+      @error_queue.push [message.to_s, backtrace.to_s]
       nil
     end
     

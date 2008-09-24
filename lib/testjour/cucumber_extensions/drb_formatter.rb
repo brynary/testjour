@@ -6,7 +6,6 @@ module Testjour
   
     def initialize(queue_server)
       @queue_server = queue_server
-      # @errors = []
     end
   
     def step_passed(step, regexp, args)
@@ -14,7 +13,7 @@ module Testjour
     end
   
     def step_failed(step, regexp, args)
-      # @errors << step.error
+      # @queue_server.write_error(step.error.message, step.error.backtrace)
       @queue_server.write_result "F"
     end
   
@@ -25,17 +24,10 @@ module Testjour
     def step_skipped(step, regexp, args)
       @queue_server.write_result "_"
     end
-
+    
     def dump
-      # @io.puts failed
-      # @errors.each_with_index do |error,n|
-      #   @io.puts
-      #   @io.puts "#{n+1})"
-      #   @io.puts error.message
-      #   @io.puts error.backtrace.join("\n")
-      # end
-      # @io.print reset
     end
+    
   end
   
 end
