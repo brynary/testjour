@@ -43,9 +43,16 @@ end
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('./config/environment')
 
+drb_uri = ARGV.shift
+project_path = ARGV.shift
+
+# Testjour::Rsync.sync(drb_uri, project_path, File.expand_path("~/temp3"))
+
 Testjour::MysqlDatabaseSetup.with_new_database do
+
+  
   DRb.start_service
-  queue_server = DRbObject.new(nil, ARGV.shift)
+  queue_server = DRbObject.new(nil, drb_uri)
 
   extend Cucumber::StepMethods
   extend Cucumber::Tree

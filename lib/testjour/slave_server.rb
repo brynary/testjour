@@ -17,14 +17,15 @@ module Testjour
       DRb.stop_service
     end
   
-    def run(queue_server_url)
+    def run(queue_server_url, path = nil)
       pid_queue = Queue.new
       
       Thread.new do
         Thread.current.abort_on_exception = true
         
         runner_path = File.expand_path(File.dirname(__FILE__) + "/runner.rb")
-        cmd = "#{runner_path} #{queue_server_url}"
+        cmd = "#{runner_path} #{queue_server_url} #{path}".strip
+        Testjour.logger.debug "Starting runner with command: #{cmd}"
         systemu(cmd) { |pid| pid_queue << pid }
       end
       

@@ -1,8 +1,8 @@
+Rsync
 Config for step file locations
 Cleanup Cucumber extension points
 PID files
 daemonize
-Rsync
 Detect runner crashes
 
 Color coding

@@ -19,7 +19,7 @@ if available_servers.any?
     available_servers.each do |server|
       Testjour.logger.info "Requesting buld from available server: #{server.uri}"
       slave_server = DRbObject.new(nil, server.uri)
-      slave_server.run(DRb.uri)
+      slave_server.run(DRb.uri, File.expand_path("."))
     end
   
     Testjour.logger.info "Waiting for results..."
