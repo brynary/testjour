@@ -12,25 +12,24 @@ module Cucumber
   end
 end
 
-drb_url = ARGV.shift
-
-DRb.start_service
-queue_server = DRbObject.new(nil, drb_url)
-
-extend Cucumber::StepMethods
-extend Cucumber::Tree
-
-Cucumber.load_language("en")
-$executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
-
-ARGV.clear # Shut up RSpec
-require "cucumber/treetop_parser/feature_en"
-require "cucumber/treetop_parser/feature_parser"
-
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('./config/environment')
 
 Testjour::MysqlDatabaseSetup.with_new_database do
+  
+  drb_url = ARGV.shift
+  DRb.start_service
+  queue_server = DRbObject.new(nil, drb_url)
+
+  # TODO - More Cucumber boilerplate
+  extend Cucumber::StepMethods
+  extend Cucumber::Tree
+  Cucumber.load_language("en")
+  $executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
+  ARGV.clear # Shut up RSpec
+  require "cucumber/treetop_parser/feature_en"
+  require "cucumber/treetop_parser/feature_parser"
+  
   Dir[File.expand_path("./features/steps/*.rb")].each do |file|
     require file
   end
@@ -47,6 +46,8 @@ Testjour::MysqlDatabaseSetup.with_new_database do
     loop do
       begin
         file = queue_server.take_work
+        
+        # TODO - More Cucumber boilerplate
         puts File.expand_path(file)
         features = parser.parse_feature(File.expand_path(file))
         $executor.visit_features(features)
