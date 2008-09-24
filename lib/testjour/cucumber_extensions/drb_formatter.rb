@@ -2,9 +2,8 @@ require "drb"
 
 class DRbFormatter
   
-  def initialize
-    DRb.start_service
-    @ro = DRbObject.new(nil, Testjour::DRB_URL)
+  def initialize(ro)
+    @ro = ro
     # @errors = []
   end
   

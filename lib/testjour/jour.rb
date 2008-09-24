@@ -6,7 +6,6 @@ Thread.abort_on_exception = true
 
 module Testjour
   Server  = Struct.new(:name, :host, :port)
-  PORT    = 8808
   SERVICE = "_testjour._tcp"  
   
   class Jour
@@ -18,7 +17,7 @@ module Testjour
         DNSSD.resolve(reply.name, reply.type, reply.domain) do |rr|
           host = Server.new(reply.name, rr.target, rr.port)
           unless hosts.include? host
-            puts "#{host.name} (#{host.host}:#{host.port})"
+            # puts "#{host.name} (#{host.host}:#{host.port})"
             hosts << host
           end
         end
@@ -26,19 +25,18 @@ module Testjour
 
       sleep 5
       service.stop
+      hosts
     end
     
-    def self.serve
-      name = ENV['USER'] if name.empty?
+    def self.serve(port)
+      name = ENV['USER']
 
       tr = DNSSD::TextRecord.new
       tr['description'] = "#{name}'s gem server"
 
       DNSSD.register(name, SERVICE, "local", port, tr.encode) do |reply|
-        puts "Ready to run tests under name '#{name}'..."
+        puts "Broadcasting: Ready to run tests under name '#{name}' on port #{port}..."
       end
-
-      sleep 60
     end
   end
   

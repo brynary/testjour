@@ -5,10 +5,19 @@ require "timeout"
 class QueueServer
   TIMEOUT_IN_SECONDS = 60
   
+  def self.with_server
+    server = new
+    DRb.start_service(nil, server)
+    puts "Starting QueueServer at #{DRb.uri}"
+    puts
+    yield server
+  end
+  
   def self.start
     server = new
-    DRb.start_service("druby://0.0.0.0:1337", server)
-    puts DRb.uri
+    DRb.start_service(nil, server)
+    puts "Starting QueueServer at #{DRb.uri}"
+    puts
     DRb.thread.join
   end
 

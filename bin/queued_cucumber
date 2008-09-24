@@ -1,24 +1,34 @@
 #!/usr/bin/env ruby
 
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/queue_server")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/queueing_executor")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/jour")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/queue_server")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/cucumber_extensions/queueing_executor")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/object_extensions")
 
-module Cucumber
-  silence_warnings do
-    Executor = QueueingExecutor
+QueueServer.with_server do |queue|
+  QueueingExecutor.queue = queue
+  
+  module Cucumber
+    silence_warnings { Executor = QueueingExecutor }
   end
-end
+  
+  Cucumber::CLI.execute
 
-QueueServer.start
-
-DRb.start_service
-ro = DRbObject.new(nil, Testjour::DRB_URL)
-ro.reset
-
-Cucumber::CLI.execute
-
-$executor.step_count.times do
-  print ro.take_result
-  $stdout.flush
+  available_servers = Testjour::Jour.list
+  
+  if available_servers.any?
+    server = available_servers.first
+    drb_uri = "druby://" + server.host.gsub(/\.$/, "") + ":" + server.port.to_s
+    ro = DRbObject.new(nil, drb_uri)
+    ro.run(DRb.uri)
+    
+    $executor.step_count.times do
+      print queue.take_result
+      $stdout.flush
+    end
+  else
+    puts "Don't see any available test servers. Try again later."
+  end
 end

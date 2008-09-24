@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + "/drb_formatter"
-require File.dirname(__FILE__) + "/queue_server"
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/cucumber_extensions/drb_formatter")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/queue_server")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/mysql_database")
 
 # Trick Cucumber into not runing anything itself
 module Cucumber
@@ -13,50 +15,51 @@ module Cucumber
   end
 end
 
+drb_url = ARGV.shift
+
+DRb.start_service
+ro = DRbObject.new(nil, drb_url)
 
 extend Cucumber::StepMethods
 extend Cucumber::Tree
 
 Cucumber.load_language("en")
-$executor = Cucumber::Executor.new(DRbFormatter.new, step_mother)
+$executor = Cucumber::Executor.new(DRbFormatter.new(ro), step_mother)
 
 ARGV.clear # Shut up RSpec
 require "cucumber/treetop_parser/feature_en"
 require "cucumber/treetop_parser/feature_parser"
 
-Dir[File.expand_path("~/p/weplay/features/steps/*.rb")].each do |file|
-  require file
-end
+ENV["RAILS_ENV"] = "test"
+require File.expand_path('./config/environment')
 
-ActiveRecord::Base.establish_connection(
-  :adapter  => "mysql",
-  :host     => "localhost",
-  :username => "root",
-  :database => "information_schema"
-)
-
-db_num = rand(1000)
-db_name = "weplay_story_build_#{db_num}"
-ActiveRecord::Base.connection.recreate_database(db_name)
-ActiveRecord::Base.establish_connection(
-  :adapter  => "mysql",
-  :database => db_name,
-  :username => "root",
-  :host     => "localhost"
-)
-load File.join(RAILS_ROOT, "db", "schema.rb")
-
-DRb.start_service
-ro = DRbObject.new(nil, Testjour::DRB_URL)
-parser = Cucumber::TreetopParser::FeatureParser.new
-
-loop do
-  begin
-    file = ro.take_work
-    puts File.expand_path(file)
-    features = parser.parse_feature(File.expand_path(file))
-    $executor.visit_features(features)
-  rescue QueueServer::NoWorkUnitsAvailableError
-    # If no work, ignore and keep looping
+Testjour::MysqlDatabaseSetup.with_new_database do
+  Dir[File.expand_path("./features/steps/*.rb")].each do |file|
+    require file
   end
+  
+  puts
+  puts "Connected to #{drb_url}"
+  puts
+  puts "Ready..."
+  puts
+  
+  parser = Cucumber::TreetopParser::FeatureParser.new
+
+  begin
+    loop do
+      begin
+        file = ro.take_work
+        puts File.expand_path(file)
+        features = parser.parse_feature(File.expand_path(file))
+        $executor.visit_features(features)
+      rescue QueueServer::NoWorkUnitsAvailableError
+        # If no work, ignore and keep looping
+      end
+    end
+  rescue DRb::DRbConnError
+    # DRb server shutdown - we're done
+  end
+  
 end
+
