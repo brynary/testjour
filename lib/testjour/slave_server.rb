@@ -18,9 +18,6 @@ module Testjour
     def self.stop
       DRb.stop_service
     end
-
-    def initialize
-    end
   
     def run(queue_server_url)
       puts "Running tests from QueueServer: #{queue_server_url}"

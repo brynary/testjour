@@ -14,14 +14,6 @@ module Testjour
       puts
       yield server
     end
-  
-    def self.start
-      server = new
-      DRb.start_service(nil, server)
-      puts "Starting QueueServer at #{DRb.uri}"
-      puts
-      DRb.thread.join
-    end
 
     def self.stop
       DRb.stop_service

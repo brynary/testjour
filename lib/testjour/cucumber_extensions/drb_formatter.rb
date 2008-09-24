@@ -4,26 +4,26 @@ module Testjour
   
   class DRbFormatter
   
-    def initialize(ro)
-      @ro = ro
+    def initialize(queue_server)
+      @queue_server = queue_server
       # @errors = []
     end
   
     def step_passed(step, regexp, args)
-      @ro.write_result "."
+      @queue_server.write_result "."
     end
   
     def step_failed(step, regexp, args)
       # @errors << step.error
-      @ro.write_result "F"
+      @queue_server.write_result "F"
     end
   
     def step_pending(step, regexp, args)
-      @ro.write_result "P"
+      @queue_server.write_result "P"
     end
 
     def step_skipped(step, regexp, args)
-      @ro.write_result "_"
+      @queue_server.write_result "_"
     end
 
     def dump

@@ -15,13 +15,13 @@ end
 drb_url = ARGV.shift
 
 DRb.start_service
-ro = DRbObject.new(nil, drb_url)
+queue_server = DRbObject.new(nil, drb_url)
 
 extend Cucumber::StepMethods
 extend Cucumber::Tree
 
 Cucumber.load_language("en")
-$executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(ro), step_mother)
+$executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
 
 ARGV.clear # Shut up RSpec
 require "cucumber/treetop_parser/feature_en"
@@ -46,7 +46,7 @@ Testjour::MysqlDatabaseSetup.with_new_database do
   begin
     loop do
       begin
-        file = ro.take_work
+        file = queue_server.take_work
         puts File.expand_path(file)
         features = parser.parse_feature(File.expand_path(file))
         $executor.visit_features(features)
