@@ -13,19 +13,33 @@ if available_servers.any?
     
     silence_warnings { Cucumber::Executor = Testjour::QueueingExecutor }
 
-    Testjour.logger.info "Queueing features..."
+    Testjour.logger.debug "Queueing features..."
     Cucumber::CLI.execute
     
+    found_server = false
+    
     available_servers.each do |server|
-      Testjour.logger.info "Requesting buld from available server: #{server.uri}"
       slave_server = DRbObject.new(nil, server.uri)
-      slave_server.run(DRb.uri, File.expand_path("."))
+      result = slave_server.run(DRb.uri, File.expand_path("."))
+      
+      if result
+        Testjour.logger.info "Requesting buld from available server: #{server.uri}. Accepted."
+        found_server = true
+      else
+        Testjour.logger.info "Requesting buld from available server: #{server.uri}. Rejected."
+      end
     end
   
-    Testjour.logger.info "Waiting for results..."
-    $executor.wait_for_results
-    Testjour.logger.info "DONE"
+    if found_server # at lease one server accepted the request
+      Testjour.logger.debug "Waiting for results..."
+      $executor.wait_for_results
+      Testjour.logger.debug "DONE"
+    else
+      puts
+      puts "Found available servers, but none accepted the build request. Try again later."
+    end
   end
 else
+  puts
   puts "Don't see any available test servers. Try again later."
 end

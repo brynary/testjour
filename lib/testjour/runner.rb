@@ -3,7 +3,7 @@
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
-Testjour.logger.info "Starting runner..."
+Testjour.logger.debug "Runner starting..."
 
 Cucumber.disable_run
 
@@ -71,7 +71,7 @@ Testjour::MysqlDatabaseSetup.with_new_database do
       end
     end
   rescue DRb::DRbConnError
-    Testjour.logger.info "DRb connection error. Exiting runner."
+    Testjour.logger.debug "DRb connection error. Exiting runner."
   end
   
 end

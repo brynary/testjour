@@ -18,7 +18,13 @@ module Testjour
     end
   
     def run(queue_server_url, path = nil)
+      if running?
+        Testjour.logger.info "Not running because pid exists: #{@pid}"
+        return false
+      end
+      
       pid_queue = Queue.new
+      @pid = nil
       
       Thread.new do
         Thread.current.abort_on_exception = true
@@ -29,11 +35,23 @@ module Testjour
         systemu(cmd) { |pid| pid_queue << pid }
       end
       
-      pid = pid_queue.pop
+      @pid = pid_queue.pop
       
-      Testjour.logger.info "Running tests from queue #{queue_server_url} on PID #{pid}"
+      Testjour.logger.info "Running tests from queue #{queue_server_url} on PID #{@pid}"
+      
+      return @pid
     end
-
+    
+  protected
+    
+    def running?
+      return false unless @pid
+      Process::kill 0, @pid.to_s.to_i
+      true
+    rescue Errno::ESRCH, Errno::EPERM
+      false
+    end
+    
   end
   
 end
