@@ -47,12 +47,7 @@ module Testjour
     end
 
     def connect
-      ActiveRecord::Base.establish_connection(
-        :adapter  => "mysql",
-        :database => runner_database_name,
-        :username => "root",
-        :host     => "localhost"
-      )
+      ActiveRecord::Base.establish_connection(self.class.admin_configuration.merge(:database => runner_database_name))
     end
 
     def load_schema
