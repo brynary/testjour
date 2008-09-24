@@ -16,9 +16,8 @@ Testjour::QueueServer.with_server do |queue|
   
   if available_servers.any?
     available_servers.each do |server|
-      drb_uri = "druby://" + server.host.gsub(/\.$/, "") + ":" + server.port.to_s
-      ro = DRbObject.new(nil, drb_uri)
-      ro.run(DRb.uri)
+      slave_server = DRbObject.new(nil, server.uri)
+      slave_server.run(DRb.uri)
     end
     
     $executor.step_count.times do
