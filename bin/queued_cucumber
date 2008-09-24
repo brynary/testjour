@@ -15,10 +15,11 @@ Testjour::QueueServer.with_server do |queue|
   available_servers = Testjour::Jour.list
   
   if available_servers.any?
-    server = available_servers.first
-    drb_uri = "druby://" + server.host.gsub(/\.$/, "") + ":" + server.port.to_s
-    ro = DRbObject.new(nil, drb_uri)
-    ro.run(DRb.uri)
+    available_servers.each do |server|
+      drb_uri = "druby://" + server.host.gsub(/\.$/, "") + ":" + server.port.to_s
+      ro = DRbObject.new(nil, drb_uri)
+      ro.run(DRb.uri)
+    end
     
     $executor.step_count.times do
       print queue.take_result
