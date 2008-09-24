@@ -1,10 +1,10 @@
+Prevent slave from running multiple runners
 Rsync
+daemonize slave
+
 Config for step file locations
 Cleanup Cucumber extension points
-PID files
-daemonize
 Detect runner crashes
-
 Color coding
 Stats
 Failover local runners
