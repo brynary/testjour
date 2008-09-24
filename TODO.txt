@@ -1,10 +1,12 @@
-Results reporting
 Logging
-Rsync
+Config for step file locations
+Cleanup Cucumber extension points
 PID files
 daemonize
+Rsync
 Detect runner crashes
 
+Color coding
 Stats
 Failover local runners
 Web UI of the network

@@ -20,21 +20,20 @@ module Testjour
         $stdout.flush
       end
       
-      # puts "Now on to errors..."
-      # $stdout.flush
-      # 
-      # error_count = 0
-      # 
-      # while error = @queue_server.take_error
-      #   message, backtrace = error
-      #   
-      #   puts
-      #   puts "#{n+1})"
-      #   puts message
-      #   puts backtrace.join("\n")
-      # 
-      #   error_count += 1
-      # end
+      puts
+      
+      error_count = 0
+      
+      while error = @queue_server.take_error
+        message, backtrace = error
+        
+        puts
+        puts "#{error_count+1})"
+        puts message
+        puts backtrace
+      
+        error_count += 1
+      end
     end
 
     def visit_features(features)
