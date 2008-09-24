@@ -15,17 +15,13 @@ module Testjour
 
       service = DNSSD.browse(SERVICE) do |reply|
         DNSSD.resolve(reply.name, reply.type, reply.domain) do |rr|
-          host = Server.new(reply.name, rr.target, rr.port)
-          unless hosts.include? host
-            # puts "#{host.name} (#{host.host}:#{host.port})"
-            hosts << host
-          end
+          hosts << Server.new(reply.name, rr.target, rr.port)
         end
       end
 
-      sleep 5
+      sleep 3
       service.stop
-      hosts
+      hosts.uniq
     end
     
     def self.serve(port)
