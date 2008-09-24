@@ -1,0 +1,7 @@
+Results reporting
+Multiple runners per slave
+Failover local runners
+Logging
+Rsync
+PID files
+daemonize
