@@ -32,7 +32,7 @@ module Testjour
       name = ENV['USER']
 
       tr = DNSSD::TextRecord.new
-      tr['description'] = "#{name}'s gem server"
+      tr['description'] = "#{name}'s testjour server"
 
       DNSSD.register(name, SERVICE, "local", port, tr.encode) do |reply|
         puts "Broadcasting: Ready to run tests under name '#{name}' on port #{port}..."

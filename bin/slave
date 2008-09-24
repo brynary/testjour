@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/jour")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/slave_server")
 
-Testjour::Jour.serve(SlaveServer.start)
+Testjour::Jour.serve(Testjour::SlaveServer.start)
 DRb.thread.join

@@ -2,9 +2,6 @@
 
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/cucumber_extensions/drb_formatter")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/queue_server")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/mysql_database")
 
 # Trick Cucumber into not runing anything itself
 module Cucumber
@@ -24,7 +21,7 @@ extend Cucumber::StepMethods
 extend Cucumber::Tree
 
 Cucumber.load_language("en")
-$executor = Cucumber::Executor.new(DRbFormatter.new(ro), step_mother)
+$executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(ro), step_mother)
 
 ARGV.clear # Shut up RSpec
 require "cucumber/treetop_parser/feature_en"
@@ -53,7 +50,7 @@ Testjour::MysqlDatabaseSetup.with_new_database do
         puts File.expand_path(file)
         features = parser.parse_feature(File.expand_path(file))
         $executor.visit_features(features)
-      rescue QueueServer::NoWorkUnitsAvailableError
+      rescue Testjour::QueueServer::NoWorkUnitsAvailableError
         # If no work, ignore and keep looping
       end
     end

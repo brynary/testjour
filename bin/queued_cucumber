@@ -2,16 +2,12 @@
 
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/jour")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/queue_server")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/cucumber_extensions/queueing_executor")
-require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/object_extensions")
 
-QueueServer.with_server do |queue|
-  QueueingExecutor.queue = queue
+Testjour::QueueServer.with_server do |queue|
+  Testjour::QueueingExecutor.queue = queue
   
   module Cucumber
-    silence_warnings { Executor = QueueingExecutor }
+    silence_warnings { Executor = Testjour::QueueingExecutor }
   end
   
   Cucumber::CLI.execute
