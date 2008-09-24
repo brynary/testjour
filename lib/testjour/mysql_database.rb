@@ -54,10 +54,6 @@ module Testjour
       silence_stream(STDOUT) do
         load File.join(RAILS_ROOT, "db", "schema.rb")
       end
-      
-      puts
-      puts "Created database #{runner_database_name}."
-      puts
     end
 
     def admin_connection

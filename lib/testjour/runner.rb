@@ -12,45 +12,56 @@ module Cucumber
   end
 end
 
+module Testjour
+  
+  class CucumberCli
+  
+    def initialize(queue_server, step_mother)
+      @queue_server = queue_server
+      
+      Cucumber.load_language("en")
+      $executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
+
+      require "cucumber/treetop_parser/feature_en"
+      require "cucumber/treetop_parser/feature_parser"
+    end
+  
+    def require_steps(pattern)
+      Dir[File.expand_path(pattern)].each do |file|
+        require file
+      end
+    end
+  
+    def run_file(file)
+      features = parser.parse_feature(File.expand_path(file))
+      $executor.visit_features(features)
+    end
+  
+    def parser
+      @parser ||= Cucumber::TreetopParser::FeatureParser.new
+    end
+  
+  end
+  
+end
+
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('./config/environment')
 
 Testjour::MysqlDatabaseSetup.with_new_database do
-  
-  drb_url = ARGV.shift
   DRb.start_service
-  queue_server = DRbObject.new(nil, drb_url)
+  queue_server = DRbObject.new(nil, ARGV.shift)
 
-  # TODO - More Cucumber boilerplate
   extend Cucumber::StepMethods
   extend Cucumber::Tree
-  Cucumber.load_language("en")
-  $executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
-  ARGV.clear # Shut up RSpec
-  require "cucumber/treetop_parser/feature_en"
-  require "cucumber/treetop_parser/feature_parser"
   
-  Dir[File.expand_path("./features/steps/*.rb")].each do |file|
-    require file
-  end
-  
-  puts
-  puts "Connected to #{drb_url}"
-  puts
-  puts "Ready..."
-  puts
-  
-  parser = Cucumber::TreetopParser::FeatureParser.new
+  cli = Testjour::CucumberCli.new(queue_server, step_mother)
+  cli.require_steps("./features/steps/*.rb")
 
   begin
     loop do
       begin
-        file = queue_server.take_work
-        
-        # TODO - More Cucumber boilerplate
-        puts File.expand_path(file)
-        features = parser.parse_feature(File.expand_path(file))
-        $executor.visit_features(features)
+        cli.run_file(queue_server.take_work)
       rescue Testjour::QueueServer::NoWorkUnitsAvailableError
         # If no work, ignore and keep looping
       end
