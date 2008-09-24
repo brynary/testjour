@@ -3,14 +3,7 @@
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
-# Trick Cucumber into not runing anything itself
-module Cucumber
- class CLI
-   def self.execute_called?
-     true
-    end
-  end
-end
+Cucumber.disable_run
 
 module Testjour
   

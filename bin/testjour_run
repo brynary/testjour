@@ -3,28 +3,25 @@
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
 
-Testjour::QueueServer.with_server do |queue|
-  Testjour::QueueingExecutor.queue = queue
-  
-  module Cucumber
-    silence_warnings { Executor = Testjour::QueueingExecutor }
-  end
-  
-  Cucumber::CLI.execute
+Cucumber.disable_run
 
-  available_servers = Testjour::Jour.list
-  
-  if available_servers.any?
+available_servers = Testjour::Jour.list
+
+if available_servers.any?
+  Testjour::QueueServer.with_server do |queue|    
+    Testjour::QueueingExecutor.queue = queue
+    
+    silence_warnings { Cucumber::Executor = Testjour::QueueingExecutor }
+
+    Cucumber::CLI.execute
+    
     available_servers.each do |server|
       slave_server = DRbObject.new(nil, server.uri)
       slave_server.run(DRb.uri)
     end
-    
-    $executor.step_count.times do
-      print queue.take_result
-      $stdout.flush
-    end
-  else
-    puts "Don't see any available test servers. Try again later."
+  
+    $executor.wait_for_results
   end
+else
+  puts "Don't see any available test servers. Try again later."
 end

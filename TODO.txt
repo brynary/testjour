@@ -1,7 +1,11 @@
 Results reporting
-Multiple runners per slave
-Failover local runners
 Logging
 Rsync
 PID files
 daemonize
+Detect runner crashes
+
+Stats
+Failover local runners
+Web UI of the network
+Multiple runners per slave

@@ -3,28 +3,22 @@ require "drb"
 module Testjour
   
   class QueueingExecutor
-    attr_reader :failed
     attr_reader :step_count
   
     class << self
       attr_accessor :queue
     end
-  
-    def line=(line)
-    end
 
     def initialize(formatter, step_mother)
-      @ro = self.class.queue
+      @queue_server = self.class.queue
       @step_count = 0
     end
-  
-    def register_world_proc(&proc)
-    end
-
-    def register_before_proc(&proc)
-    end
-
-    def register_after_proc(&proc)
+    
+    def wait_for_results
+      step_count.times do
+        print @queue_server.take_result
+        $stdout.flush
+      end
     end
 
     def visit_features(features)
@@ -33,10 +27,7 @@ module Testjour
 
     def visit_feature(feature)
       feature.accept(self)
-      @ro.write_work(feature.file)
-    end
-
-    def visit_header(header)
+      @queue_server.write_work(feature.file)
     end
 
     def visit_row_scenario(scenario)
@@ -61,6 +52,10 @@ module Testjour
 
     def visit_step(step)
       @step_count += 1
+    end
+    
+    def method_missing(*args)
+      # Do nothing
     end
 
   end
