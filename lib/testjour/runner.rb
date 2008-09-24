@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
-require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
+drb_uri = ARGV.shift
+project_path = ARGV.shift
+
+require File.expand_path(project_path + "/vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
 Testjour.logger.debug "Runner starting..."
@@ -46,10 +49,7 @@ module Testjour
 end
 
 ENV["RAILS_ENV"] = "test"
-require File.expand_path('./config/environment')
-
-drb_uri = ARGV.shift
-project_path = ARGV.shift
+require File.expand_path(project_path + '/config/environment')
 
 # Testjour::Rsync.sync(drb_uri, project_path, File.expand_path("~/temp3"))
 
@@ -58,7 +58,7 @@ Testjour::MysqlDatabaseSetup.with_new_database do
   queue_server = DRbObject.new(nil, drb_uri)
   
   cli = Testjour::CucumberCli.new(queue_server, step_mother)
-  cli.require_steps("./features/steps/*.rb")
+  cli.require_steps(File.expand_path(project_path + "/features/steps/*.rb"))
 
   begin
     loop do
