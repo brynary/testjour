@@ -24,12 +24,19 @@ module Testjour
     def reset
       @work_queue   = Queue.new
       @result_queue = Queue.new
+      @error_queue  = Queue.new
     end
   
     def done_with_work
       @done_with_work = true
     end
 
+    def take_error
+      @error_queue.pop(true)
+    rescue Object => ex
+      raise unless ex.message == "queue empty"
+    end
+    
     def take_result
       Timeout.timeout(TIMEOUT_IN_SECONDS, ResultOverdueError) do
         @result_queue.pop
@@ -48,6 +55,11 @@ module Testjour
       end
     end
 
+    def write_error(error)
+      @error_queue.push error
+      nil
+    end
+    
     def write_result(result)
       @result_queue.push result
       nil
