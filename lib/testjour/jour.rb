@@ -49,8 +49,7 @@ module Testjour
       tr['description'] = "#{name}'s testjour server"
 
       DNSSD.register(name, SERVICE, "local", port, tr.encode) do |reply|
-        puts "Broadcasting: Ready to run tests under name '#{name}' on port #{port}..."
-        puts
+        Testjour.logger.info "Broadcasting: Ready to run tests under name '#{name}' on port #{port}..."
       end
     end
   end

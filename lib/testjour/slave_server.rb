@@ -30,7 +30,7 @@ module Testjour
       
       pid = pid_queue.pop
       
-      puts "Running tests from queue #{queue_server_url} on PID #{pid}"
+      Testjour.logger.info "Running tests from queue #{queue_server_url} on PID #{pid}"
     end
 
   end

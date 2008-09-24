@@ -21,7 +21,6 @@ module Testjour
       end
       
       puts
-      
       error_count = 0
       
       while error = @queue_server.take_error

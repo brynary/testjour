@@ -3,6 +3,8 @@
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
+Testjour.logger.info "Starting runner..."
+
 Cucumber.disable_run
 
 module Testjour
@@ -54,13 +56,15 @@ Testjour::MysqlDatabaseSetup.with_new_database do
   begin
     loop do
       begin
-        cli.run_file(queue_server.take_work)
+        file = queue_server.take_work
+        Testjour.logger.debug "Running feature file: #{file}"
+        cli.run_file(file)
       rescue Testjour::QueueServer::NoWorkUnitsAvailableError
         # If no work, ignore and keep looping
       end
     end
   rescue DRb::DRbConnError
-    # DRb server shutdown - we're done
+    Testjour.logger.info "DRb connection error. Exiting runner."
   end
   
 end
