@@ -14,6 +14,11 @@ module Testjour
     def initialize(queue_server, step_mother)
       @queue_server = queue_server
       
+      Object.class_eval do
+        extend Cucumber::StepMethods
+        extend Cucumber::Tree
+      end
+      
       Cucumber.load_language("en")
       $executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), step_mother)
 
@@ -49,13 +54,8 @@ project_path = ARGV.shift
 # Testjour::Rsync.sync(drb_uri, project_path, File.expand_path("~/temp3"))
 
 Testjour::MysqlDatabaseSetup.with_new_database do
-
-  
   DRb.start_service
   queue_server = DRbObject.new(nil, drb_uri)
-
-  extend Cucumber::StepMethods
-  extend Cucumber::Tree
   
   cli = Testjour::CucumberCli.new(queue_server, step_mother)
   cli.require_steps("./features/steps/*.rb")
