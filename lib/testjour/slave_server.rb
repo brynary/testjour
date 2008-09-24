@@ -10,8 +10,6 @@ module Testjour
     def self.start
       server = new
       DRb.start_service(nil, server)
-      puts "Starting SlaveServer available at #{DRb.uri}"
-      puts
       DRb.uri.split(":").last.to_i
     end
 
@@ -27,8 +25,6 @@ module Testjour
         
         runner_path = File.expand_path(File.dirname(__FILE__) + "/runner.rb")
         cmd = "#{runner_path} #{queue_server_url}"
-        
-        puts cmd
         systemu cmd
       end
     end

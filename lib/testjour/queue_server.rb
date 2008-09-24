@@ -10,8 +10,6 @@ module Testjour
     def self.with_server
       server = new
       DRb.start_service(nil, server)
-      puts "Starting QueueServer at #{DRb.uri}"
-      puts
       yield server
     end
 
