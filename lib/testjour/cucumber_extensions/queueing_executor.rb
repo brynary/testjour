@@ -4,10 +4,6 @@ require "cucumber/tree/top_down_visitor"
 module Testjour
   
   class QueueingExecutor < ::Cucumber::Tree::TopDownVisitor
-    class Colorer
-      extend ::Cucumber::Formatters::ANSIColor
-    end
-    
     attr_reader :step_count
   
     class << self
@@ -20,33 +16,41 @@ module Testjour
     end
     
     def wait_for_results
-      errors = []
+      passed  = 0
+      skipped = 0
+      pending = 0
+      errors  = []
       
       step_count.times do
         dot, message, backtrace = @queue_server.take_result
         
-        unless message.size.zero?
-          errors << [message, backtrace]
-        end
-        
-        print case dot
+        case dot
         when "."
-          Colorer.passed(dot)
+          passed += 1
+          print Colorer.passed(dot)
         when "F"
-          Colorer.failed(dot)
+          errors << [message, backtrace]
+          print Colorer.failed(dot)
         when "P"
-          Colorer.pending(dot)
+          pending += 1
+          print Colorer.pending(dot)
         when "_"
-          Colorer.skipped(dot)
+          skipped += 1
+          print Colorer.skipped(dot)
         else
-          dot
+          print dot
         end
         
         $stdout.flush
       end
       
       puts
-      error_count = 0
+      puts
+      puts Colorer.passed("#{passed} steps passed") unless passed.zero?
+      puts Colorer.failed("#{errors.size} steps failed") unless errors.empty?
+      puts Colorer.skipped("#{skipped} steps skipped") unless skipped.zero?
+      puts Colorer.pending("#{pending} steps pending") unless pending.zero?
+      puts
       
       errors.each_with_index do |error, i|
         message, backtrace = error

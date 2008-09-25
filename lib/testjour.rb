@@ -22,4 +22,7 @@ module Testjour
     @logger
   end
   
+  class Colorer
+    extend ::Cucumber::Formatters::ANSIColor
+  end
 end

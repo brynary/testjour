@@ -39,10 +39,10 @@ if available_servers.any?
       Testjour.logger.debug "DONE"
     else
       puts
-      puts "Found available servers, but none accepted the build request. Try again later."
+      puts Testjour::Colorer.failed("Found available servers, but none accepted the build request. Try again later.")
     end
   end
 else
   puts
-  puts "Don't see any available test servers. Try again later."
+  puts Testjour::Colorer.failed("Don't see any available test servers. Try again later.")
 end
