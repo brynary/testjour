@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
 
 Testjour::Jour.serve(Testjour::SlaveServer.start)
