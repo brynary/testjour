@@ -1,10 +1,7 @@
 Rsync
-daemonize slave
-
 Config for step file locations (profiles??)
-Cleanup Cucumber extension points
 Detect runner crashes
-Stats
 Failover local runners
+Cleanup Cucumber extension points
+Stats
 Web UI of the network
-Multiple runners per slave
