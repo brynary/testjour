@@ -16,23 +16,29 @@ module Testjour
     end
     
     def wait_for_results
+      errors = []
+      
       step_count.times do
-        print @queue_server.take_result
+        dot, message, backtrace = @queue_server.take_result
+        
+        unless message.size.zero?
+          errors << [message, backtrace]
+        end
+        
+        print dot
         $stdout.flush
       end
       
       puts
       error_count = 0
       
-      while error = @queue_server.take_error
+      errors.each_with_index do |error, i|
         message, backtrace = error
         
         puts
-        puts "#{error_count+1})"
+        puts "#{i+1})"
         puts message
         puts backtrace
-      
-        error_count += 1
       end
     end
 

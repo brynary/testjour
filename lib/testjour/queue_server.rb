@@ -30,12 +30,6 @@ module Testjour
     def done_with_work
       @done_with_work = true
     end
-
-    def take_error
-      @error_queue.pop(true)
-    rescue Object => ex
-      raise unless ex.message == "queue empty"
-    end
     
     def take_result
       Timeout.timeout(TIMEOUT_IN_SECONDS, ResultOverdueError) do
@@ -54,14 +48,9 @@ module Testjour
         raise
       end
     end
-
-    def write_error(message, backtrace)
-      @error_queue.push [message.to_s, backtrace.join("\n")]
-      nil
-    end
     
-    def write_result(result)
-      @result_queue.push result
+    def write_result(dot, message = nil, backtrace = [])
+      @result_queue.push [dot, message.to_s, backtrace.join("\n")]
       nil
     end
 

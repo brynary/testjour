@@ -13,8 +13,7 @@ module Testjour
     end
   
     def step_failed(step, regexp, args)
-      @queue_server.write_error(step.error.message, step.error.backtrace)
-      @queue_server.write_result "F"
+      @queue_server.write_result "F", step.error.message, step.error.backtrace
     end
   
     def step_pending(step, regexp, args)
