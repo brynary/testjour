@@ -1,10 +1,9 @@
 Rsync
 daemonize slave
 
-Config for step file locations
+Config for step file locations (profiles??)
 Cleanup Cucumber extension points
 Detect runner crashes
-Color coding
 Stats
 Failover local runners
 Web UI of the network

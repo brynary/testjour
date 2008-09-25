@@ -4,6 +4,10 @@ require "cucumber/tree/top_down_visitor"
 module Testjour
   
   class QueueingExecutor < ::Cucumber::Tree::TopDownVisitor
+    class Colorer
+      extend ::Cucumber::Formatters::ANSIColor
+    end
+    
     attr_reader :step_count
   
     class << self
@@ -25,7 +29,19 @@ module Testjour
           errors << [message, backtrace]
         end
         
-        print dot
+        print case dot
+        when "."
+          Colorer.passed(dot)
+        when "F"
+          Colorer.failed(dot)
+        when "P"
+          Colorer.pending(dot)
+        when "_"
+          Colorer.skipped(dot)
+        else
+          dot
+        end
+        
         $stdout.flush
       end
       
@@ -36,9 +52,9 @@ module Testjour
         message, backtrace = error
         
         puts
-        puts "#{i+1})"
-        puts message
-        puts backtrace
+        puts Colorer.failed("#{i+1})")
+        puts Colorer.failed(message)
+        puts Colorer.failed(backtrace)
       end
     end
 
