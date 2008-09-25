@@ -1,9 +1,22 @@
 #!/usr/bin/env ruby
 
-drb_uri = ARGV.shift
-project_path = ARGV.shift
+require "optparse"
 
-require File.expand_path(project_path + "/vendor/plugins/cucumber/lib/cucumber")
+options = { :drb_uri => nil, :project_path => "."}
+ARGV.extend(OptionParser::Arguable)
+ARGV.options do |opts|
+  opts.on("-q URI", "--queue URI", "Where to grab work from") do |v|
+    options[:drb_uri] = v
+  end
+  
+  opts.on("-d PROJECT_DIR", "--working-dir PROJECT_DIR", "Which dir to run in") do |v|
+    options[:project_path] = v
+  end
+end.parse!
+
+options[:project_path] = File.expand_path(options[:project_path])
+
+require File.expand_path(options[:project_path] + "/vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../testjour")
 
 Testjour.logger.debug "Runner starting..."
@@ -49,16 +62,16 @@ module Testjour
 end
 
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(project_path + '/config/environment')
+require File.expand_path(options[:project_path] + '/config/environment')
 
-# Testjour::Rsync.sync(drb_uri, project_path, File.expand_path("~/temp3"))
+# Testjour::Rsync.sync(options[:drb_uri], options[:project_path], File.expand_path("~/temp3"))
 
 Testjour::MysqlDatabaseSetup.with_new_database do
   DRb.start_service
-  queue_server = DRbObject.new(nil, drb_uri)
+  queue_server = DRbObject.new(nil, options[:drb_uri])
   
   cli = Testjour::CucumberCli.new(queue_server, step_mother)
-  cli.require_steps(File.expand_path(project_path + "/features/steps/*.rb"))
+  cli.require_steps(File.expand_path(options[:project_path] + "/features/steps/*.rb"))
 
   begin
     loop do
