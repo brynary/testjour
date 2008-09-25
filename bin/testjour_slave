@@ -3,5 +3,35 @@
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
 
+Cucumber.disable_run
+
+require 'daemons/daemonize'
+wd = File.expand_path(".")
+pid_file = File.expand_path("./testjour_slave.pid")
+
+class StopServer < Exception; end
+
+if File.exist?(pid_file)
+  puts "!!! PID file #{pid_file} already exists.  testjour_slave could be running already."
+  puts "!!! Exiting with error.  You must stop testjour_slave and clear the .pid before I'll attempt a start."
+  exit 1
+end
+
+at_exit { File.unlink(pid_file) if pid_file and File.exists?(pid_file) }
+trap("TERM") { Testjour.logger.info "TERM signal received."; raise StopServer.new }
+        
+logfile = File.expand_path("./daemonizing.log")
+Daemonize.daemonize(logfile)
+
+# change back to the original starting directory
+Dir.chdir(wd)
+
+# write pid. From mongrel
+open(pid_file,"w") {|f| f.write(Process.pid) }
+open(pid_file,"w") do |f|
+  f.write(Process.pid)
+  File.chmod(0644, pid_file)
+end
+
 Testjour::Jour.serve(Testjour::SlaveServer.start)
 DRb.thread.join
