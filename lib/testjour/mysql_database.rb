@@ -34,9 +34,19 @@ module Testjour
       yield
     end
 
+    def grant_privileges(connection)
+      sql = %{grant all on #{runner_database_name}.* 
+          to %s@'localhost' identified by %s;} % [
+        connection.quote(self.class.admin_configuration[:username]),
+        connection.quote(self.class.admin_configuration[:password] || "")
+      ]
+      connection.execute sql
+    end
+    
     def create_database
       admin_connection do |connection|
         connection.recreate_database runner_database_name
+        grant_privileges(connection)
       end
     end
     
