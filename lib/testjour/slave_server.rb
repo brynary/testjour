@@ -32,7 +32,8 @@ module Testjour
         runner_path = File.expand_path(File.dirname(__FILE__) + "/runner.rb")
         cmd = "#{runner_path} --queue #{queue_server_url} --working-dir #{File.expand_path(".")}".strip
         Testjour.logger.debug "Starting runner with command: #{cmd}"
-        systemu(cmd) { |pid| pid_queue << pid }
+        status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
+        Testjour.logger.warn stderr if stderr.strip.size > 0
       end
       
       @pid = pid_queue.pop
