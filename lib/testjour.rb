@@ -23,7 +23,7 @@ module Testjour
     return @logger if @logger
     @logger = Logger.new("log/testjour.log")
     @logger.formatter = proc { |severity, time, progname, msg| "#{time.strftime("%b %d %H:%M:%S")} [#{$PID}]: #{msg}\n" }
-    @logger.level = Logger::DEBUG # ENV["TESTJOUR_LOG"] || Logger::INFO
+    @logger.level = Logger::INFO
     @logger
   end
   
