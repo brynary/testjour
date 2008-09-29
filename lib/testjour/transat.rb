@@ -123,7 +123,6 @@ module Transat
     end
 
     def execute(command, non_options)
-      found = false
       @commands.each do |command_name, options|
         command_klass = options[:class]
         aliases = [command_name]
