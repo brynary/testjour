@@ -6,11 +6,16 @@ module Testjour
       def run
         available_servers = Testjour::Jour.list
         
-        available_servers.each do |server|
+        if available_servers.any?
           puts
-          puts server.name
-          puts server.host
-          puts server.port
+          puts "Testjour servers:"
+          puts 
+          available_servers.each do |server|
+            puts "    #{server.name} (#{server.host}:#{server.port})"
+          end
+        else
+          puts
+          puts "No testjour servers found."
         end
       end
       
