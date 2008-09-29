@@ -1,0 +1,6 @@
+require File.expand_path(File.dirname(__FILE__) + "/command")
+require File.expand_path(File.dirname(__FILE__) + "/commands/run")
+require File.expand_path(File.dirname(__FILE__) + "/commands/list")
+require File.expand_path(File.dirname(__FILE__) + "/commands/slave_start")
+require File.expand_path(File.dirname(__FILE__) + "/commands/slave_stop")
+require File.expand_path(File.dirname(__FILE__) + "/commands/slave_run")
