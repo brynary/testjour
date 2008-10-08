@@ -1,5 +1,6 @@
 extend Cucumber::StepMethods
 Cucumber::CLI.step_mother = step_mother
+Cucumber::CLI.executor = executor
 
 extend(Cucumber::Tree)
 Cucumber::CLI.features = features
@@ -10,6 +11,7 @@ module Testjour
     class SlaveRun < Testjour::Command
       class << self
         attr_accessor :step_mother
+        attr_accessor :executor
       end
       
       def initialize(non_options, options)
@@ -34,7 +36,7 @@ module Testjour
         ARGV.clear # Don't pass along args to RSpec
         
         Testjour.logger.debug "Runner starting..."
-
+        
         ENV["RAILS_ENV"] = "test"
         require File.expand_path(@chdir + '/config/environment')
 
@@ -44,7 +46,7 @@ module Testjour
           DRb.start_service
           
           queue_server = DRbObject.new(nil, @queue)
-          $executor = Cucumber::Executor.new(Testjour::DRbFormatter.new(queue_server), self.class.step_mother)
+          self.class.executor.formatter = Testjour::DRbFormatter.new(queue_server)
           
           require_steps(File.expand_path(@chdir + "/features/steps/*.rb"))
 
@@ -73,7 +75,7 @@ module Testjour
       def run_file(file)
         Testjour.logger.debug "Running feature file: #{file}"
         features = parser.parse_feature(File.expand_path(file))
-        $executor.visit_features(features)
+        self.class.executor.visit_features(features)
       end
   
       def parser
@@ -85,4 +87,5 @@ module Testjour
   end
 end
 
+Testjour::Commands::SlaveRun.executor = executor
 Testjour::Commands::SlaveRun.step_mother = step_mother

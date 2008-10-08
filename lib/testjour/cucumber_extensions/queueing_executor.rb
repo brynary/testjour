@@ -5,12 +5,13 @@ module Testjour
   
   class QueueingExecutor < ::Cucumber::Tree::TopDownVisitor
     attr_reader :step_count
-  
+    attr_accessor :formatter
+    
     class << self
       attr_accessor :queue
     end
 
-    def initialize(formatter, step_mother)
+    def initialize(step_mother)
       @queue_server = self.class.queue
       @step_count = 0
     end

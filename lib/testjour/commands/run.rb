@@ -2,12 +2,13 @@ module Testjour
   module Commands
     
     class Run < Testjour::Command
+      class << self
+        attr_accessor :step_mother
+      end
       
       def run
         require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
         require File.expand_path(File.dirname(__FILE__) + "/../../../lib/testjour")
-
-        Cucumber.disable_run
 
         available_servers = Testjour::Jour.list
         
@@ -17,11 +18,6 @@ module Testjour
         
             require "cucumber"
             
-            Cucumber.module_eval do
-              silence_warnings { const_set :Executor, Testjour::QueueingExecutor }
-            end
-            
-              
             Cucumber::CLI.class_eval do
               def require_files
                 ARGV.clear # Shut up RSpec
@@ -35,6 +31,8 @@ module Testjour
             
             ARGV.replace(@non_options)
             
+            @executor = Testjour::QueueingExecutor.new(self.class.step_mother)
+            Cucumber::CLI.executor = @executor
             Cucumber::CLI.execute
             Testjour.logger.debug "Done queueing features."
         
@@ -57,7 +55,7 @@ module Testjour
               puts "#{found_server} slave accepted the build request. Waiting for results."
               puts
         
-              $executor.wait_for_results
+              @executor.wait_for_results
               Testjour.logger.debug "DONE"
             else
               puts
@@ -75,3 +73,4 @@ module Testjour
   end
 end
 
+Testjour::Commands::Run.step_mother = step_mother

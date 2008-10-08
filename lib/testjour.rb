@@ -9,8 +9,6 @@ require File.expand_path(File.dirname(__FILE__) + "/testjour/cucumber_extensions
 require File.expand_path(File.dirname(__FILE__) + "/testjour/transat")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/commands")
 
-Cucumber.disable_run
-
 require "cucumber/formatters/ansicolor"
 
 require "logger"
