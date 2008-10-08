@@ -16,6 +16,11 @@ require "cucumber/formatters/ansicolor"
 module Testjour
   VERSION = '1.0.0'
   
+  class << self
+    attr_accessor :step_mother
+    attr_accessor :executor
+  end
+  
   def self.logger
     return @logger if @logger
     @logger = Logger.new("log/testjour.log")
@@ -45,3 +50,6 @@ module Testjour
     command "slave:run",    Testjour::Commands::SlaveRun, :valid_options => %w[chdir queue working_dir]
   end
 end
+
+Testjour.executor = executor
+Testjour.step_mother = step_mother

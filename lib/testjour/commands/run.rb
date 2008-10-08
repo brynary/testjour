@@ -2,9 +2,6 @@ module Testjour
   module Commands
     
     class Run < Testjour::Command
-      class << self
-        attr_accessor :step_mother
-      end
       
       def run
         require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
@@ -31,7 +28,7 @@ module Testjour
             
             ARGV.replace(@non_options)
             
-            @executor = Testjour::QueueingExecutor.new(self.class.step_mother)
+            @executor = Testjour::QueueingExecutor.new(Testjour.step_mother)
             Cucumber::CLI.executor = @executor
             Cucumber::CLI.execute
             Testjour.logger.debug "Done queueing features."
@@ -72,5 +69,3 @@ module Testjour
     
   end
 end
-
-Testjour::Commands::Run.step_mother = step_mother

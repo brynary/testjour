@@ -2,10 +2,6 @@ module Testjour
   module Commands
   
     class SlaveRun < Testjour::Command
-      class << self
-        attr_accessor :step_mother
-        attr_accessor :executor
-      end
       
       def initialize(non_options, options)
         @chdir = File.expand_path(options[:chdir] || ".")
@@ -39,7 +35,7 @@ module Testjour
           DRb.start_service
           
           queue_server = DRbObject.new(nil, @queue)
-          self.class.executor.formatter = Testjour::DRbFormatter.new(queue_server)
+          Testjour.executor.formatter = Testjour::DRbFormatter.new(queue_server)
           
           require_steps(File.expand_path(@chdir + "/features/steps/*.rb"))
 
@@ -68,7 +64,7 @@ module Testjour
       def run_file(file)
         Testjour.logger.debug "Running feature file: #{file}"
         features = parser.parse_feature(File.expand_path(file))
-        self.class.executor.visit_features(features)
+        Testjour.executor.visit_features(features)
       end
   
       def parser
@@ -79,6 +75,3 @@ module Testjour
 
   end
 end
-
-Testjour::Commands::SlaveRun.executor = executor
-Testjour::Commands::SlaveRun.step_mother = step_mother
