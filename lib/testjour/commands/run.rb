@@ -22,7 +22,6 @@ module Testjour
                 require "cucumber/treetop_parser/feature_parser"
               end
             end
-              
         
             Testjour.logger.debug "Queueing features..."
             

@@ -10,20 +10,13 @@ module Testjour
         require File.expand_path(@chdir + "/vendor/plugins/cucumber/lib/cucumber")
         require File.expand_path(File.dirname(__FILE__) + "/../../testjour")
       
-        # Object.class_eval do
-        #   include Cucumber::StepMethods
-        #   include Cucumber::Tree
-        # end
-      
         Cucumber.load_language("en")
-
         require "cucumber/treetop_parser/feature_en"
         require "cucumber/treetop_parser/feature_parser"
       end
   
       def run
         ARGV.clear # Don't pass along args to RSpec
-        
         Testjour.logger.debug "Runner starting..."
         
         ENV["RAILS_ENV"] = "test"
@@ -32,9 +25,6 @@ module Testjour
         # Testjour::Rsync.sync(@queue, @chdir, File.expand_path("~/temp3"))
 
         Testjour::MysqlDatabaseSetup.with_new_database do
-          DRb.start_service
-          
-          queue_server = DRbObject.new(nil, @queue)
           Testjour.executor.formatter = Testjour::DRbFormatter.new(queue_server)
           
           require_steps(File.expand_path(@chdir + "/features/steps/*.rb"))
@@ -48,9 +38,8 @@ module Testjour
               end
             end
           rescue DRb::DRbConnError
-            Testjour.logger.debug "DRb connection error. Exiting runner."
+            Testjour.logger.debug "DRb connection error. (This is normal.) Exiting runner."
           end
-
         end
       end
     
@@ -65,6 +54,13 @@ module Testjour
         Testjour.logger.debug "Running feature file: #{file}"
         features = parser.parse_feature(File.expand_path(file))
         Testjour.executor.visit_features(features)
+      end
+      
+      def queue_server
+        @queue_server ||= begin
+          DRb.start_service
+          DRbObject.new(nil, @queue)
+        end
       end
   
       def parser
