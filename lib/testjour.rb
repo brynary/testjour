@@ -1,4 +1,6 @@
 require "rubygems"
+require "logger"
+require 'English'
 
 require File.expand_path(File.dirname(__FILE__) + "/testjour/core_extensions")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/drb_servers")
@@ -10,9 +12,6 @@ require File.expand_path(File.dirname(__FILE__) + "/testjour/transat")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/commands")
 
 require "cucumber/formatters/ansicolor"
-
-require "logger"
-require 'English'
 
 module Testjour
   VERSION = '1.0.0'

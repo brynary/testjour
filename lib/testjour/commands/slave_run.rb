@@ -1,10 +1,3 @@
-extend Cucumber::StepMethods
-Cucumber::CLI.step_mother = step_mother
-Cucumber::CLI.executor = executor
-
-extend(Cucumber::Tree)
-Cucumber::CLI.features = features
-
 module Testjour
   module Commands
   
