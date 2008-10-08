@@ -7,9 +7,6 @@ module Testjour
         @chdir = File.expand_path(options[:chdir] || ".")
         @queue = options[:queue]
       
-        require File.expand_path(@chdir + "/vendor/plugins/cucumber/lib/cucumber")
-        require File.expand_path(File.dirname(__FILE__) + "/../../testjour")
-      
         Cucumber.load_language("en")
         require "cucumber/treetop_parser/feature_en"
         require "cucumber/treetop_parser/feature_parser"

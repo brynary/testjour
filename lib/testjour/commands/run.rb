@@ -4,11 +4,6 @@ module Testjour
     class Run < Testjour::Command
       
       def run
-        require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
-        require File.expand_path(File.dirname(__FILE__) + "/../../../lib/testjour")
-
-        available_servers = Testjour::Jour.list
-        
         if available_servers.any?
           Testjour::QueueServer.with_server do |queue|    
             Testjour::QueueingExecutor.queue = queue
@@ -53,6 +48,10 @@ module Testjour
           puts
           puts Testjour::Colorer.failed("Don't see any available test servers. Try again later.")
         end
+      end
+      
+      def available_servers
+        @available_servers ||= Testjour::Jour.list
       end
       
       def request_build_from(server)
