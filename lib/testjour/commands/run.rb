@@ -27,31 +27,22 @@ module Testjour
             
             ARGV.replace(@non_options)
             
-            @executor = Testjour::QueueingExecutor.new(Testjour.step_mother)
-            Cucumber::CLI.executor = @executor
+            Cucumber::CLI.executor = executor
             Cucumber::CLI.execute
             Testjour.logger.debug "Done queueing features."
         
-            found_server = 0
+            @found_server = 0
         
             available_servers.each do |server|
-              slave_server = DRbObject.new(nil, server.uri)
-              result = slave_server.run(DRb.uri, File.expand_path("."))
-        
-              if result
-                Testjour.logger.info "Requesting buld from available server: #{server.uri}. Accepted."
-                found_server += 1
-              else
-                Testjour.logger.info "Requesting buld from available server: #{server.uri}. Rejected."
-              end
+              request_build_from(server)
             end
         
-            if found_server > 0
+            if @found_server > 0
               puts
-              puts "#{found_server} slave accepted the build request. Waiting for results."
+              puts "#{@found_server} slave accepted the build request. Waiting for results."
               puts
         
-              @executor.wait_for_results
+              executor.wait_for_results
               Testjour.logger.debug "DONE"
             else
               puts
@@ -62,6 +53,22 @@ module Testjour
           puts
           puts Testjour::Colorer.failed("Don't see any available test servers. Try again later.")
         end
+      end
+      
+      def request_build_from(server)
+        slave_server = DRbObject.new(nil, server.uri)
+        result = slave_server.run(DRb.uri, File.expand_path("."))
+  
+        if result
+          Testjour.logger.info "Requesting buld from available server: #{server.uri}. Accepted."
+          @found_server += 1
+        else
+          Testjour.logger.info "Requesting buld from available server: #{server.uri}. Rejected."
+        end
+      end
+      
+      def executor
+        @executor ||= Testjour::QueueingExecutor.new(Testjour.step_mother)
       end
       
     end
