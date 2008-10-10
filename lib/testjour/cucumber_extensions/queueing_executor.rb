@@ -11,8 +11,8 @@ module Testjour
       attr_accessor :queue
     end
 
-    def initialize(step_mother)
-      @queue_server = self.class.queue
+    def initialize(queue_server, step_mother)
+      @queue_server = queue_server
       @step_count = 0
     end
     

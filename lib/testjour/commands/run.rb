@@ -5,10 +5,7 @@ module Testjour
       
       def run
         if available_servers.any?
-          Testjour::QueueServer.with_server do |queue|    
-            Testjour::QueueingExecutor.queue = queue
-        
-            require "cucumber"
+          Testjour::QueueServer.with_server do |queue|
             
             Cucumber::CLI.class_eval do
               def require_files
@@ -22,8 +19,10 @@ module Testjour
             
             ARGV.replace(@non_options)
             
+            executor = Testjour::QueueingExecutor.new(queue, Testjour.step_mother)
             Cucumber::CLI.executor = executor
             Cucumber::CLI.execute
+            
             Testjour.logger.debug "Done queueing features."
         
             @found_server = 0
@@ -64,10 +63,6 @@ module Testjour
         else
           Testjour.logger.info "Requesting buld from available server: #{server.uri}. Rejected."
         end
-      end
-      
-      def executor
-        @executor ||= Testjour::QueueingExecutor.new(Testjour.step_mother)
       end
       
     end
