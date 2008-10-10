@@ -11,7 +11,6 @@ module Testjour
               def require_files
                 ARGV.clear # Shut up RSpec
                 require "cucumber/treetop_parser/feature_en"
-                require "cucumber/treetop_parser/feature_parser"
               end
             end
         

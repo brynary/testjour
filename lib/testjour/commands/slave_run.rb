@@ -9,7 +9,6 @@ module Testjour
       
         Cucumber.load_language("en")
         require "cucumber/treetop_parser/feature_en"
-        require "cucumber/treetop_parser/feature_parser"
       end
   
       def run

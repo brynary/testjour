@@ -2,6 +2,8 @@ require "rubygems"
 require "logger"
 require 'English'
 
+require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
+
 require File.expand_path(File.dirname(__FILE__) + "/testjour/core_extensions")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/drb_servers")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/jour")
