@@ -11,46 +11,54 @@ module Testjour
     def initialize(queue_server, step_mother)
       @queue_server = queue_server
       @step_count = 0
+      @passed  = 0
+      @skipped = 0
+      @pending = 0
+      @errors  = []
     end
     
     def wait_for_results
-      passed  = 0
-      skipped = 0
-      pending = 0
-      errors  = []
-      
       step_count.times do
-        dot, message, backtrace = @queue_server.take_result
-        
-        case dot
-        when "."
-          passed += 1
-          print Colorer.passed(dot)
-        when "F"
-          errors << [message, backtrace]
-          print Colorer.failed(dot)
-        when "P"
-          pending += 1
-          print Colorer.pending(dot)
-        when "_"
-          skipped += 1
-          print Colorer.skipped(dot)
-        else
-          print dot
-        end
-        
-        $stdout.flush
+        print_step_result(*@queue_server.take_result)
+      end
+
+      print_summary
+      print_errors
+    end
+    
+    def print_step_result(dot, message, backtrace)
+      case dot
+      when "."
+        @passed += 1
+        print Colorer.passed(dot)
+      when "F"
+        @errors << [message, backtrace]
+        print Colorer.failed(dot)
+      when "P"
+        @pending += 1
+        print Colorer.pending(dot)
+      when "_"
+        @skipped += 1
+        print Colorer.skipped(dot)
+      else
+        print dot
       end
       
+      $stdout.flush
+    end
+
+    def print_summary
       puts
       puts
-      puts Colorer.passed("#{passed} steps passed") unless passed.zero?
-      puts Colorer.failed("#{errors.size} steps failed") unless errors.empty?
-      puts Colorer.skipped("#{skipped} steps skipped") unless skipped.zero?
-      puts Colorer.pending("#{pending} steps pending") unless pending.zero?
+      puts Colorer.passed("#{@passed} steps passed") unless @passed.zero?
+      puts Colorer.failed("#{@errors.size} steps failed") unless @errors.empty?
+      puts Colorer.skipped("#{@skipped} steps skipped") unless @skipped.zero?
+      puts Colorer.pending("#{@pending} steps pending") unless @pending.zero?
       puts
-      
-      errors.each_with_index do |error, i|
+    end
+    
+    def print_errors
+      @errors.each_with_index do |error, i|
         message, backtrace = error
         
         puts
@@ -59,7 +67,7 @@ module Testjour
         puts Colorer.failed(backtrace)
       end
     end
-
+    
     def visit_feature(feature)
       super
       @queue_server.write_work(feature.file)
