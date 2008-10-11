@@ -43,8 +43,8 @@ module Testjour
       #   @option_parser.summarize(message)
       # end
         
-      def initialize(non_options, options)
-        @non_options, @options = non_options, options
+      def initialize(parser, non_options, options)
+        @parser, @non_options, @options = parser, non_options, options
       end
     end
     

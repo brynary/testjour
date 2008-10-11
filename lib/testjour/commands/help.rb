@@ -7,7 +7,7 @@ module Testjour
       end
       
       def run
-        puts usage
+        puts @parser.usage
         exit 1
       end
     end

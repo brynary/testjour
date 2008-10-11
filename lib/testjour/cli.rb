@@ -81,7 +81,7 @@ module Testjour
         command_klass = find_command_klass(command)
         raise UnknownCommand.new(command, self) unless command_klass
         
-        return command_klass.new(non_options, @received_options).run
+        return command_klass.new(self, non_options, @received_options).run
       end
       
       def find_command_klass(command)

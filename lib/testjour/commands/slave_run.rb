@@ -6,7 +6,7 @@ module Testjour
         "slave:run"
       end
       
-      def initialize(non_options, options)
+      def initialize(parser, non_options, options)
         super
         @chdir = File.expand_path(options[:chdir] || ".")
         @queue = options[:queue]
@@ -49,7 +49,7 @@ module Testjour
   
       def run_file(file)
         Testjour.logger.debug "Running feature file: #{file}"
-        features = parser.parse_feature(File.expand_path(file))
+        features = feature_parser.parse_feature(File.expand_path(file))
         Testjour.executor.visit_features(features)
       end
       
@@ -60,8 +60,8 @@ module Testjour
         end
       end
   
-      def parser
-        @parser ||= Cucumber::TreetopParser::FeatureParser.new
+      def feature_parser
+        @feature_parser ||= Cucumber::TreetopParser::FeatureParser.new
       end
   
     end

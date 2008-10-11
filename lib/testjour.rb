@@ -20,9 +20,9 @@ require File.expand_path(File.dirname(__FILE__) + "/testjour/slave_server")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/bonjour")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/rsync")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/mysql")
+require File.expand_path(File.dirname(__FILE__) + "/testjour/pid_file")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/cli")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/commands")
-
 
 module Testjour
   VERSION = '1.0.0'
