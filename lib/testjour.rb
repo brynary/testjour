@@ -10,6 +10,13 @@ require "cucumber/formatters/ansicolor"
 require "cucumber/treetop_parser/feature_en"
 Cucumber.load_language("en")
 
+# Expose this because we need it
+module Cucumber
+  class << CLI
+    attr_reader :executor
+  end
+end
+
 module Testjour
   VERSION = '1.0.0'
   

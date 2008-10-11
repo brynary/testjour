@@ -13,47 +13,56 @@ module Testjour
         "run"
       end
       
+      def initialize(*args)
+        super
+        @found_server = 0
+      end
+      
       def run
         if available_servers.any?
           Testjour::QueueServer.with_server do |queue|
-            
-            Cucumber::CLI.class_eval do
-              def require_files
-                ARGV.clear # Shut up RSpec
-              end
-            end
-        
-            Testjour.logger.debug "Queueing features..."
-            
-            ARGV.replace(@non_options)
-            
-            executor = Testjour::QueueingExecutor.new(queue, Testjour.step_mother)
-            Cucumber::CLI.executor = executor
-            Cucumber::CLI.execute
-            
-            Testjour.logger.debug "Done queueing features."
-        
-            @found_server = 0
+            disable_cucumber_require
+            queue_features(queue)
         
             available_servers.each do |server|
               request_build_from(server)
             end
         
-            if @found_server > 0
-              puts
-              puts "#{@found_server} slave accepted the build request. Waiting for results."
-              puts
-        
-              executor.wait_for_results
-              Testjour.logger.debug "DONE"
-            else
-              puts
-              puts Testjour::Colorer.failed("Found available servers, but none accepted the build request. Try again later.")
-            end
+            print_results
           end
         else
           puts
           puts Testjour::Colorer.failed("Don't see any available test servers. Try again later.")
+        end
+      end
+      
+      def disable_cucumber_require
+        Cucumber::CLI.class_eval do
+          def require_files
+            ARGV.clear # Shut up RSpec
+          end
+        end
+      end
+      
+      def queue_features(queue)
+        Testjour.logger.debug "Queueing features..."
+        
+        ARGV.replace(@non_options)
+        Cucumber::CLI.executor = Testjour::QueueingExecutor.new(queue, Testjour.step_mother)
+        Cucumber::CLI.execute
+      end
+      
+      def print_results
+        if @found_server > 0
+          puts
+          puts "#{@found_server} slave accepted the build request. Waiting for results."
+          puts
+    
+          Cucumber::CLI.executor.wait_for_results
+          Testjour.logger.debug "DONE"
+        else
+          puts
+          puts Testjour::Colorer.failed("Found available servers, but none accepted the build request. Try again later.")
         end
       end
       
