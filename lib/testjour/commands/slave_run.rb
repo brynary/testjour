@@ -1,9 +1,13 @@
 module Testjour
-  module Commands
+  module CLI
   
-    class SlaveRun < Testjour::Command
+    class SlaveRun < BaseCommand
+      def self.command
+        "slave:run"
+      end
       
       def initialize(non_options, options)
+        super
         @chdir = File.expand_path(options[:chdir] || ".")
         @queue = options[:queue]
       end

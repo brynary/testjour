@@ -1,10 +1,13 @@
 module Testjour
-  module Commands
+  module CLI
     
-    class List < Testjour::Command
+    class List < BaseCommand
+      def self.command
+        "list"
+      end
       
       def run
-        available_servers = Testjour::Jour.list
+        available_servers = Testjour::Bonjour.list
         
         if available_servers.any?
           puts

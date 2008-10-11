@@ -7,7 +7,7 @@ Thread.abort_on_exception = true
 module Testjour
   SERVICE = "_testjour._tcp"  
   
-  class Jour
+  class Bonjour
     
     class Server
       attr_reader :name, :host, :port

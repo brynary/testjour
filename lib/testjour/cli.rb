@@ -1,31 +1,9 @@
 module Testjour
   module CLI
-    
-    class VersionNeeded < StandardError; end
-
-    class HelpNeeded < StandardError
-      attr_reader :command
-
-      def initialize(command)
-        @command = command
-      end
-    end
 
     class NoCommandGiven < StandardError
       def message
         "No command given"
-      end
-    end
-
-    class UnknownOptions < StandardError
-      attr_reader :command
-
-      def initialize(command, unrecognized_options)
-        @command, @unrecognized_options = command, unrecognized_options
-      end
-
-      def message
-        "Command #{@command} does not accept options #{@unrecognized_options.join(", ")}"
       end
     end
 
@@ -39,33 +17,15 @@ module Testjour
       end
     end
 
-    class BaseCommand
-      attr_reader :non_options, :options
-      def initialize(non_options, options)
-        @non_options, @options = non_options, options
-      end
-    end
-
-    class VersionCommand < BaseCommand
-      def run
-        raise VersionNeeded
-      end
-    end
-
-    class HelpCommand < BaseCommand
-      def run
-        raise HelpNeeded.new(non_options.first)
-      end
-    end
-
     class Parser
-      def initialize(&block)
-        @valid_options, @received_options, @commands = [], {}, {}
-        @option_parser = OptionParser.new
-
-        command(:help, HelpCommand)
-        command(:version, VersionCommand)
-        instance_eval(&block) if block_given?
+      
+      def initialize
+        @valid_options    = []
+        @received_options = {}
+        @commands         = []
+        @option_parser    = OptionParser.new
+        
+        yield self
       end
 
       def option(name, options={})
@@ -78,6 +38,7 @@ module Testjour
         opt_args << "--#{options[:long] || name}"
         opt_args << "=#{options[:param_name]}" if options.has_key?(:param_name)
         opt_args << options[:message]
+        
         case options[:type]
         when :int, :integer
           opt_args << Integer
@@ -94,23 +55,17 @@ module Testjour
         end
       end
 
-      def command(name, klass, options={})
-        @commands[name.to_s] = options.merge(:class => klass)
+      def command(klass)
+        @commands << klass
       end
 
       def parse_and_execute(args=ARGV)
         begin
           command, non_options = parse(args)
           execute(command, non_options)
-        rescue HelpNeeded
-          $stderr.puts usage($!.command)
-          exit 1
-        rescue VersionNeeded
-          puts "#{program_name} #{version}"
-          exit 0
-        rescue NoCommandGiven, UnknownOptions, UnknownCommand
+        rescue NoCommandGiven, UnknownCommand
           $stderr.puts "ERROR: #{$!.message}"
-          $stderr.puts usage($!.respond_to?(:command) ? $!.command : nil)
+          $stderr.puts usage
           exit 1
         end
       end
@@ -123,66 +78,34 @@ module Testjour
       end
 
       def execute(command, non_options)
-        @commands.each do |command_name, options|
-          command_klass = options[:class]
-          aliases = [command_name]
-          aliases += command_klass.aliases if command_klass.respond_to?(:aliases)
-          return command_klass.new(non_options, @received_options).run if aliases.include?(command)
+        command_klass = find_command_klass(command)
+        raise UnknownCommand.new(command, self) unless command_klass
+        
+        return command_klass.new(non_options, @received_options).run
+      end
+      
+      def find_command_klass(command)
+        @commands.each do |command_klass|
+          aliases = [command_klass.command] + command_klass.aliases
+          return command_klass if aliases.include?(command)
         end
-
-        raise UnknownCommand.new(command, self)
+        
+        return nil
       end
 
-      def usage(command=nil)
+      def usage
         message = []
-
-        if command then
-          command_klass = @commands[command][:class]
-          help =
-            if command_klass.respond_to?(:aliases) then
-              "#{command} (#{command_klass.aliases.join(", ")})"
-            else
-              "#{command}"
-            end
-          help = "#{help}: #{command_klass.help}" if command_klass.respond_to?(:help)
-          message << help
-          message << command_klass.detailed_help if command_klass.respond_to?(:detailed_help)
-          message << ""
-          message << "Valid options:"
-          @option_parser.summarize(message)
-        else
-          message << "usage: #{program_name.downcase} <SUBCOMMAND> [OPTIONS] [ARGS...]"
-          message << "Type '#{program_name.downcase} help <SUBCOMMAND>' for help on a specific subcommand."
-          message << "Type '#{program_name.downcase} version' to get this program's version."
-          message << ""
-          message << "Available subcommands are:"
-          @commands.sort.each do |command, options|
-            command_klass = options[:class]
-            if command_klass.respond_to?(:aliases) then
-              message << "  #{command} (#{command_klass.aliases.join(", ")})"
-            else
-              message << "  #{command}"
-            end
-          end
+        message << "usage: testjour <SUBCOMMAND> [OPTIONS] [ARGS...]"
+        message << "Type 'testjour help <SUBCOMMAND>' for help on a specific subcommand."
+        message << "Type 'testjour version' to get this program's version."
+        message << ""
+        message << "Available subcommands are:"
+        
+        @commands.sort_by { |c| c.command }.each do |command_klass|
+          message << "  " + command_klass.command_and_aliases
         end
-
-        message.map {|line| line.chomp}.join("\n")
-      end
-
-      def program_name(value=nil)
-        value ? @program_name = value : @program_name
-      end
-
-      def version(value=nil)
-        if value then
-          @version = value.respond_to?(:join) ? value.join(".") : value
-        else
-          @version
-        end
-      end
-
-      def self.parse_and_execute(args=ARGV, &block)
-        self.new(&block).parse_and_execute(args)
+        
+        message.map { |line| line.chomp }.join("\n")
       end
     end
     

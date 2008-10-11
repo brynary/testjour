@@ -1,8 +1,12 @@
 module Testjour
-  module Commands
+  module CLI
     
-    class SlaveStart < Testjour::Command
+    class SlaveStart < BaseCommand
       class StopServer < Exception
+      end
+      
+      def self.command
+        "slave:start"
       end
       
       def run
@@ -22,7 +26,7 @@ module Testjour
 
         write_pid(pid_file)
 
-        Testjour::Jour.serve(Testjour::SlaveServer.start)
+        Testjour::Bonjour.serve(Testjour::SlaveServer.start)
         DRb.thread.join
         
       rescue StopServer

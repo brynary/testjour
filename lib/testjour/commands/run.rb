@@ -1,7 +1,10 @@
 module Testjour
-  module Commands
+  module CLI
     
-    class Run < Testjour::Command
+    class Run < BaseCommand
+      def self.command
+        "run"
+      end
       
       def run
         if available_servers.any?
@@ -48,7 +51,7 @@ module Testjour
       end
       
       def available_servers
-        @available_servers ||= Testjour::Jour.list
+        @available_servers ||= Testjour::Bonjour.list
       end
       
       def request_build_from(server)

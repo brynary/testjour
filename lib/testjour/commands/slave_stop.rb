@@ -1,7 +1,10 @@
 module Testjour
-  module Commands
+  module CLI
     
-    class SlaveStop < Testjour::Command
+    class SlaveStop < BaseCommand
+      def self.command
+        "slave:stop"
+      end
       
       def run
         pid_file = File.expand_path("./testjour_slave.pid")
