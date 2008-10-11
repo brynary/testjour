@@ -1,3 +1,10 @@
+require "drb"
+
+require "testjour/commands/base_command"
+require "testjour/queue_server"
+require "testjour/cucumber_extensions/drb_formatter"
+require "testjour/mysql"
+
 module Testjour
   module CLI
   
@@ -6,10 +13,22 @@ module Testjour
         "slave:run"
       end
       
-      def initialize(parser, non_options, options)
+      def option_parser
+        OptionParser.new do |opts|
+          opts.on("-c", "--chdir", "=PATH", "Change to dir before starting (will be expanded).") do |value|
+            @options[:chdir] = value
+          end
+          
+          opts.on("-q", "--queue", "=DRB_URI", "Where to grab the work") do |value|
+            @options[:queue] = value
+          end
+        end
+      end
+      
+      def initialize(parser, args)
         super
-        @chdir = File.expand_path(options[:chdir] || ".")
-        @queue = options[:queue]
+        @chdir = File.expand_path(@options[:chdir] || ".")
+        @queue = @options[:queue]
       end
   
       def run
@@ -66,5 +85,6 @@ module Testjour
   
     end
 
+    Parser.register_command SlaveRun
   end
 end

@@ -1,3 +1,6 @@
+require "testjour/commands/base_command"
+require "testjour/bonjour"
+
 module Testjour
   module CLI
     
@@ -24,6 +27,7 @@ module Testjour
       
     end
     
+    Parser.register_command List
   end
 end
 

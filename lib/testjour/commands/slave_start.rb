@@ -1,3 +1,11 @@
+require "drb"
+
+require "testjour/commands/base_command"
+require "daemons/daemonize"
+require "testjour/pid_file"
+require "testjour/slave_server"
+require "testjour/bonjour"
+
 module Testjour
   module CLI
     
@@ -38,5 +46,6 @@ module Testjour
       
     end
     
+    Parser.register_command SlaveStart
   end
 end

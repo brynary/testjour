@@ -2,4 +2,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
 
-Testjour::CommandLineProcessor.parse_and_execute
+require "testjour/cli"
+require "testjour/commands"
+
+Testjour::CLI.execute

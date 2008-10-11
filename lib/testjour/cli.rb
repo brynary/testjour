@@ -8,91 +8,56 @@ module Testjour
     end
 
     class UnknownCommand < StandardError
-      def initialize(command, parser)
-        @command, @parser = command, parser
+      def initialize(command_name)
+        @command_name = command_name
       end
 
       def message
-        "Unknown command: #{@command.inspect}"
+        "Unknown command: #{@command_name.inspect}"
       end
     end
 
+    def self.execute
+      Parser.new.execute
+    end
+    
     class Parser
+      class << self
+        attr_accessor :commands
+        
+        def register_command(klass)
+          @commands << klass
+        end
+      end
       
-      def initialize
-        @valid_options    = []
-        @received_options = {}
-        @commands         = []
-        @option_parser    = OptionParser.new
-        
-        yield self
-      end
+      self.commands = []
 
-      def option(name, options={})
-        options[:long] = name.to_s.gsub("_", "-") unless options[:long]
-        @valid_options << name
-        @received_options[name] = nil
-
-        opt_args = []
-        opt_args << "-#{options[:short]}" if options.has_key?(:short)
-        opt_args << "--#{options[:long] || name}"
-        opt_args << "=#{options[:param_name]}" if options.has_key?(:param_name)
-        opt_args << options[:message]
-        
-        case options[:type]
-        when :int, :integer
-          opt_args << Integer
-        when :float
-          opt_args << Float
-        when nil
-          # NOP
-        else
-          raise ArgumentError, "Option #{name} has a bad :type parameter: #{options[:type].inspect}"
-        end
-
-        @option_parser.on(*opt_args.compact) do |value|
-          @received_options[name] = value
-        end
-      end
-
-      def command(klass)
-        @commands << klass
-      end
-
-      def parse_and_execute(args=ARGV)
+      def execute
         begin
-          command, non_options = parse(args)
-          execute(command, non_options)
+          raise NoCommandGiven if ARGV.empty?
+          raise UnknownCommand.new(command_name) unless command_klass
+          
+          args = ARGV.dup
+          args.shift # Remove subcommand name
+          
+          command_klass.new(self, args).run
         rescue NoCommandGiven, UnknownCommand
           $stderr.puts "ERROR: #{$!.message}"
           $stderr.puts usage
           exit 1
         end
       end
-
-      def parse(args)
-        non_options = @option_parser.parse(args)
-        command = non_options.shift
-        raise NoCommandGiven unless command
-        return command, non_options
+      
+      def command_klass
+        self.class.commands.detect do |command_klass|
+          command_klass.command == command_name
+        end
       end
 
-      def execute(command, non_options)
-        command_klass = find_command_klass(command)
-        raise UnknownCommand.new(command, self) unless command_klass
-        
-        return command_klass.new(self, non_options, @received_options).run
+      def command_name
+        ARGV.first
       end
       
-      def find_command_klass(command)
-        @commands.each do |command_klass|
-          aliases = [command_klass.command] + command_klass.aliases
-          return command_klass if aliases.include?(command)
-        end
-        
-        return nil
-      end
-
       def usage
         message = []
         message << "usage: testjour <SUBCOMMAND> [OPTIONS] [ARGS...]"
@@ -101,8 +66,8 @@ module Testjour
         message << ""
         message << "Available subcommands are:"
         
-        @commands.sort_by { |c| c.command }.each do |command_klass|
-          message << "  " + command_klass.command_and_aliases
+        self.class.commands.sort_by { |c| c.command }.each do |command_klass|
+          message << "  " + command_klass.command
         end
         
         message.map { |line| line.chomp }.join("\n")

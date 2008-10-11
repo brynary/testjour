@@ -1,3 +1,5 @@
+require "testjour/commands/base_command"
+
 module Testjour
   module CLI
     
@@ -11,6 +13,8 @@ module Testjour
         exit 1
       end
     end
-    
+
+    Parser.register_command HelpCommand
   end
 end
+

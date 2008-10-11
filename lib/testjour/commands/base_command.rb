@@ -1,3 +1,5 @@
+require "optparse"
+
 module Testjour
   module CLI
 
@@ -7,9 +9,9 @@ module Testjour
       def self.command
         self.name.downcase
       end
-  
-      def self.aliases
-        []
+      
+      def self.options
+        {}
       end
   
       def self.help
@@ -20,21 +22,13 @@ module Testjour
         nil
       end
       
-      def self.command_and_aliases
-        if aliases.any?
-          "#{command} (#{aliases.join(", ")})"
-        else
-          "#{command}"
-        end
-      end
-      
       # def self.usage
       #   message = []
       #   
       #   if help.nil?
-      #     message << command_and_aliases
+      #     message << command
       #   else
-      #     message << "#{command_and_aliases}: #{help}"
+      #     message << "#{command}: #{help}"
       #   end
       #   message << detailed_help unless detailed_help.nil?
       #   message << ""
@@ -43,9 +37,16 @@ module Testjour
       #   @option_parser.summarize(message)
       # end
         
-      def initialize(parser, non_options, options)
-        @parser, @non_options, @options = parser, non_options, options
+      def initialize(parser, args)
+        @parser   = parser
+        @options  = {}
+        @non_options = option_parser.parse(args)
       end
+      
+      def option_parser
+        OptionParser.new
+      end
+      
     end
     
   end

@@ -1,3 +1,10 @@
+require "drb"
+
+require "testjour/commands/base_command"
+require "testjour/cucumber_extensions/queueing_executor"
+require "testjour/queue_server"
+require "testjour/bonjour"
+
 module Testjour
   module CLI
     
@@ -67,6 +74,7 @@ module Testjour
       end
       
     end
-    
+   
+    Parser.register_command Run
   end
 end

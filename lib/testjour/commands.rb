@@ -1,8 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + "/commands/base_command")
-require File.expand_path(File.dirname(__FILE__) + "/commands/help")
-require File.expand_path(File.dirname(__FILE__) + "/commands/version")
-require File.expand_path(File.dirname(__FILE__) + "/commands/run")
-require File.expand_path(File.dirname(__FILE__) + "/commands/list")
-require File.expand_path(File.dirname(__FILE__) + "/commands/slave_start")
-require File.expand_path(File.dirname(__FILE__) + "/commands/slave_stop")
-require File.expand_path(File.dirname(__FILE__) + "/commands/slave_run")
+require "testjour/commands/help"
+require "testjour/commands/version"
+require "testjour/commands/run"
+require "testjour/commands/list"
+require "testjour/commands/slave_start"
+require "testjour/commands/slave_stop"
+require "testjour/commands/slave_run"

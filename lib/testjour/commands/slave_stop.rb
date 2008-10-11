@@ -1,3 +1,6 @@
+require "testjour/commands/base_command"
+require "testjour/pid_file"
+
 module Testjour
   module CLI
     
@@ -10,8 +13,8 @@ module Testjour
         pid_file = PidFile.new("./testjour_slave.pid")
         pid_file.send_signal("TERM")
       end
-      
     end
     
+    Parser.register_command SlaveStop
   end
 end
