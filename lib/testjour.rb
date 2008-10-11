@@ -3,6 +3,8 @@ require "logger"
 require 'English'
 
 require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
+require "cucumber/treetop_parser/feature_en"
+Cucumber.load_language("en")
 
 require File.expand_path(File.dirname(__FILE__) + "/testjour/core_extensions")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/drb_servers")

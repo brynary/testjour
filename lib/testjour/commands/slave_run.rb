@@ -6,9 +6,6 @@ module Testjour
       def initialize(non_options, options)
         @chdir = File.expand_path(options[:chdir] || ".")
         @queue = options[:queue]
-      
-        Cucumber.load_language("en")
-        require "cucumber/treetop_parser/feature_en"
       end
   
       def run

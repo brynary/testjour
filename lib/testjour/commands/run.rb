@@ -10,7 +10,6 @@ module Testjour
             Cucumber::CLI.class_eval do
               def require_files
                 ARGV.clear # Shut up RSpec
-                require "cucumber/treetop_parser/feature_en"
               end
             end
         
