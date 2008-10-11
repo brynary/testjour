@@ -40,6 +40,7 @@ module Testjour
           args = ARGV.dup
           args.shift # Remove subcommand name
           
+          Testjour.logger.debug "Runner command #{command_klass}..."
           command_klass.new(self, args).run
         rescue NoCommandGiven, UnknownCommand
           $stderr.puts "ERROR: #{$!.message}"
