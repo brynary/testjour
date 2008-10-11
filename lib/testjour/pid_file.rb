@@ -8,7 +8,7 @@ module Testjour
     
     def verify_doesnt_exist
       if File.exist?(@path)
-        puts "!!! PID file #{pid_file} already exists.  testjour could be running already."
+        puts "!!! PID file #{@path} already exists.  testjour could be running already."
         puts "!!! Exiting with error.  You must stop testjour and clear the .pid before I'll attempt a start."
         exit 1
       end
