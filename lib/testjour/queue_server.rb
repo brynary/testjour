@@ -5,7 +5,7 @@ require "timeout"
 module Testjour
 
   class QueueServer
-    TIMEOUT_IN_SECONDS = 60
+    TIMEOUT_IN_SECONDS = 30
   
     def self.with_server
       server = new

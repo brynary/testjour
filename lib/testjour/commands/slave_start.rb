@@ -1,5 +1,3 @@
-require 'daemons/daemonize'
-
 module Testjour
   module Commands
     

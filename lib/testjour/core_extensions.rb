@@ -1,1 +1,12 @@
-require File.expand_path(File.dirname(__FILE__) + "/core_extensions/object_extensions")
+module Kernel
+
+  # From activesupport...
+  
+  def silence_warnings
+    old_verbose, $VERBOSE = $VERBOSE, nil
+    yield
+  ensure
+    $VERBOSE = old_verbose
+  end
+  
+end

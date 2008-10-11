@@ -1,21 +1,27 @@
-require "rubygems"
-require "logger"
-require 'English'
+$:.unshift(File.expand_path("./vendor/plugins/cucumber/lib"))
 
-require File.expand_path("./vendor/plugins/cucumber/lib/cucumber")
+require "rubygems"
+require "English"
+require "optparse"
+require "logger"
+require "drb"
+require "daemons/daemonize"
+
+require "cucumber"
+require "cucumber/formatters/ansicolor"
 require "cucumber/treetop_parser/feature_en"
 Cucumber.load_language("en")
 
+require File.expand_path(File.dirname(__FILE__) + "/testjour/cucumber_extensions/drb_formatter")
+require File.expand_path(File.dirname(__FILE__) + "/testjour/cucumber_extensions/queueing_executor")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/core_extensions")
-require File.expand_path(File.dirname(__FILE__) + "/testjour/drb_servers")
+require File.expand_path(File.dirname(__FILE__) + "/testjour/queue_server")
+require File.expand_path(File.dirname(__FILE__) + "/testjour/slave_server")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/jour")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/rsync")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/mysql_database")
-require File.expand_path(File.dirname(__FILE__) + "/testjour/cucumber_extensions")
-require File.expand_path(File.dirname(__FILE__) + "/testjour/transat")
 require File.expand_path(File.dirname(__FILE__) + "/testjour/commands")
-
-require "cucumber/formatters/ansicolor"
+require File.expand_path(File.dirname(__FILE__) + "/testjour/cli")
 
 module Testjour
   VERSION = '1.0.0'
@@ -29,7 +35,7 @@ module Testjour
     return @logger if @logger
     @logger = Logger.new("log/testjour.log")
     @logger.formatter = proc { |severity, time, progname, msg| "#{time.strftime("%b %d %H:%M:%S")} [#{$PID}]: #{msg}\n" }
-    @logger.level = Logger::INFO
+    @logger.level = Logger::DEBUG
     @logger
   end
   
@@ -37,7 +43,7 @@ module Testjour
     extend ::Cucumber::Formatters::ANSIColor
   end
   
-  CommandLineProcessor = Transat::Parser.new do
+  CommandLineProcessor = Testjour::CLI::Parser.new do
     program_name "Testjour"
     version [Testjour::VERSION]
 

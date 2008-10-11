@@ -1,5 +1,3 @@
-require "drb"
-
 module Testjour
   
   class DRbFormatter
