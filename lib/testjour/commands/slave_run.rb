@@ -2,6 +2,7 @@ require "drb"
 require "uri"
 
 require "testjour/commands/base_command"
+require "testjour/rsync"
 require "testjour/queue_server"
 require "testjour/cucumber_extensions/drb_formatter"
 require "testjour/mysql"
@@ -16,16 +17,15 @@ module Testjour
       
       def initialize(parser, args)
         Testjour.logger.debug "Runner command #{self.class}..."
-        Testjour.load_cucumber
-        
         super
         @queue = @non_options.last
       end
   
       def run
+        Testjour::Rsync.sync(@queue)
+        
         ARGV.clear # Don't pass along args to RSpec
-
-        # Testjour::Rsync.sync(@queue, File.expand_path("~/temp3"))
+        Testjour.load_cucumber
         
         ENV["RAILS_ENV"] = "test"
         require File.expand_path("config/environment")
