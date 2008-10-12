@@ -1,4 +1,5 @@
 require "drb"
+require "uri"
 
 require "testjour/commands/base_command"
 require "testjour/queue_server"
@@ -69,7 +70,10 @@ module Testjour
       end
       
       def drb_uri
-        @queue.gsub(/^testjour:/, "druby:")
+        uri = URI.parse(@queue)
+        uri.scheme = "druby"
+        uri.path = ""
+        uri.to_s
       end
   
       def feature_parser
