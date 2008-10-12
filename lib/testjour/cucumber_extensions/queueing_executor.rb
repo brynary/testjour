@@ -1,3 +1,5 @@
+require "testjour/colorer"
+
 module Testjour
   
   class QueueingExecutor < ::Cucumber::Tree::TopDownVisitor

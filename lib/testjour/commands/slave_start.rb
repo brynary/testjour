@@ -18,6 +18,8 @@ module Testjour
       end
       
       def run
+        Testjour.logger.debug "Runner command #{self.class}..."
+        
         original_working_directory = File.expand_path(".")
         
         pid_file = PidFile.new("./testjour_slave.pid")
@@ -25,12 +27,13 @@ module Testjour
         at_exit { pid_file.remove }
         register_signal_handler
 
-        logfile = File.expand_path("./daemonizing.log")
+        logfile = File.expand_path("./testjour.log")
         Daemonize.daemonize(logfile)
-
+        
         Dir.chdir(original_working_directory)
         pid_file.write
-
+        
+        Testjour.setup_logger
         Testjour::Bonjour.serve(Testjour::SlaveServer.start)
         DRb.thread.join
       rescue StopServer

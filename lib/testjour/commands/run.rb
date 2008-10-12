@@ -1,7 +1,6 @@
 require "drb"
 
 require "testjour/commands/base_command"
-require "testjour/cucumber_extensions/queueing_executor"
 require "testjour/queue_server"
 require "testjour/bonjour"
 
@@ -16,9 +15,15 @@ module Testjour
       def initialize(*args)
         super
         @found_server = 0
+        
+        Testjour.load_cucumber
+        require "testjour/cucumber_extensions/queueing_executor"
+        require "testjour/colorer"
       end
       
       def run
+        Testjour.logger.debug "Runner command #{self.class}..."
+        
         if available_servers.any?
           Testjour::QueueServer.with_server do |queue|
             disable_cucumber_require
@@ -48,7 +53,7 @@ module Testjour
         Testjour.logger.debug "Queueing features..."
         
         ARGV.replace(@non_options)
-        Cucumber::CLI.executor = Testjour::QueueingExecutor.new(queue, Testjour.step_mother)
+        Cucumber::CLI.executor = Testjour::QueueingExecutor.new(queue, Cucumber::CLI.step_mother)
         Cucumber::CLI.execute
       end
       
