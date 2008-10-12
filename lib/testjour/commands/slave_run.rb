@@ -26,21 +26,21 @@ module Testjour
       end
       
       def initialize(parser, args)
-        super
+        Testjour.logger.debug "Runner command #{self.class}..."
         Testjour.load_cucumber
+        
+        super
         @chdir = File.expand_path(@options[:chdir] || ".")
         @queue = @options[:queue]
       end
   
       def run
-        Testjour.logger.debug "Runner command #{self.class}..."
-        
         ARGV.clear # Don't pass along args to RSpec
 
+        # Testjour::Rsync.sync(@queue, @chdir, File.expand_path("~/temp3"))
+        
         ENV["RAILS_ENV"] = "test"
         require File.expand_path(@chdir + '/config/environment')
-
-        # Testjour::Rsync.sync(@queue, @chdir, File.expand_path("~/temp3"))
 
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatter = Testjour::DRbFormatter.new(queue_server)

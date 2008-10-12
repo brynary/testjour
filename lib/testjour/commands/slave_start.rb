@@ -17,9 +17,12 @@ module Testjour
         "slave:start"
       end
       
-      def run
+      def initialize(*args)
         Testjour.logger.debug "Runner command #{self.class}..."
-        
+        super
+      end
+      
+      def run
         original_working_directory = File.expand_path(".")
         
         pid_file = PidFile.new("./testjour_slave.pid")

@@ -9,8 +9,12 @@ module Testjour
         "slave:stop"
       end
       
-      def run
+      def initialize(*args)
         Testjour.logger.debug "Runner command #{self.class}..."
+        super
+      end
+      
+      def run
         pid_file = PidFile.new("./testjour_slave.pid")
         pid_file.send_signal("TERM")
       end

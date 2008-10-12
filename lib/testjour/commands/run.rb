@@ -13,17 +13,16 @@ module Testjour
       end
       
       def initialize(*args)
+        Testjour.logger.debug "Runner command #{self.class}..."
+        Testjour.load_cucumber
+        
         super
         @found_server = 0
-        
-        Testjour.load_cucumber
         require "testjour/cucumber_extensions/queueing_executor"
         require "testjour/colorer"
       end
       
       def run
-        Testjour.logger.debug "Runner command #{self.class}..."
-        
         if available_servers.any?
           Testjour::QueueServer.with_server do |queue|
             disable_cucumber_require
