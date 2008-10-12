@@ -64,8 +64,12 @@ module Testjour
       def queue_server
         @queue_server ||= begin
           DRb.start_service
-          DRbObject.new(nil, @queue)
+          DRbObject.new(nil, drb_uri)
         end
+      end
+      
+      def drb_uri
+        @queue.gsub(/^testjour:/, "druby:")
       end
   
       def feature_parser

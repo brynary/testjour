@@ -76,7 +76,7 @@ module Testjour
       
       def request_build_from(server)
         slave_server = DRbObject.new(nil, server.uri)
-        result = slave_server.run(DRb.uri, File.expand_path("."))
+        result = slave_server.run(testjour_uri, File.expand_path("."))
   
         if result
           Testjour.logger.info "Requesting buld from available server: #{server.uri}. Accepted."
@@ -86,6 +86,9 @@ module Testjour
         end
       end
       
+      def testjour_uri
+        DRb.uri.gsub(/^druby:/, "testjour:")
+      end
     end
    
     Parser.register_command Run
