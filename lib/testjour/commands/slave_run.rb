@@ -13,35 +13,26 @@ module Testjour
         "slave:run"
       end
       
-      def option_parser
-        OptionParser.new do |opts|
-          opts.on("-c", "--chdir", "=PATH", "Change to dir before starting (will be expanded).") do |value|
-            @options[:chdir] = value
-          end
-        end
-      end
-      
       def initialize(parser, args)
         Testjour.logger.debug "Runner command #{self.class}..."
         Testjour.load_cucumber
         
         super
-        @chdir = File.expand_path(@options[:chdir] || ".")
         @queue = @non_options.last
       end
   
       def run
         ARGV.clear # Don't pass along args to RSpec
 
-        # Testjour::Rsync.sync(@queue, @chdir, File.expand_path("~/temp3"))
+        # Testjour::Rsync.sync(@queue, File.expand_path("~/temp3"))
         
         ENV["RAILS_ENV"] = "test"
-        require File.expand_path(@chdir + '/config/environment')
+        require File.expand_path("config/environment")
 
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatter = Testjour::DRbFormatter.new(queue_server)
           
-          require_steps(File.expand_path(@chdir + "/features/steps/*.rb"))
+          require_steps(File.expand_path("features/steps/*.rb"))
 
           begin
             loop do
