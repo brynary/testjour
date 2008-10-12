@@ -18,10 +18,6 @@ module Testjour
           opts.on("-c", "--chdir", "=PATH", "Change to dir before starting (will be expanded).") do |value|
             @options[:chdir] = value
           end
-          
-          opts.on("-q", "--queue", "=DRB_URI", "Where to grab the work") do |value|
-            @options[:queue] = value
-          end
         end
       end
       
@@ -31,7 +27,7 @@ module Testjour
         
         super
         @chdir = File.expand_path(@options[:chdir] || ".")
-        @queue = @options[:queue]
+        @queue = @non_options.last
       end
   
       def run

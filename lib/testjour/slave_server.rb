@@ -30,7 +30,7 @@ module Testjour
         Thread.current.abort_on_exception = true
         
         testour_bin_path = File.expand_path(File.dirname(__FILE__) + "/../../bin/testjour")
-        cmd = "#{testour_bin_path} slave:run --queue #{queue_server_url} --chdir #{File.expand_path(".")}".strip
+        cmd = "#{testour_bin_path} slave:run --chdir #{File.expand_path(".")} #{queue_server_url}".strip
         Testjour.logger.debug "Starting runner with command: #{cmd}"
         status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
         Testjour.logger.warn stderr if stderr.strip.size > 0
