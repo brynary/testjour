@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{testjour}
   s.rubygems_version = %q{1.2.0}
-  s.summary = nil
+  s.summary = %q{Distributed test running with autodiscovery via Bonjour (for Cucumber first)}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
