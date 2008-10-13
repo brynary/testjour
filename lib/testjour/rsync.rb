@@ -4,7 +4,7 @@ module Testjour
   
   class Rsync
     
-    def self.sync(source_uri)
+    def self.copy_to_current_directory_from(source_uri)
       destination_dir = File.expand_path(".")
       uri = URI.parse(source_uri)
       
@@ -16,7 +16,7 @@ module Testjour
       
       if successful
         time = Time.now - start_time
-        Testjour.logger.debug("Rsync finished in %.2f" % time)
+        Testjour.logger.debug("Rsync finished in %.2fs" % time)
       else
         raise "RSync Failed!!"
       end

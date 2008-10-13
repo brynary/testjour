@@ -22,7 +22,7 @@ module Testjour
       end
   
       def run
-        Testjour::Rsync.sync(@queue)
+        Testjour::Rsync.copy_to_current_directory_from(@queue)
         
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
