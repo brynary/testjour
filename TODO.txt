@@ -1,7 +1,5 @@
-Gemify
-Config for step file locations (profiles??)
+Use profiles for step matcher locations
+Use profiles for specifying which feature files to run
+Figure out how to work with different mysql login configurations
 Detect runner crashes
 Failover local runners
-Cleanup Cucumber extension points
-Stats
-Web UI of the network
