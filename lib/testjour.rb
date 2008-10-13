@@ -5,7 +5,7 @@ require "logger"
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
 module Testjour
-  VERSION = '1.0.0'
+  VERSION = '0.1.0'
   
   class << self
     attr_accessor :step_mother
