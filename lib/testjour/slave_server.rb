@@ -19,6 +19,10 @@ module Testjour
       DRb.stop_service
     end
   
+    def status
+      running? ? "busy" : "available"
+    end
+    
     def run(queue_server_url, path = nil)
       if running?
         Testjour.logger.info "Not running because pid exists: #{@pid}"
