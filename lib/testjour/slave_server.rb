@@ -1,5 +1,6 @@
 require "thread"
 require "drb"
+require "uri"
 require "timeout"
 require "systemu"
 
@@ -8,9 +9,10 @@ module Testjour
   class SlaveServer
 
     def self.start
-      server = new
+      server = self.new
       DRb.start_service(nil, server)
-      DRb.uri.split(":").last.to_i
+      uri = URI.parse(DRb.uri)
+      return uri.port.to_i
     end
 
     def self.stop
@@ -28,8 +30,7 @@ module Testjour
       
       Thread.new do
         Thread.current.abort_on_exception = true
-        
-        cmd = "#{testjour_bin_path} slave:run #{queue_server_url}".strip
+        cmd = command_to_run_for(queue_server_url)
         Testjour.logger.debug "Starting runner with command: #{cmd}"
         status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
         Testjour.logger.warn stderr if stderr.strip.size > 0
@@ -43,6 +44,10 @@ module Testjour
     end
     
   protected
+  
+    def command_to_run_for(master_server_uri)
+      "#{testjour_bin_path} slave:run #{master_server_uri}".strip
+    end
     
     def testjour_bin_path
       File.expand_path(File.dirname(__FILE__) + "/../../bin/testjour")
