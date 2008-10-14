@@ -23,6 +23,8 @@ module Testjour
       end
       
       def run
+        verify_not_a_git_repo
+        
         original_working_directory = File.expand_path(".")
         
         pid_file = PidFile.new("./testjour_slave.pid")
@@ -41,6 +43,12 @@ module Testjour
         DRb.thread.join
       rescue StopServer
         exit 0
+      end
+      
+      def verify_not_a_git_repo
+        return unless File.exists?("./.git")
+        puts "!!! This directory looks like a git repository. This probably isn't where you want to start a testjour slave"
+        exit 1
       end
       
       def register_signal_handler
