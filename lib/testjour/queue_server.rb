@@ -24,7 +24,6 @@ module Testjour
     def reset
       @work_queue   = Queue.new
       @result_queue = Queue.new
-      @error_queue  = Queue.new
     end
   
     def done_with_work
