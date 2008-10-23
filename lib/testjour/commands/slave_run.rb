@@ -73,6 +73,7 @@ module Testjour
         uri = URI.parse(@queue)
         uri.scheme = "druby"
         uri.path = ""
+        uri.user = nil
         uri.to_s
       end
   

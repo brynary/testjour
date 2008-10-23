@@ -8,7 +8,7 @@ module Testjour
       destination_dir = File.expand_path(".")
       uri = URI.parse(source_uri)
       
-      command = "rsync -az --delete --exclude=.git --exclude=*.log --exclude=*.pid #{uri.host}:#{uri.path}/ #{destination_dir}"
+      command = "rsync -az --delete --exclude=.git --exclude=*.log --exclude=*.pid #{uri.user}@#{uri.host}:#{uri.path}/ #{destination_dir}"
       
       Testjour.logger.info "Rsyncing: #{command}"
       start_time = Time.now

@@ -87,7 +87,11 @@ module Testjour
       end
       
       def testjour_uri
-        DRb.uri.gsub(/^druby:/, "testjour:") + File.expand_path(".")
+        uri = URI.parse(DRb.uri)
+        uri.path = File.expand_path(".")
+        uri.scheme = "testjour"
+        uri.user = `whoami`.strip
+        uri.to_s
       end
     end
    
