@@ -33,7 +33,7 @@ module Testjour
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatter = Testjour::DRbFormatter.new(queue_server)
           
-          require_steps(Dir[File.expand_path("./features/steps") + "/**/*.rb"].to_a)
+          require_steps(File.expand_path("./features/steps") + "/**/*.rb")
 
           begin
             loop do
