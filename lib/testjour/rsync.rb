@@ -2,6 +2,9 @@ require "uri"
 
 module Testjour
   
+  class RsyncFailed < StandardError
+  end
+  
   class Rsync
     
     def self.copy_to_current_directory_from(source_uri)
@@ -18,7 +21,7 @@ module Testjour
         time = Time.now - start_time
         Testjour.logger.debug("Rsync finished in %.2fs" % time)
       else
-        raise "RSync Failed!!"
+        raise RsyncFailed.new
       end
     end
     
