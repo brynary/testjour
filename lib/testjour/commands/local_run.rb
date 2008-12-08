@@ -2,7 +2,6 @@ require "drb"
 require "uri"
 
 require "testjour/commands/base_command"
-require "testjour/rsync"
 require "testjour/queue_server"
 require "testjour/cucumber_extensions/drb_formatter"
 require "testjour/mysql"
@@ -10,20 +9,18 @@ require "testjour/mysql"
 module Testjour
   module CLI
   
-    class SlaveRun < BaseCommand
+    class LocalRun < BaseCommand
       def self.command
-        "slave:run"
+        "local:run"
       end
       
       def initialize(parser, args)
         Testjour.logger.debug "Runner command #{self.class}..."
         super
-        @queue = @non_options.first
+        @queue = @non_options.shift
       end
   
       def run
-        Testjour::Rsync.copy_to_current_directory_from(@queue)
-        
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
         
@@ -81,6 +78,6 @@ module Testjour
   
     end
 
-    Parser.register_command SlaveRun
+    Parser.register_command LocalRun
   end
 end
