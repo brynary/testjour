@@ -1,5 +1,7 @@
 require "testjour/colorer"
 
+require File.expand_path(File.dirname(__FILE__) + "/../../../vendor/progressbar")
+
 module Testjour
   
   class QueueingExecutor < ::Cucumber::Tree::TopDownVisitor
@@ -20,33 +22,30 @@ module Testjour
     end
     
     def wait_for_results
+      pbar = ProgressBar.new("running", step_count)
+      
       step_count.times do
-        print_step_result(*@queue_server.take_result)
+        log_result(*@queue_server.take_result)
+        pbar.inc
       end
+      
+      pbar.finish
 
       print_summary
       print_errors
     end
     
-    def print_step_result(dot, message, backtrace)
+    def log_result(dot, message, backtrace)
       case dot
       when "."
         @passed += 1
-        print Colorer.passed(dot)
       when "F"
         @errors << [message, backtrace]
-        print Colorer.failed(dot)
       when "P"
         @pending += 1
-        print Colorer.pending(dot)
       when "_"
         @skipped += 1
-        print Colorer.skipped(dot)
-      else
-        print dot
       end
-      
-      $stdout.flush
     end
 
     def print_summary
