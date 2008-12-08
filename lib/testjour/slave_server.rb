@@ -23,7 +23,7 @@ module Testjour
       running? ? "busy" : "available"
     end
     
-    def run(queue_server_url)
+    def run(queue_server_url, cucumber_options)
       if running?
         Testjour.logger.info "Not running because pid exists: #{@pid}"
         return false
@@ -34,7 +34,7 @@ module Testjour
       
       Thread.new do
         Thread.current.abort_on_exception = true
-        cmd = command_to_run_for(queue_server_url)
+        cmd = command_to_run_for(queue_server_url, cucumber_options)
         Testjour.logger.debug "Starting runner with command: #{cmd}"
         status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
         Testjour.logger.warn stderr if stderr.strip.size > 0
@@ -49,8 +49,8 @@ module Testjour
     
   protected
   
-    def command_to_run_for(master_server_uri)
-      "#{testjour_bin_path} slave:run #{master_server_uri}".strip
+    def command_to_run_for(master_server_uri, cucumber_options)
+      "#{testjour_bin_path} slave:run #{master_server_uri} -- #{cucumber_options}".strip
     end
     
     def testjour_bin_path

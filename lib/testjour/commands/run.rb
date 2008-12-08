@@ -51,7 +51,7 @@ module Testjour
       def queue_features(queue)
         Testjour.logger.debug "Queueing features..."
         
-        ARGV.replace(@non_options)
+        ARGV.replace(@non_options.clone)
         Cucumber::CLI.executor = Testjour::QueueingExecutor.new(queue, Cucumber::CLI.step_mother)
         Cucumber::CLI.execute
       end
@@ -76,7 +76,7 @@ module Testjour
       
       def request_build_from(server)
         slave_server = DRbObject.new(nil, server.uri)
-        result = slave_server.run(testjour_uri, File.expand_path("."))
+        result = slave_server.run(testjour_uri, @non_options)
   
         if result
           Testjour.logger.info "Requesting buld from available server: #{server.uri}. Accepted."

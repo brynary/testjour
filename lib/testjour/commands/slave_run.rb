@@ -18,7 +18,7 @@ module Testjour
       def initialize(parser, args)
         Testjour.logger.debug "Runner command #{self.class}..."
         super
-        @queue = @non_options.last
+        @queue = @non_options.first
       end
   
       def run
@@ -29,11 +29,13 @@ module Testjour
         
         ENV["RAILS_ENV"] = "test"
         require File.expand_path("config/environment")
-
+        
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
-          
-          require_steps(File.expand_path("./features/steps") + "/**/*.rb")
+
+          cli = Cucumber::CLI.new
+          cli.parse_options!(@non_options)
+          require_steps(cli.send(:files_to_require))
 
           begin
             loop do
@@ -49,8 +51,8 @@ module Testjour
         end
       end
     
-      def require_steps(pattern)
-        Dir[File.expand_path(pattern)].each do |file|
+      def require_steps(files)
+        files.each do |file|
           Testjour.logger.debug "Requiring step file: #{file}"
           require file
         end
