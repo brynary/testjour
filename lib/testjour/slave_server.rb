@@ -23,6 +23,30 @@ module Testjour
       running? ? "busy" : "available"
     end
     
+    def warm(queue_server_url)
+      if running?
+        Testjour.logger.info "Not running because pid exists: #{@pid}"
+        return false
+      end
+      
+      pid_queue = Queue.new
+      @pid = nil
+      
+      Thread.new do
+        Thread.current.abort_on_exception = true
+        cmd = command_to_warm_for(queue_server_url)
+        Testjour.logger.debug "Starting warm with command: #{cmd}"
+        status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
+        Testjour.logger.warn stderr if stderr.strip.size > 0
+      end
+      
+      @pid = pid_queue.pop
+      
+      Testjour.logger.info "Warming from server #{queue_server_url} on PID #{@pid}"
+      
+      return @pid
+    end
+    
     def run(queue_server_url, cucumber_options)
       if running?
         Testjour.logger.info "Not running because pid exists: #{@pid}"
@@ -51,6 +75,10 @@ module Testjour
   
     def command_to_run_for(master_server_uri, cucumber_options)
       "#{testjour_bin_path} slave:run #{master_server_uri} -- #{cucumber_options}".strip
+    end
+    
+    def command_to_warm_for(master_server_uri)
+      "#{testjour_bin_path} slave:warm #{master_server_uri}".strip
     end
     
     def testjour_bin_path
