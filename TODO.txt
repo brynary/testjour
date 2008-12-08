@@ -1,5 +1,8 @@
 Use profiles for step matcher locations
 Use profiles for specifying which feature files to run
-Figure out how to work with different mysql login configurations
+Add warm and slave:warm tasks
+Use local runners
 Detect runner crashes
-Failover local runners
+Figure out how to work with different mysql login configurations
+Detect and handle RSync failure
+Print partial test results when killed with CTRL+C

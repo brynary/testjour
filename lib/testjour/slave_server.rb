@@ -23,7 +23,7 @@ module Testjour
       running? ? "busy" : "available"
     end
     
-    def run(queue_server_url, path = nil)
+    def run(queue_server_url)
       if running?
         Testjour.logger.info "Not running because pid exists: #{@pid}"
         return false

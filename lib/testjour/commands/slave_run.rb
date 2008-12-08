@@ -31,7 +31,7 @@ module Testjour
         require File.expand_path("config/environment")
 
         Testjour::MysqlDatabaseSetup.with_new_database do
-          Cucumber::CLI.executor.formatter = Testjour::DRbFormatter.new(queue_server)
+          Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
           
           require_steps(File.expand_path("./features/steps") + "/**/*.rb")
 

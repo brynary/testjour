@@ -5,7 +5,7 @@ module Testjour
     def initialize(queue_server)
       @queue_server = queue_server
     end
-  
+    
     def step_passed(step, regexp, args)
       @queue_server.write_result "."
     end
@@ -22,7 +22,7 @@ module Testjour
       @queue_server.write_result "_"
     end
     
-    def dump
+    def method_missing(*args, &block)
     end
     
   end
