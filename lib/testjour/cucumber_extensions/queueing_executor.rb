@@ -22,18 +22,29 @@ module Testjour
     end
     
     def wait_for_results
-      pbar = ProgressBar.new("running", step_count)
+      progress_bar = ProgressBar.new("running", step_count)
       
       step_count.times do
         log_result(*@queue_server.take_result)
-        pbar.inc
+        
+        if failed?
+          progress_bar.colorer = Testjour::Colorer.method(:failed).to_proc
+          progress_bar.title = "#{@errors.size} failed"
+        end
+        
+        progress_bar.inc
       end
       
-      pbar.finish
+      progress_bar.finish
 
       print_summary
       print_errors
     end
+    
+    def failed?
+      @errors.any?
+    end
+    
     
     def log_result(dot, message, backtrace)
       case dot

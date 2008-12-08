@@ -12,6 +12,9 @@
 class ProgressBar
   VERSION = "0.3"
 
+  attr_accessor :colorer
+  attr_writer :title
+  
   def initialize (title, total, out = STDERR)
     @title = title
     @total = total
@@ -66,12 +69,19 @@ class ProgressBar
   end
 
   def show (percentage)
-    @out.printf("%-14s %3d%% %s %s%s", 
+    output = sprintf("%-14s %3d%% %s %s%s", 
     @title[0,13] + ":", 
     percentage, 
     bar(percentage),
     time,
-    eol)
+    eol
+    )
+    
+    unless @colorer.nil?
+      output = colorer.call(output)
+    end
+      
+    @out.print(output)
   end
 
   def show_progress
