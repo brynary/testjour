@@ -74,7 +74,7 @@ module Testjour
   protected
   
     def command_to_run_for(master_server_uri, cucumber_options)
-      "#{testjour_bin_path} slave:run #{master_server_uri} -- #{cucumber_options}".strip
+      "#{testjour_bin_path} slave:run #{master_server_uri} -- #{cucumber_options.join(' ')}".strip
     end
     
     def command_to_warm_for(master_server_uri)

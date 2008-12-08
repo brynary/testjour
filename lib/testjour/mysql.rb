@@ -61,9 +61,9 @@ module Testjour
     end
 
     def load_schema
-      silence_stream(STDOUT) do
+      # silence_stream(STDOUT) do
         load File.join(RAILS_ROOT, "db", "schema.rb")
-      end
+      # end
     end
 
     def admin_connection
