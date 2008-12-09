@@ -24,10 +24,15 @@ module Testjour
       
       def run
         Testjour::QueueServer.with_server do |queue|
-          queue_features(queue)
-          start_local_runners
+          start_local_runners unless servers_specified?
           start_slave_runners
-          print_results
+          queue_features(queue)
+          
+          if @found_server.zero?
+            puts "No processes to build on. Aborting."
+          else
+            print_results
+          end
         end
       end
       
@@ -49,11 +54,18 @@ module Testjour
       
       def print_results
         puts
-        puts "#{@found_server} slave accepted the build request. Waiting for results."
+        puts "Building on #{@found_server} processes..."
         puts
   
         Cucumber::CLI.executor.wait_for_results
         Testjour.logger.debug "DONE"
+      end
+      
+      def slave_servers_to_use
+        # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
+        @slave_servers_to_use ||= available_servers.select do |potential_server|
+          !servers_specified? || specified_servers_include?(potential_server)
+        end
       end
       
       def available_servers
@@ -79,7 +91,7 @@ module Testjour
       end
       
       def start_slave_runners
-        available_servers.each do |server|
+        slave_servers_to_use.each do |server|
           request_build_from(server)
         end
       end
@@ -97,6 +109,7 @@ module Testjour
 
         pid = pid_queue.pop
         
+        @found_server += 1
         Testjour.logger.info "Started local:run on PID #{pid}"
         
         pid
@@ -116,6 +129,25 @@ module Testjour
         uri.scheme = "testjour"
         uri.user = `whoami`.strip
         uri.to_s
+      end
+      
+      def specified_servers_include?(potential_server)
+        @options[:server].any? do |specified_server|
+          potential_server.host.include?(specified_server)
+        end
+      end
+      
+      def servers_specified?
+        @options[:server] && @options[:server].any?
+      end
+      
+      def option_parser
+        OptionParser.new do |opts|
+          opts.on("--on SERVER", "Specify a pattern to exclude servers to. Disabled local runners") do |server|
+            @options[:server] ||= []
+            @options[:server] << server
+          end
+        end
       end
     end
    
