@@ -25,14 +25,15 @@ module Testjour
       def run
         Testjour::QueueServer.with_server do |queue|
           start_local_runners unless servers_specified?
-          start_slave_runners
-          queue_features(queue)
+          start_slave_runners unless no_remote?
           
           if @found_server.zero?
             puts "No processes to build on. Aborting."
-          else
-            print_results
+            exit
           end
+          
+          queue_features(queue)
+          print_results
         end
       end
       
@@ -137,6 +138,10 @@ module Testjour
         end
       end
       
+      def no_remote?
+        @options[:no_remote]
+      end
+      
       def servers_specified?
         @options[:server] && @options[:server].any?
       end
@@ -146,6 +151,10 @@ module Testjour
           opts.on("--on SERVER", "Specify a pattern to exclude servers to. Disabled local runners") do |server|
             @options[:server] ||= []
             @options[:server] << server
+          end
+          
+          opts.on("--no-remote", "Only use local runners") do |server|
+            @options[:no_remote] = true
           end
         end
       end
