@@ -11,6 +11,7 @@ spec = Gem::Specification.new do |s|
   s.homepage     = "http://github.com/brynary/testjour"
   s.summary      = "Distributed test running with autodiscovery via Bonjour (for Cucumber first)"
   s.description  = s.summary
+  s.executables  = "testjour"
   s.files        = %w[History.txt MIT-LICENSE.txt README.rdoc Rakefile] + Dir["bin/*"] + Dir["lib/**/*"] + Dir["vendor/**/*"]
   
   s.add_dependency "systemu", ">=1.2.0"
