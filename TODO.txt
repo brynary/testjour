@@ -1,7 +1,3 @@
-Use profiles for step matcher locations
-Use profiles for specifying which feature files to run
-Add warm and slave:warm tasks
-Use local runners
 Detect runner crashes
 Figure out how to work with different mysql login configurations
 Detect and handle RSync failure
