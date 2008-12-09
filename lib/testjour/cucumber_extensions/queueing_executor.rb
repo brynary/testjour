@@ -30,6 +30,9 @@ module Testjour
         if failed?
           progress_bar.colorer = Testjour::Colorer.method(:failed).to_proc
           progress_bar.title = "#{@errors.size} failed"
+        else
+          progress_bar.colorer = Testjour::Colorer.method(:passed).to_proc
+          progress_bar.title   = "running"
         end
         
         progress_bar.inc

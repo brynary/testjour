@@ -23,7 +23,6 @@ class ProgressBar
     @previous = 0
     @is_finished = false
     @start_time = Time.now
-    @bar = "oooooooooooooooooooooooooooooooooooooooo"
     show_progress
   end
 
@@ -63,9 +62,10 @@ class ProgressBar
     if @is_finished then "\n" else "\r" end
   end
 
-  def bar (percentage)
-    len = percentage * @bar.length / 100
-    sprintf("|%.*s%*s|", len, @bar, @bar.length - len, "")
+  def bar(percentage)
+    @bar = "=" * 41
+    len = percentage * (@bar.length + 1) / 100
+    sprintf("[%.*s%s%*s]", len, @bar, ">", [@bar.size - len, 0].max, "")
   end
 
   def show (percentage)
