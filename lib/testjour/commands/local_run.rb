@@ -24,9 +24,6 @@ module Testjour
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
         
-        ENV["RAILS_ENV"] = "test"
-        require File.expand_path("config/environment")
-        
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
           require_files

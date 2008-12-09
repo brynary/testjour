@@ -1,3 +1,5 @@
+RAILS_ROOT = File.expand_path(".") unless defined?(RAILS_ROOT)
+
 module Testjour
   
   # Stolen from deep-test
@@ -21,8 +23,17 @@ module Testjour
     }
 
     def self.with_new_database
+      ENV["RAILS_ENV"] ||= "test"
+      require File.expand_path("./vendor/rails/railties/lib/initializer")
+      Rails::Initializer.run(:set_load_path)
+      
+      require "active_record"
+      require "active_record/connection_adapters/mysql_adapter"
+      
       mysql = self.new
       mysql.create_database
+      
+      ENV["TESTJOUR_DB"] = mysql.runner_database_name
       
       at_exit do
         mysql.drop_database
@@ -33,7 +44,7 @@ module Testjour
       
       yield
     end
-
+    
     def grant_privileges(connection)
       sql = %{grant all on #{runner_database_name}.* 
           to %s@'localhost' identified by %s;} % [
