@@ -45,7 +45,7 @@ class ProgressBar
     else
       elapsed = Time.now - @start_time
       eta = elapsed * @total / @current - elapsed;
-      sprintf("ETA:  %s", format_time(eta))
+      sprintf("ETA: %s", format_time(eta))
     end
   end
 
@@ -69,8 +69,8 @@ class ProgressBar
   end
 
   def show (percentage)
-    output = sprintf("%-14s %3d%% %s %s%s", 
-    @title[0,13] + ":", 
+    output = sprintf("%-25s %3d%% %s %s%s", 
+    @title[0,25], 
     percentage, 
     bar(percentage),
     time,

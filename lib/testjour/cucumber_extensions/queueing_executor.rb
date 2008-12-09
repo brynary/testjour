@@ -1,6 +1,5 @@
 require "testjour/colorer"
-
-require File.expand_path(File.dirname(__FILE__) + "/../../../vendor/progressbar")
+require "testjour/progressbar"
 
 module Testjour
   
@@ -18,21 +17,22 @@ module Testjour
       @passed  = 0
       @skipped = 0
       @pending = 0
+      @result_uris = []
       @errors  = []
     end
     
     def wait_for_results
-      progress_bar = ProgressBar.new("running", step_count)
+      progress_bar = ProgressBar.new("0 slaves", step_count)
       
       step_count.times do
         log_result(*@queue_server.take_result)
         
         if failed?
           progress_bar.colorer = Testjour::Colorer.method(:failed).to_proc
-          progress_bar.title = "#{@errors.size} failed"
+          progress_bar.title = "#{@result_uris.size} slaves, #{@errors.size} failures"
         else
           progress_bar.colorer = Testjour::Colorer.method(:passed).to_proc
-          progress_bar.title   = "running"
+          progress_bar.title   = "#{@result_uris.size} slaves"
         end
         
         progress_bar.inc
@@ -49,7 +49,10 @@ module Testjour
     end
     
     
-    def log_result(dot, message, backtrace)
+    def log_result(uri, dot, message, backtrace)
+      @result_uris << uri
+      @result_uris.uniq!
+      
       case dot
       when "."
         @passed += 1

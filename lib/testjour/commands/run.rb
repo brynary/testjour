@@ -55,7 +55,7 @@ module Testjour
       
       def print_results
         puts
-        puts "Building on #{@found_server} processes..."
+        puts "Requesting build from #{@found_server} processes..."
         puts
   
         Cucumber::CLI.executor.wait_for_results

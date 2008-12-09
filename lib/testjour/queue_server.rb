@@ -48,8 +48,8 @@ module Testjour
       end
     end
     
-    def write_result(dot, message = nil, backtrace = [])
-      @result_queue.push [dot, message.to_s, backtrace.join("\n")]
+    def write_result(uri, dot, message = nil, backtrace = [])
+      @result_queue.push [uri, dot, message.to_s, backtrace.join("\n")]
       nil
     end
 
