@@ -10,6 +10,8 @@ module Testjour
   module CLI
     
     class SlaveStart < BaseCommand
+      include Bonjour
+      
       class StopServer < Exception
       end
       
@@ -39,7 +41,7 @@ module Testjour
         pid_file.write
         
         Testjour.setup_logger
-        Testjour::Bonjour.serve(Testjour::SlaveServer.start)
+        bonjour_serve(Testjour::SlaveServer.start)
         DRb.thread.join
       rescue StopServer
         exit 0

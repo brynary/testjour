@@ -6,6 +6,8 @@ module Testjour
   module CLI
     
     class List < BaseCommand
+      include Bonjour
+      
       def self.command
         "list"
       end
@@ -19,14 +21,12 @@ module Testjour
       end
       
       def run
-        available_servers = Testjour::Bonjour.list
-        
-        if available_servers.any?
+        if bonjour_servers.any?
           puts
           puts "Testjour servers:"
           puts
           
-          available_servers.each do |server|
+          bonjour_servers.each do |server|
             slave_server = DRbObject.new(nil, server.uri)
             status = colorize_status(slave_server.status)
             puts "    %-12s %s %s" % [server.name, status, "#{server.host}:#{server.port}"]

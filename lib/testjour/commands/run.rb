@@ -8,6 +8,8 @@ module Testjour
   module CLI
     
     class Run < BaseCommand
+      include Bonjour
+      
       def self.command
         "run"
       end
@@ -63,14 +65,9 @@ module Testjour
       end
       
       def slave_servers_to_use
-        # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
-        @slave_servers_to_use ||= available_servers.select do |potential_server|
+        @slave_servers_to_use ||= bonjour_servers.select do |potential_server|
           !servers_specified? || specified_servers_include?(potential_server)
         end
-      end
-      
-      def available_servers
-        @available_servers ||= Testjour::Bonjour.list
       end
       
       def request_build_from(server)

@@ -7,6 +7,8 @@ module Testjour
   module CLI
     
     class Warm < BaseCommand
+      include Bonjour
+      
       def self.command
         "warm"
       end
@@ -20,8 +22,8 @@ module Testjour
       end
       
       def run
-        if available_servers.any?
-          available_servers.each do |server|
+        if bonjour_servers.any?
+          bonjour_servers.each do |server|
             request_warm_from(server)
           end
           
@@ -30,10 +32,6 @@ module Testjour
           puts
           puts Testjour::Colorer.failed("Don't see any available test servers. Try again later.")
         end
-      end
-      
-      def available_servers
-        @available_servers ||= Testjour::Bonjour.list
       end
       
       def request_warm_from(server)
