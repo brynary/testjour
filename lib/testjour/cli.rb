@@ -33,19 +33,17 @@ module Testjour
       self.commands = []
 
       def execute
-        begin
-          raise NoCommandGiven if ARGV.empty?
-          raise UnknownCommand.new(command_name) unless command_klass
-          
-          args = ARGV.dup
-          args.shift # Remove subcommand name
-          
-          command_klass.new(self, args).run
-        rescue NoCommandGiven, UnknownCommand
-          $stderr.puts "ERROR: #{$!.message}"
-          $stderr.puts usage
-          exit 1
-        end
+        raise NoCommandGiven if ARGV.empty?
+        raise UnknownCommand.new(command_name) unless command_klass
+        
+        args = ARGV.dup
+        args.shift # Remove subcommand name
+        
+        command_klass.new(self, args).run
+      rescue NoCommandGiven, UnknownCommand
+        $stderr.puts "ERROR: #{$!.message}"
+        $stderr.puts usage
+        exit 1
       end
       
       def command_klass
