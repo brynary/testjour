@@ -47,10 +47,15 @@ module Testjour
       
       def require_files
         cli = Cucumber::CLI.new
-        cli.parse_options!(@non_options)
+        Testjour.logger.debug "Cucumber options: #{options_for_cucumber.inspect}"
+        cli.parse_options!(options_for_cucumber)
         cli.send(:require_files)
       end
   
+      def options_for_cucumber
+        @non_options
+      end
+      
       def run_file(file)
         Testjour.logger.debug "Running feature file: #{file}"
         features = feature_parser.parse_feature(File.expand_path(file))
