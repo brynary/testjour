@@ -1,6 +1,10 @@
 module Testjour
   
   class PidFile
+
+    def self.term(path)
+      new(path).send_signal("TERM")
+    end
     
     def initialize(path)
       @path = File.expand_path(path)

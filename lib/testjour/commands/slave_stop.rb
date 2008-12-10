@@ -15,8 +15,7 @@ module Testjour
       end
       
       def run
-        pid_file = PidFile.new("./testjour_slave.pid")
-        pid_file.send_signal("TERM")
+        PidFile.term("./testjour_slave.pid")
       end
     end
     
