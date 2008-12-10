@@ -2,12 +2,14 @@ require "thread"
 require "drb"
 require "uri"
 require "timeout"
-require "systemu"
+
+require "testjour/run_command"
 
 module Testjour
   
   class SlaveServer
-
+    include RunCommand
+    
     def self.start
       server = self.new
       DRb.start_service(nil, server)
@@ -28,22 +30,8 @@ module Testjour
         Testjour.logger.info "Not running because pid exists: #{@pid}"
         return false
       end
-      
-      pid_queue = Queue.new
-      @pid = nil
-      
-      Thread.new do
-        Thread.current.abort_on_exception = true
-        cmd = command_to_warm_for(queue_server_url)
-        Testjour.logger.debug "Starting warm with command: #{cmd}"
-        status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
-        Testjour.logger.warn stderr if stderr.strip.size > 0
-      end
-      
-      @pid = pid_queue.pop
-      
-      Testjour.logger.info "Warming from server #{queue_server_url} on PID #{@pid}"
-      
+
+      @pid = run_command(command_to_warm_for(queue_server_url))
       return @pid
     end
     
@@ -53,21 +41,7 @@ module Testjour
         return false
       end
       
-      pid_queue = Queue.new
-      @pid = nil
-      
-      Thread.new do
-        Thread.current.abort_on_exception = true
-        cmd = command_to_run_for(queue_server_url, cucumber_options)
-        Testjour.logger.debug "Starting runner with command: #{cmd}"
-        status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
-        Testjour.logger.warn stderr if stderr.strip.size > 0
-      end
-      
-      @pid = pid_queue.pop
-      
-      Testjour.logger.info "Running tests from queue #{queue_server_url} on PID #{@pid}"
-      
+      @pid = run_command(command_to_run_for(queue_server_url, cucumber_options))
       return @pid
     end
     

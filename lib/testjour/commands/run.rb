@@ -3,11 +3,13 @@ require "drb"
 require "testjour/commands/base_command"
 require "testjour/queue_server"
 require "testjour/bonjour"
+require "testjour/run_command"
 
 module Testjour
   module CLI
     
     class Run < BaseCommand
+      include RunCommand
       include Bonjour
       
       def self.command
@@ -95,22 +97,8 @@ module Testjour
       end
       
       def start_local_runner
-        pid_queue = Queue.new
-
-        Thread.new do
-          Thread.current.abort_on_exception = true
-          cmd = command_for_local_run
-          Testjour.logger.debug "Starting local:run with command: #{cmd}"
-          status, stdout, stderr = systemu(cmd) { |pid| pid_queue << pid }
-          Testjour.logger.warn stderr if stderr.strip.size > 0
-        end
-
-        pid = pid_queue.pop
-        
+        run_command(command_for_local_run)
         @found_server += 1
-        Testjour.logger.info "Started local:run on PID #{pid}"
-        
-        pid
       end
       
       def command_for_local_run

@@ -11,6 +11,10 @@ module Testjour
     class Server
       attr_reader :name, :host, :port
       
+      def self.from_dnssd(reply, rr)
+        new(reply.name, rr.target, rr.port)
+      end
+      
       def initialize(name, host, port)
         @name = name
         @host = host
@@ -48,7 +52,7 @@ module Testjour
       end
       
       def drb_object
-        @drb_object ||= DRbObject.new(nil, server.uri)
+        @drb_object ||= DRbObject.new(nil, uri)
       end
     end
     
@@ -59,14 +63,19 @@ module Testjour
 
       service = DNSSD.browse(SERVICE) do |reply|
         DNSSD.resolve(reply.name, reply.type, reply.domain) do |rr|
-          server = Server.new(reply.name, rr.target, rr.port)
-          @bonjour_servers << server unless hosts.any? { |h| h == server }
+          found_bonjour_server(Server.from_dnssd(reply, rr))
         end
       end
 
       sleep 3
       service.stop
       return @bonjour_servers
+    end
+    
+    def found_bonjour_server(server)
+      unless @bonjour_servers.any? { |h| h == server }
+        @bonjour_servers << server
+      end
     end
     
     def bonjour_serve(port)
