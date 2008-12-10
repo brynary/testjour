@@ -47,7 +47,6 @@ module Testjour
       @errors.any?
     end
     
-    
     def log_result(uri, dot, message, backtrace)
       @result_uris << uri
       @result_uris.uniq!

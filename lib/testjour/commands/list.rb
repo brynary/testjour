@@ -27,25 +27,11 @@ module Testjour
           puts
           
           bonjour_servers.each do |server|
-            slave_server = DRbObject.new(nil, server.uri)
-            status = colorize_status(slave_server.status)
-            puts "    %-12s %s %s" % [server.name, status, "#{server.host}:#{server.port}"]
+            puts server.status_line
           end
         else
           puts
           puts "No testjour servers found."
-        end
-      end
-      
-      def colorize_status(status)
-        formatted_status = ("%-12s" % status)
-        return formatted_status unless defined?(Testjour::Colorer)
-        
-        case formatted_status.strip
-        when "available"
-          Testjour::Colorer.green(formatted_status)
-        else
-          Testjour::Colorer.yellow(formatted_status)
         end
       end
       

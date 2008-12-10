@@ -24,6 +24,32 @@ module Testjour
       def uri
         "druby://" + @host.gsub(/\.$/, "") + ":" + @port.to_s
       end
+      
+      def status_line
+        "    %-12s %s %s" % [name, colored_status, "#{host}:#{port}"]
+      end
+      
+    protected
+    
+      def colored_status
+        formatted_status = ("%-12s" % status)
+        return formatted_status unless defined?(Testjour::Colorer)
+
+        case formatted_status.strip
+        when "available"
+          Testjour::Colorer.green(formatted_status)
+        else
+          Testjour::Colorer.yellow(formatted_status)
+        end
+      end
+      
+      def status
+        drb_object.status
+      end
+      
+      def drb_object
+        @drb_object ||= DRbObject.new(nil, server.uri)
+      end
     end
     
     def bonjour_servers
