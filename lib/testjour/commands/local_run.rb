@@ -27,18 +27,21 @@ module Testjour
         Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
           require_files
-
-          begin
-            loop do
-              begin
-                run_file(queue_server.take_work)
-              rescue Testjour::QueueServer::NoWorkUnitsAvailableError
-                # If no work, ignore and keep looping
-              end
+          work
+        end
+      end
+      
+      def work
+        begin
+          loop do
+            begin
+              run_file(queue_server.take_work)
+            rescue Testjour::QueueServer::NoWorkUnitsAvailableError
+              # If no work, ignore and keep looping
             end
-          rescue DRb::DRbConnError
-            Testjour.logger.debug "DRb connection error. (This is normal.) Exiting runner."
           end
+        rescue DRb::DRbConnError
+          Testjour.logger.debug "DRb connection error. (This is normal.) Exiting runner."
         end
       end
       
