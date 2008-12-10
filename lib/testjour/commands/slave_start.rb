@@ -26,7 +26,15 @@ module Testjour
       
       def run
         verify_not_a_git_repo
-        
+        daemonize
+        Testjour.setup_logger
+        bonjour_serve(Testjour::SlaveServer.start)
+        DRb.thread.join
+      rescue StopServer
+        exit 0
+      end
+      
+      def daemonize
         original_working_directory = File.expand_path(".")
         
         pid_file = PidFile.new("./testjour_slave.pid")
@@ -39,12 +47,6 @@ module Testjour
         
         Dir.chdir(original_working_directory)
         pid_file.write
-        
-        Testjour.setup_logger
-        bonjour_serve(Testjour::SlaveServer.start)
-        DRb.thread.join
-      rescue StopServer
-        exit 0
       end
       
       def verify_not_a_git_repo

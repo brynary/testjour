@@ -41,9 +41,7 @@ module Testjour
         
         command_klass.new(self, args).run
       rescue NoCommandGiven, UnknownCommand
-        $stderr.puts "ERROR: #{$!.message}"
-        $stderr.puts usage
-        exit 1
+        exit_with_usage
       end
       
       def command_klass
@@ -56,6 +54,12 @@ module Testjour
         ARGV.first
       end
       
+      def exit_with_usage
+        $stderr.puts "ERROR: #{$!.message}"
+        $stderr.puts usage
+        exit 1
+      end
+      
       def usage
         message = []
         message << "usage: testjour <SUBCOMMAND> [OPTIONS] [ARGS...]"
@@ -63,13 +67,16 @@ module Testjour
         message << "Type 'testjour version' to get this program's version."
         message << ""
         message << "Available subcommands are:"
-        
-        self.class.commands.sort_by { |c| c.command }.each do |command_klass|
-          message << "  " + command_klass.command
-        end
-        
+        message += command_listing
         message.map { |line| line.chomp }.join("\n")
       end
+      
+      def command_listing
+        self.class.commands.sort_by { |c| c.command }.map do |command_klass|
+          "  " + command_klass.command
+        end
+      end
+      
     end
     
   end
