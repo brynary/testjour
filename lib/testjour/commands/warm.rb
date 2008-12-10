@@ -68,6 +68,5 @@ module Testjour
       end
     end
    
-    Parser.register_command Warm
   end
 end

@@ -159,7 +159,6 @@ module Testjour
         end
       end
     end
-   
-    Parser.register_command Run
+
   end
 end

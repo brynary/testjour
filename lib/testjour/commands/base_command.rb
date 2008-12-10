@@ -10,6 +10,10 @@ module Testjour
         self.name.downcase
       end
       
+      def self.inherited(command_class)
+        Parser.register_command command_class
+      end
+      
       def self.options
         {}
       end

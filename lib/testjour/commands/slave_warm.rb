@@ -26,6 +26,5 @@ module Testjour
   
     end
 
-    Parser.register_command SlaveWarm
   end
 end

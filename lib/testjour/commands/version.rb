@@ -13,6 +13,5 @@ module Testjour
       end
     end
     
-    Parser.register_command VersionCommand
   end
 end

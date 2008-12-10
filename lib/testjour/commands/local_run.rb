@@ -74,7 +74,5 @@ module Testjour
       end
   
     end
-
-    Parser.register_command LocalRun
   end
 end

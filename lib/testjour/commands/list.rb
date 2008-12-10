@@ -51,7 +51,6 @@ module Testjour
       
     end
     
-    Parser.register_command List
   end
 end
 

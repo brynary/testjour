@@ -14,7 +14,6 @@ module Testjour
       end
     end
 
-    Parser.register_command HelpCommand
   end
 end
 

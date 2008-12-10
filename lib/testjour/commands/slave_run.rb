@@ -80,6 +80,5 @@ module Testjour
   
     end
 
-    Parser.register_command SlaveRun
   end
 end
