@@ -4,4 +4,3 @@ Move DB setup and teardown to separate Ruby processes
 Detect runner crashes and send the feature file to another runner
 Figure out how to work with different mysql login configurations
 Detect and handle RSync failure
-Print partial test results when killed with CTRL+C

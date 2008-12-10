@@ -41,7 +41,6 @@ module Testjour
       progress_bar.finish
 
       print_summary
-      print_errors
     end
     
     def failed?
@@ -58,6 +57,12 @@ module Testjour
         @passed += 1
       when "F"
         @errors << [message, backtrace]
+        
+        erase_current_line
+        print Testjour::Colorer.failed("#{@errors.size}) ")
+        puts Testjour::Colorer.failed(message)
+        puts backtrace
+        puts
       when "P"
         @pending += 1
       when "_"
@@ -65,6 +70,10 @@ module Testjour
       end
     end
 
+    def erase_current_line
+      print "\e[K"
+    end
+    
     def print_summary
       puts
       puts
@@ -73,17 +82,6 @@ module Testjour
       puts Colorer.skipped("#{@skipped} steps skipped") unless @skipped.zero?
       puts Colorer.pending("#{@pending} steps pending") unless @pending.zero?
       puts
-    end
-    
-    def print_errors
-      @errors.each_with_index do |error, i|
-        message, backtrace = error
-        
-        puts
-        puts Colorer.failed("#{i+1})")
-        puts Colorer.failed(message)
-        puts Colorer.failed(backtrace)
-      end
     end
     
     def visit_feature(feature)
