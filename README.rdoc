@@ -45,3 +45,4 @@ For now, just pull down the code from the GitHub repo:
 === Authors
 
 - Maintained by Bryan Helmkamp (http://brynary.com/)
+- Thanks to Weplay (http://weplay.com) for sponsoring development and supporting open sourcing it from the start
