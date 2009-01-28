@@ -22,27 +22,8 @@ module Testjour
       :database => "information_schema"
     }
 
-    def self.with_new_database
-      ENV["RAILS_ENV"] ||= "test"
-      require File.expand_path("./vendor/rails/railties/lib/initializer")
-      Rails::Initializer.run(:set_load_path)
-      
-      require "active_record"
-      require "active_record/connection_adapters/mysql_adapter"
-      
-      mysql = self.new
-      mysql.create_database
-      
-      ENV["TESTJOUR_DB"] = mysql.runner_database_name
-      
-      at_exit do
-        mysql.drop_database
-      end
-      
-      mysql.connect
-      mysql.load_schema
-      
-      yield
+    def initialize(runner_database_name = nil)
+      @runner_database_name = runner_database_name
     end
     
     def grant_privileges(connection)

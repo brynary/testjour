@@ -1,15 +1,16 @@
 require "drb"
 require "uri"
+require "systemu"
 
 require "testjour/commands/base_command"
 require "testjour/queue_server"
 require "testjour/cucumber_extensions/drb_formatter"
-require "testjour/mysql"
 
 module Testjour
   module CLI
   
     class LocalRun < BaseCommand
+      
       def self.command
         "local:run"
       end
@@ -24,11 +25,16 @@ module Testjour
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
         
-        Testjour::MysqlDatabaseSetup.with_new_database do
-          Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
-          require_files
-          work
-        end
+        status, stdout, stderr = systemu("#{testjour_bin_path} mysql:create")
+        database_name = stdout.split.last.strip
+        Testjour.logger.info "MySQL db name: #{database_name.inspect}"
+        
+        Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
+        require_files
+        work
+        
+        status, stdout, stderr = systemu("#{testjour_bin_path} mysql:drop #{database_name}")
+        Testjour.logger.info "Dropped MySQL db: #{status.inspect}, #{stdout.inspect}, #{stderr.inspect}"
       end
       
       def work
