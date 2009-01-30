@@ -11,11 +11,11 @@ module Testjour
     end
     
     def create_database
-      system "mysqladmin create #{runner_database_name}"
+      system "mysqladmin create -uroot #{runner_database_name}"
     end
     
     def drop_database
-      system "yes | mysqladmin drop #{runner_database_name}"
+      system "yes | mysqladmin drop -uroot #{runner_database_name}"
     end
 
     def connect
