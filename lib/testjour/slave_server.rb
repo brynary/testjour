@@ -41,12 +41,12 @@ module Testjour
         return false
       end
       
-      @pid = fork do
-        exec(command_to_run_for(queue_server_url, cucumber_options))
-      end
-      
-      Process.detach(@pid)
-      return @pid
+      # @pid = fork do
+        system(command_to_run_for(queue_server_url, cucumber_options))
+      # end
+      # 
+      # Process.detach(@pid)
+      # return @pid
     end
     
   protected
