@@ -1,10 +1,10 @@
 require "drb"
 require "uri"
-require "systemu"
 
 require "testjour/commands/base_command"
 require "testjour/queue_server"
 require "testjour/cucumber_extensions/drb_formatter"
+require "testjour/mysql"
 
 module Testjour
   module CLI
