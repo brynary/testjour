@@ -26,6 +26,7 @@ module Testjour
         Testjour.load_cucumber
         
         status, stdout, stderr = systemu("#{testjour_bin_path} mysql:create")
+        Testjour.logger.info "Created MySQL db: #{status.inspect}, #{stdout.inspect}, #{stderr.inspect}"
         database_name = stdout.split.last.strip
         Testjour.logger.info "MySQL db name: #{database_name.inspect}"
         
