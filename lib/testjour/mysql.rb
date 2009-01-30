@@ -15,7 +15,7 @@ module Testjour
     end
     
     def drop_database
-      system "yes | mysqladmin drop -uroot #{runner_database_name}"
+      system "echo y | mysqladmin drop -uroot #{runner_database_name}"
     end
 
     def connect
