@@ -38,9 +38,14 @@ module Testjour
         Testjour.logger.info "MySQL db name: #{mysql.runner_database_name.inspect}"
         
         Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
+        
+        Testjour.logger.info "Requiring files..."
         require_files
+        
+        Testjour.logger.info "Working..."
         work
         
+        Testjour.logger.info "Dropping DB..."
         mysql.drop_database
       end
       
