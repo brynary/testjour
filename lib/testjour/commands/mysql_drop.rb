@@ -13,15 +13,11 @@ module Testjour
       def initialize(*args)
         super
         Testjour.logger.debug "Runner command #{self.class}..."
-        
-        ENV["RAILS_ENV"] ||= "test"
-        require File.expand_path("./config/environment")
       end
       
       def run
         database_name = @non_options.shift
         mysql = MysqlDatabaseSetup.new(database_name)
-        mysql.connect
         mysql.drop_database
       end
       
