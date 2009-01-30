@@ -51,10 +51,6 @@ module Testjour
         OptionParser.new
       end
       
-      def testjour_bin_path
-        File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
-      end
-      
     end
     
   end
