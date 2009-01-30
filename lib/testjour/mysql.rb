@@ -6,6 +6,24 @@ module Testjour
   
   class MysqlDatabaseSetup
 
+    def self.with_new_database
+      mysql = self.new
+      mysql.create_database
+      
+      ENV["TESTJOUR_DB"] = mysql.runner_database_name
+      ENV["RAILS_ENV"] ||= "test"
+      require File.expand_path("./config/environment")
+      
+      mysql.connect
+      mysql.load_schema
+      Testjour.logger.info "MySQL db name: #{mysql.runner_database_name.inspect}"
+      
+      yield
+      
+      Testjour.logger.info "Dropping DB..."
+      mysql.drop_database
+    end
+    
     def initialize(runner_database_name = nil)
       @runner_database_name = runner_database_name
     end

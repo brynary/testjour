@@ -25,28 +25,15 @@ module Testjour
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
         
-        mysql = MysqlDatabaseSetup.new
-        mysql.create_database
+        MysqlDatabaseSetup.with_new_database do
+          Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
         
-        ENV["TESTJOUR_DB"] = mysql.runner_database_name
-        ENV["RAILS_ENV"] ||= "test"
-        require File.expand_path("./config/environment")
+          Testjour.logger.info "Requiring files..."
+          require_files
         
-        mysql.connect
-        mysql.load_schema
-        
-        Testjour.logger.info "MySQL db name: #{mysql.runner_database_name.inspect}"
-        
-        Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
-        
-        Testjour.logger.info "Requiring files..."
-        require_files
-        
-        Testjour.logger.info "Working..."
-        work
-        
-        Testjour.logger.info "Dropping DB..."
-        mysql.drop_database
+          Testjour.logger.info "Working..."
+          work
+        end
       end
       
       def work
