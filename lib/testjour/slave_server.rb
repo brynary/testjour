@@ -42,7 +42,7 @@ module Testjour
       end
       
       @pid = fork do
-        system(command_to_run_for(queue_server_url, cucumber_options))
+        exec(command_to_run_for(queue_server_url, cucumber_options))
       end
       
       Process.detach(@pid)
