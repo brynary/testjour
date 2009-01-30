@@ -10,7 +10,6 @@ module Testjour
   module CLI
   
     class LocalRun < BaseCommand
-      
       def self.command
         "local:run"
       end
@@ -25,7 +24,7 @@ module Testjour
         ARGV.clear # Don't pass along args to RSpec
         Testjour.load_cucumber
         
-        MysqlDatabaseSetup.with_new_database do
+        Testjour::MysqlDatabaseSetup.with_new_database do
           Cucumber::CLI.executor.formatters = Testjour::DRbFormatter.new(queue_server)
         
           Testjour.logger.info "Requiring files..."

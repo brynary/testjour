@@ -11,6 +11,12 @@ module Testjour
       mysql.create_database
       
       ENV["TESTJOUR_DB"] = mysql.runner_database_name
+      
+      at_exit do
+        Testjour.logger.info "Dropping DB..."
+        mysql.drop_database
+      end
+      
       ENV["RAILS_ENV"] ||= "test"
       require File.expand_path("./config/environment")
       
@@ -19,9 +25,6 @@ module Testjour
       Testjour.logger.info "MySQL db name: #{mysql.runner_database_name.inspect}"
       
       yield
-      
-      Testjour.logger.info "Dropping DB..."
-      mysql.drop_database
     end
     
     def initialize(runner_database_name = nil)
