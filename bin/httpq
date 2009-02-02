@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "rack"
+require "webrick"
+
+class HttpQueue
+  
+  class << self
+    attr_accessor :feature
+  end
+
+  def self.call(env)
+    new(env).call
+  end
+  
+  def initialize(env)
+    @env = env
+    @request = Rack::Request.new(env)
+  end
+  
+  def env
+    @env
+  end
+  
+  def request
+    @request
+  end
+  
+  def call
+    if request.post?
+      handle_post
+    else
+      handle_get
+    end
+  end
+  
+protected
+  
+  def handle_get
+    case request.path_info
+    when "/reset" then reset
+    when "/"      then pop
+    else error
+    end
+  end
+  
+  def handle_post
+    case request.path_info
+    when "/"  then push
+    else error
+    end
+  end
+  
+  def error
+    [500, { "Content-Type" => "text/plain" }, "Server error"]
+  end
+  
+  def reset
+    self.class.feature = nil
+    success
+  end
+  
+  def pop
+    if self.class.feature
+      response = [200, { "Content-Type" => "text/plain" }, self.class.feature]
+      self.class.feature = nil
+      response
+    else
+      [404, { "Content-Type" => "text/plain" }, "Empty"]
+    end
+  end
+  
+  def push
+    self.class.feature = request.POST["feature_file"]
+    success
+  end
+  
+  def success
+    [200, { "Content-Type" => "text/plain" }, "OK"]
+  end
+  
+end
+
+Rack::Handler::WEBrick.run HttpQueue, :Port => 15434
