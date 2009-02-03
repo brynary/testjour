@@ -1,6 +1,20 @@
+require "testjour/core_extensions/wait_for_service"
+
 module Testjour
   class HttpQueue
 
+    def self.run_on(handler)
+      handler.run self, :Port => port
+    end
+    
+    def self.wait_for_service
+      TCPSocket.wait_for_service :host => "0.0.0.0", :port => port
+    end
+    
+    def self.with_net_http(&block)
+      Net::HTTP.start("0.0.0.0", port, &block)
+    end
+    
     def self.port
       15434
     end

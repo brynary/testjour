@@ -4,7 +4,6 @@ require "fileutils"
 require "net/http"
 
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
-require "testjour/core_extensions/wait_for_service"
 require "testjour/http_queue"
 
 Spec::Runner.configure do |config|
@@ -15,7 +14,7 @@ Spec::Runner.configure do |config|
       exec "ruby httpq"
     end
     
-    TCPSocket.wait_for_service :host => "0.0.0.0", :port => Testjour::HttpQueue.port
+    Testjour::HttpQueue.wait_for_service
   end
   
   def shutdown_queue
@@ -24,22 +23,18 @@ Spec::Runner.configure do |config|
   end
   
   def get(path)
-    with_http do |http|
+    Testjour::HttpQueue.with_net_http do |http|
       get = Net::HTTP::Get.new(path)
       @response = http.request(get)
     end
   end
   
   def post(path, data = {})
-    with_http do |http|
+    Testjour::HttpQueue.with_net_http do |http|
       post = Net::HTTP::Post.new(path)
       post.form_data = data
       @response = http.request(post)
     end
-  end
-  
-  def with_http(&block)
-    Net::HTTP.start("0.0.0.0", Testjour::HttpQueue.port, &block)
   end
   
   def response
