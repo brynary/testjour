@@ -25,10 +25,7 @@ module Commands
           feature_file = queue.pop(:feature_files)
           
           if feature_file
-            File.open("testjour.log", "w") do |log|
-              log.puts feature_file
-            end
-            
+            Testjour.logger.info "Running: #{feature_file}"
             features = load_plain_text_feature(feature_file)
             visit_features(features)
           end

@@ -1,8 +1,6 @@
 require "systemu"
 
 When /^I run `(.+)`$/ do |args|
-  @full_dir = File.expand_path(File.dirname(__FILE__) + "/../../spec/fixtures")
-  
   args = args.split[1..-1]
   
   Dir.chdir(@full_dir) do
@@ -36,9 +34,9 @@ Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
   @stdout.should be_like(text)
 end
 
-Then /^(.+) should contain "(.+)"$/ do |filename, text|
+Then /^(.+) should include "(.+)"$/ do |filename, text|
   Dir.chdir(@full_dir) do
-    IO.read(filename).should be_like(text)
+    IO.read(filename).should include(text)
   end
 end
 

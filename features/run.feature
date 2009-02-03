@@ -7,12 +7,12 @@ Feature: Run Features
   Scenario: Run passing features
     When I run `testjour run passing.feature`
     Then it should pass with "Passed"
-    And testjour.log should contain "passing.feature"
+    And testjour.log should include "passing.feature"
     
   Scenario: Run failing features
     When I run `testjour run failing.feature`
     Then it should fail with "Failed"
-    And testjour.log should contain "failing.feature"
+    And testjour.log should include "failing.feature"
   
   Scenario: Distribute runs
     When I run `testjour run --profile=slow`
