@@ -41,14 +41,6 @@ module Commands
       visitor.visit_features(features)
     end
     
-    def cucumber_configuration
-      return @cucumber_configuration if @cucumber_configuration
-      
-      @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
-      @cucumber_configuration.parse!(@args)
-      @cucumber_configuration
-    end
-    
     def require_files
       cucumber_configuration.files_to_require.each do |lib|
         require lib
