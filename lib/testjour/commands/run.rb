@@ -1,6 +1,5 @@
 require "testjour/commands/command"
 require "testjour/http_queue"
-require "systemu"
 require "net/http"
 
 module Testjour
@@ -23,8 +22,14 @@ module Commands
         
         testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
         cmd = "#{testjour_path} local:run #{@args.join(' ')}"
-        systemu(cmd)
-      
+        
+        pid = fork do
+          silence_stream(STDOUT) do
+            exec(cmd)
+          end
+        end
+        Process.waitpid(pid)
+        
         results = []
         
         HttpQueue.with_net_http do |http|
