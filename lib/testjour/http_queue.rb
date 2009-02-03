@@ -92,7 +92,7 @@ module Testjour
     end
   
     def push
-      self.class.queue.push(request.POST["feature_file"])
+      self.class.queue.push(request.POST["data"])
       ok
     end
   

@@ -15,7 +15,7 @@ describe "httpq" do
   end
   
   it "can be reset" do
-    post "/", "feature_file" => "features/test.feature"
+    post "/", "data" => "features/test.feature"
     get "/reset"
     response.code.to_i.should == 200
     get "/"
@@ -28,19 +28,19 @@ describe "httpq" do
   end
   
   it "accepts work" do
-    post "/", "feature_file" => "features/test.feature"
+    post "/", "data" => "features/test.feature"
     response.code.to_i.should == 200
   end
   
   it "returns work from the queue" do
-    post "/", "feature_file" => "features/test.feature"
+    post "/", "data" => "features/test.feature"
     get "/"
     response.code.to_i.should == 200
     response.body.should == "features/test.feature"
   end
   
   it "is empty after all work is returned" do
-    post "/", "feature_file" => "features/test.feature"
+    post "/", "data" => "features/test.feature"
     get "/"
     get "/"
     response.code.to_i.should == 404
