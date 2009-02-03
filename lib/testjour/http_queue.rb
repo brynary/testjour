@@ -4,6 +4,38 @@ module Testjour
   class HttpQueue
     class ResultOverdueError < StandardError; end
     
+    class QueueProxy
+      
+      def push(queue_name, data)
+        self.class.with_net_http do |http|
+          request = Net::HTTP::Post.new("/" + queue_name.to_s)
+          request.form_data = { "data" => data }
+          response  = http.request(request)
+          return response.code.to_i == 200
+        end
+      end
+      
+      def pop(queue_name)
+        self.class.with_net_http do |http|
+          request = Net::HTTP::Get.new("/" + queue_name.to_s)
+          response = http.request(request)
+          
+          if response.code.to_i == 200
+            return response.body
+          else
+            return nil
+          end
+        end
+      end
+      
+    protected
+    
+      def self.with_net_http(&block)
+        Net::HTTP.start("0.0.0.0", HttpQueue.port, &block)
+      end
+      
+    end
+    
     def self.timeout_in_seconds
       60
     end
@@ -16,11 +48,11 @@ module Testjour
       TCPSocket.wait_for_service :host => "0.0.0.0", :port => port
     end
     
-    def self.with_net_http(&block)
-      Net::HTTP.start("0.0.0.0", port, &block)
+    def self.with_queue(&block)
+      yield QueueProxy.new
     end
     
-    def self.with_queue
+    def self.with_queue_server
       pid = fork do
         exec File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq")
       end

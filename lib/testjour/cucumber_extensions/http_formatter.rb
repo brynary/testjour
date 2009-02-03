@@ -35,10 +35,8 @@ module Testjour
       }
 
       def progress(status)
-        HttpQueue.with_net_http do |http|
-          post = Net::HTTP::Post.new("/results")
-          post.form_data = { "data" => CHARS[status] }
-          http.request(post)
+        HttpQueue.with_queue do |queue|
+          queue.push(:results, CHARS[status])
         end
       end
       

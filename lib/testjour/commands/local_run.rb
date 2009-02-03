@@ -15,17 +15,13 @@ module Commands
 
       require_files
       
-      HttpQueue.with_net_http do |http|
-        code = 200
+      HttpQueue.with_queue do |queue|
+        feature_file = true
         
-        while code == 200
-          get = Net::HTTP::Get.new("/feature_files")
-          response  = http.request(get)
-          code      = response.code.to_i
+        while feature_file
+          feature_file = queue.pop(:feature_files)
           
-          if code == 200
-            feature_file = response.body
-            
+          if feature_file
             File.open("testjour.log", "w") do |log|
               log.puts feature_file
             end

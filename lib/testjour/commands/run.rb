@@ -8,15 +8,13 @@ module Commands
   class Run < Command
     
     def execute
-      HttpQueue.with_queue do
+      HttpQueue.with_queue_server do
         require 'cucumber/cli/main'
         cucumber_configuration.load_language
       
-        HttpQueue.with_net_http do |http|
+        HttpQueue.with_queue do |queue|
           cucumber_configuration.feature_files.each do |feature_file|
-            post = Net::HTTP::Post.new("/feature_files")
-            post.form_data = {"data" => feature_file}
-            http.request(post)
+            queue.push(:feature_files, feature_file)
           end
         end
         
@@ -32,12 +30,13 @@ module Commands
         
         results = []
         
-        HttpQueue.with_net_http do |http|
+        HttpQueue.with_queue do |queue|
           cucumber_configuration.feature_files.each do |feature_file|
-            get = Net::HTTP::Get.new("/results")
-            results << http.request(get).body
+            results << queue.pop(:results)
           end
         end
+        
+        results.compact!
         
         if results.include?("F")
           @out_stream.write "Failed"

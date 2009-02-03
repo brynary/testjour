@@ -23,14 +23,14 @@ Spec::Runner.configure do |config|
   end
   
   def get(path)
-    Testjour::HttpQueue.with_net_http do |http|
+    Testjour::HttpQueue::QueueProxy.with_net_http do |http|
       get = Net::HTTP::Get.new(path)
       @response = http.request(get)
     end
   end
   
   def post(path, data = {})
-    Testjour::HttpQueue.with_net_http do |http|
+    Testjour::HttpQueue::QueueProxy.with_net_http do |http|
       post = Net::HTTP::Post.new(path)
       post.form_data = data
       @response = http.request(post)
