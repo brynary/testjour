@@ -49,11 +49,14 @@ module Commands
       
       results.compact!
       
+      results.each do |result|
+        @out_stream.print result
+        @out_stream.flush
+      end
+      
       if results.include?("F")
-        @out_stream.write "Failed"
         1
       else
-        @out_stream.write "Passed"
         0
       end
     end
