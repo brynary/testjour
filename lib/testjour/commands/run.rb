@@ -8,6 +8,10 @@ module Commands
     def execute
       result = nil
       
+      File.open("testjour.log", "w") do |log|
+        log.puts @args.first
+      end
+      
       silence_stream(STDOUT) do
         result = system "cucumber #{@args.first}"
       end
