@@ -14,7 +14,10 @@ module Commands
       step_mother.options = cucumber_configuration.options
 
       require_files
-      
+      work
+    end
+    
+    def work
       HttpQueue.with_queue do |queue|
         feature_file = true
         
