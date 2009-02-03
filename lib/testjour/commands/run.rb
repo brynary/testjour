@@ -18,7 +18,7 @@ module Commands
       
         HttpQueue.with_net_http do |http|
           configuration.feature_files.each do |feature_file|
-            post = Net::HTTP::Post.new("/")
+            post = Net::HTTP::Post.new("/feature_files")
             post.form_data = {"data" => feature_file}
             http.request(post)
           end

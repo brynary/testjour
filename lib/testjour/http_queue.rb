@@ -34,8 +34,8 @@ module Testjour
       15434
     end
     
-    def self.queue
-      @queue ||= Queue.new
+    def self.feature_files_queue
+      @feature_files_queue ||= Queue.new
     end
 
     def self.call(env)
@@ -63,25 +63,25 @@ module Testjour
     def handle_get
       case request.path_info
       when "/reset" then reset
-      when "/"      then pop
+      when "/feature_files"      then pop
       else error
       end
     end
   
     def handle_post
       case request.path_info
-      when "/"  then push
+      when "/feature_files"  then push
       else error
       end
     end
   
     def reset
-      self.class.queue.clear
+      feature_files.clear
       ok
     end
   
     def pop
-      feature = self.class.queue.pop(true)
+      feature = feature_files.pop(true)
       [200, { "Content-Type" => "text/plain" }, feature]
     rescue ThreadError => ex
       if ex.message =~ /queue empty/
@@ -92,10 +92,14 @@ module Testjour
     end
   
     def push
-      self.class.queue.push(request.POST["data"])
+      feature_files.push(request.POST["data"])
       ok
     end
   
+    def feature_files
+      self.class.feature_files_queue
+    end
+    
     def ok
       [200, { "Content-Type" => "text/plain" }, "OK"]
     end

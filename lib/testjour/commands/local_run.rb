@@ -19,7 +19,7 @@ module Commands
       
       HttpQueue.with_net_http do |http|
         configuration.feature_files.each do |feature_file|
-          get = Net::HTTP::Get.new("/")
+          get = Net::HTTP::Get.new("/feature_files")
           response = http.request(get)
           feature_files << response.body
         end

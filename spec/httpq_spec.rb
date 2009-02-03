@@ -10,15 +10,15 @@ describe "httpq" do
   end
   
   it "is empty by default (returns 404)" do
-    get "/"
+    get "/feature_files"
     response.code.to_i.should == 404
   end
   
   it "can be reset" do
-    post "/", "data" => "features/test.feature"
+    post "/feature_files", "data" => "features/test.feature"
     get "/reset"
     response.code.to_i.should == 200
-    get "/"
+    get "/feature_files"
     response.code.to_i.should == 404
   end
   
@@ -28,21 +28,21 @@ describe "httpq" do
   end
   
   it "accepts work" do
-    post "/", "data" => "features/test.feature"
+    post "/feature_files", "data" => "features/test.feature"
     response.code.to_i.should == 200
   end
   
   it "returns work from the queue" do
-    post "/", "data" => "features/test.feature"
-    get "/"
+    post "/feature_files", "data" => "features/test.feature"
+    get "/feature_files"
     response.code.to_i.should == 200
     response.body.should == "features/test.feature"
   end
   
   it "is empty after all work is returned" do
-    post "/", "data" => "features/test.feature"
-    get "/"
-    get "/"
+    post "/feature_files", "data" => "features/test.feature"
+    get "/feature_files"
+    get "/feature_files"
     response.code.to_i.should == 404
   end
   
