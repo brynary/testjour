@@ -1,5 +1,6 @@
 require "testjour/core_extensions/wait_for_service"
 require "net/http"
+require "json"
 
 module Testjour
   class HttpQueue
