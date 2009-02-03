@@ -1,7 +1,12 @@
 require 'rubygems'
 require "rake/gempackagetask"
 require "rake/clean"
+require "spec/rake/spectask"
 require './lib/testjour.rb'
+
+Spec::Rake::SpecTask.new do |t|
+  t.spec_opts == ["--color"]
+end
 
 spec = Gem::Specification.new do |s|
   s.name         = "testjour"

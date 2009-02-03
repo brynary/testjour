@@ -3,4 +3,5 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless $LOAD_PATH.i
 require "testjour/cli"
 
 module Testjour
+  VERSION = "0.3.0"
 end
