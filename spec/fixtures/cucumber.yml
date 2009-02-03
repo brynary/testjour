@@ -1,2 +1,2 @@
-default: --require step_definitions .
-slow: --require step_definitions slow
+default: .
+slow: slow
