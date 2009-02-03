@@ -25,9 +25,6 @@ spec = Gem::Specification.new do |s|
   s.description  = s.summary
   s.executables  = "testjour"
   s.files        = %w[History.txt MIT-LICENSE.txt README.rdoc Rakefile] + Dir["bin/*"] + Dir["lib/**/*"] + Dir["vendor/**/*"]
-  
-  s.add_dependency "systemu", ">=1.2.0"
-  s.add_dependency "dnssd", ">=0.6.0"
 end
 
 Rake::GemPackageTask.new(spec) do |package|
