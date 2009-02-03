@@ -69,14 +69,14 @@ describe "httpq" do
     it "should reset the feature files" do
       @http_queue.push(:feature_files, "features/test.feature")
       get "/reset"
-      response.code.to_i.should == 200
+      @response_code.should == 200
       @http_queue.pop(:feature_files).should be_nil
     end
     
     it "should reset the results" do
       @http_queue.push(:results, "result")
       get "/reset"
-      response.code.to_i.should == 200
+      @response_code.should == 200
       
       lambda {
         Timeout.timeout(1) do
@@ -88,11 +88,11 @@ describe "httpq" do
   
   it "raises errors for unknown GETs" do
     get "/unknown"
-    response.code.to_i.should == 500
+    @response_code.should == 500
   end
   
   it "raises errors for unknown POSTs" do
     post "/unknown"
-    response.code.to_i.should == 500
+    @response_code.should == 500
   end
 end

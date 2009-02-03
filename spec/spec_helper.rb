@@ -28,18 +28,19 @@ Spec::Runner.configure do |config|
   end
   
   def get(path)
-    Testjour::HttpQueue::QueueProxy.with_net_http do |http|
-      get = Net::HTTP::Get.new(path)
-      @response = http.request(get)
-    end
+    require "curb"
+    
+    @response = Curl::Easy.new("http://0.0.0.0:#{Testjour::HttpQueue.port}" + path)
+    @response.perform
+    @response_code = @response.response_code
   end
   
-  def post(path, data = {})
-    Testjour::HttpQueue::QueueProxy.with_net_http do |http|
-      post = Net::HTTP::Post.new(path)
-      post.form_data = data
-      @response = http.request(post)
-    end
+  def post(path)
+    require "curb"
+    
+    @response = Curl::Easy.http_post("http://0.0.0.0:#{Testjour::HttpQueue.port}" + path)
+    @response.perform
+    @response_code = @response.response_code
   end
   
   def response
