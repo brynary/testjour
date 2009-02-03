@@ -15,7 +15,7 @@ module Commands
       configuration.load_language
       step_mother.options = configuration.options
 
-      features = load_plain_text_features
+      features = load_plain_text_features(configuration.feature_files)
       
       require_files
       visit_features(features)
@@ -48,11 +48,11 @@ module Commands
       end
     end
     
-    def load_plain_text_features
+    def load_plain_text_features(files)
       features = Cucumber::Ast::Features.new(configuration.ast_filter)
       parser = Cucumber::Parser::FeatureParser.new
 
-      configuration.feature_files.each do |f|
+      files.each do |f|
         features.add_feature(parser.parse_file(f))
       end
       
