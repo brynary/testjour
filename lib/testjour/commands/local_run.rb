@@ -17,23 +17,23 @@ module Commands
       configuration.load_language
       step_mother.options = configuration.options
 
-      feature_files = []
+      require_files
       
       HttpQueue.with_net_http do |http|
         code = 200
         
         while code == 200
           get = Net::HTTP::Get.new("/feature_files")
-          response = http.request(get)
-          code = response.code.to_i
-          feature_files << response.body if code == 200
+          response  = http.request(get)
+          code      = response.code.to_i
+          
+          if code == 200
+            feature_file = response.body
+            features = load_plain_text_features(feature_file)
+            visit_features(features)
+          end
         end
       end
-      
-      features = load_plain_text_features(feature_files)
-      
-      require_files
-      visit_features(features)
     end
     
     def visit_features(features)
@@ -64,11 +64,6 @@ module Commands
       end
       
       return features
-    end
-    
-    def failed?(features)
-      features.steps[:failed].any? ||
-      (configuration.strict? && features.steps[:undefined].length)
     end
     
     def step_mother
