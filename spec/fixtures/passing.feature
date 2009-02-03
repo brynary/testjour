@@ -1,4 +1,4 @@
-Feature: Failing
+Feature: Passing
 
-  Scenario: Failing
-    Given failing
+  Scenario: Passing
+    Given passing

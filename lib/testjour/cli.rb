@@ -8,8 +8,9 @@ module Testjour
     end
     
     def initialize(args, out_stream = STDOUT, err_stream = STDERR)
-      klass = command_class(args)
-      klass.new(args[1..-1], out_stream, err_stream).execute
+      @args = args
+      @out_stream = out_stream
+      @err_stream = err_stream
     end
     
     def command_class(args)
@@ -23,7 +24,8 @@ module Testjour
     end
     
     def execute
-      0
+      klass = command_class(@args)
+      klass.new(@args[1..-1], @out_stream, @err_stream).execute || 0
     end
     
   end

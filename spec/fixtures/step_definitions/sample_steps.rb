@@ -1,6 +1,6 @@
-Given /^passing$/ do |table|
+Given /^passing$/ do
 end
 
-Given /^failing$/ do |string|
-  flunker
+Given /^failing$/ do
+  raise "FAIL"
 end

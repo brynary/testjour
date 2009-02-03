@@ -2,7 +2,7 @@ When /^I run testjour (.+)$/ do |args|
   full_dir = File.expand_path(File.dirname(__FILE__) + "/../../spec/fixtures")
   
   Dir.chdir(full_dir) do
-    @exit_code = Testjour::CLI.execute([args], @stdout = StringIO.new, @stderr = StringIO.new)
+    @exit_code = Testjour::CLI.execute(args.split, @stdout = StringIO.new, @stderr = StringIO.new)
   end
 end
 

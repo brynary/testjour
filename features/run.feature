@@ -10,6 +10,5 @@ Feature: Run Features
     
   Scenario: Run failing features
     When I run testjour run failing.feature
-    Then it should be pending
-    And it should fail with "Failed"
+    Then it should fail with "Failed"
   
