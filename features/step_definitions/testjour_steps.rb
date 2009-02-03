@@ -10,7 +10,6 @@ When /^I run `(.+)`$/ do |args|
     
     testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../../bin/testjour")
     status, @stdout, @stderr = systemu "#{testjour_path} #{args.join(' ')}"
-    # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
     @exit_code = status.exitstatus
     
     @run_time = Time.now - @start_time
