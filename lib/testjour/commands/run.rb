@@ -15,8 +15,9 @@ module Commands
       configuration.load_language
       step_mother.options = configuration.options
 
-      require_files
       features = load_plain_text_features
+      
+      require_files
       visit_features(features)
       
       if failed?(features)
