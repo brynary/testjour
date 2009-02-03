@@ -1,4 +1,6 @@
 require "testjour/commands/command"
+require "testjour/http_queue"
+require "testjour/core_extensions/wait_for_service"
 require "systemu"
 
 module Testjour
@@ -15,10 +17,11 @@ module Commands
       end
       
       Process.detach(pid)
-      
       at_exit do
         Process.kill("INT", pid)
       end
+      
+      TCPSocket.wait_for_service :host => "0.0.0.0", :port => Testjour::HttpQueue.port
       
       status, stdout, stderr = systemu(cmd)
       
