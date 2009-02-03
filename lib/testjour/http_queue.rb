@@ -15,6 +15,21 @@ module Testjour
       Net::HTTP.start("0.0.0.0", port, &block)
     end
     
+    def self.with_queue
+      pid = fork do
+        exec File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq")
+      end
+      
+      Process.detach(pid)
+      at_exit do
+        Process.kill("INT", pid)
+      end
+      
+      wait_for_service
+      
+      yield
+    end
+    
     def self.port
       15434
     end

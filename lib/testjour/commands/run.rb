@@ -12,33 +12,24 @@ module Commands
       testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
       cmd = "#{testjour_path} local:run #{@args.join(' ')}"
 
-      pid = fork do
-        exec File.expand_path(File.dirname(__FILE__) + "/../../../bin/httpq")
-      end
+      HttpQueue.with_queue do
+        require 'cucumber/cli/main'
+        configuration.load_language
       
-      Process.detach(pid)
-      at_exit do
-        Process.kill("INT", pid)
-      end
-      
-      HttpQueue.wait_for_service
-      
-      require 'cucumber/cli/main'
-      configuration.load_language
-      
-      HttpQueue.with_net_http do |http|
-        configuration.feature_files.each do |feature_file|
-          post = Net::HTTP::Post.new("/")
-          post.form_data = {"feature_file" => feature_file}
-          http.request(post)
+        HttpQueue.with_net_http do |http|
+          configuration.feature_files.each do |feature_file|
+            post = Net::HTTP::Post.new("/")
+            post.form_data = {"feature_file" => feature_file}
+            http.request(post)
+          end
         end
-      end
         
-      status, stdout, stderr = systemu(cmd)
+        status, stdout, stderr = systemu(cmd)
       
-      @out_stream.write stdout
-      @err_stream.write stderr
-      status.exitstatus
+        @out_stream.write stdout
+        @err_stream.write stderr
+        status.exitstatus
+      end
     end
     
     def configuration
