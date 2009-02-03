@@ -20,6 +20,8 @@ module Testjour
         Commands::Version
       elsif args.first == "run"
         Commands::Run
+      elsif args.first == "local:run"
+        Commands::LocalRun
       end
     end
     
