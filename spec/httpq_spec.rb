@@ -41,8 +41,11 @@ describe "httpq" do
   
   describe "results queue" do
     it "is empty by default (returns 404)" do
-      get "/results"
-      response.code.to_i.should == 404
+      lambda {
+        Timeout.timeout(1) do
+          get "/results"
+        end
+      }.should raise_error(Timeout::Error)
     end
     
     it "accepts work" do
@@ -60,8 +63,12 @@ describe "httpq" do
     it "is empty after all work is returned" do
       post "/results", "data" => "result"
       get "/results"
-      get "/results"
-      response.code.to_i.should == 404
+
+      lambda {
+        Timeout.timeout(1) do
+          get "/results"
+        end
+      }.should raise_error(Timeout::Error)
     end
   end
   
@@ -78,8 +85,12 @@ describe "httpq" do
       post "/results", "data" => "result"
       get "/reset"
       response.code.to_i.should == 200
-      get "/results"
-      response.code.to_i.should == 404
+      
+      lambda {
+        Timeout.timeout(1) do
+          get "/results"
+        end
+      }.should raise_error(Timeout::Error)
     end
   end
   

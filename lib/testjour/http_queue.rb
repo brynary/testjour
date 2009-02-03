@@ -105,7 +105,7 @@ module Testjour
       case request.path_info
       when "/reset"         then reset
       when "/feature_files" then pop(:feature_files)
-      when "/results"       then pop(:results)
+      when "/results"       then pop(:results, false)
       else error
       end
     end

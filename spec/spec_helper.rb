@@ -18,7 +18,7 @@ Spec::Runner.configure do |config|
   end
   
   def shutdown_queue
-    Process.kill "INT", $tjqueue_pid
+    Process.kill 9, $tjqueue_pid
     Process.wait($tjqueue_pid)
   end
   

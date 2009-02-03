@@ -28,6 +28,7 @@ module Testjour
       private
 
       CHARS = {
+        :undefined => 'U',
         :passed    => '.',
         :failed    => 'F',
         :pending   => 'P',

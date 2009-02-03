@@ -20,6 +20,7 @@ module Commands
       cucumber_configuration.load_language
     
       @step_count = count_steps(cucumber_configuration.feature_files)
+      @feature_files_count = cucumber_configuration.feature_files.size
       
       HttpQueue.with_queue do |queue|
         cucumber_configuration.feature_files.each do |feature_file|
@@ -32,13 +33,17 @@ module Commands
       testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
       cmd = "#{testjour_path} local:run #{@args.join(' ')}"
       
-      pid = fork do
-        silence_stream(STDOUT) do
-          exec(cmd)
+      local_slave_count.times do
+        Testjour.logger.info "Starting slave: #{cmd}"
+        
+        pid = fork do
+          silence_stream(STDOUT) do
+            exec(cmd)
+          end
         end
-      end
       
-      Process.waitpid(pid)
+        Process.detach(pid)
+      end
     end
     
     def print_results
@@ -46,20 +51,16 @@ module Commands
       
       HttpQueue.with_queue do |queue|
         @step_count.times do
-          results << queue.pop(:results)
+          result = queue.pop(:results)
+          
+          @out_stream.print result
+          @out_stream.flush
+          
+          results << result
         end
       end
       
-      results.compact.each do |result|
-        @out_stream.print result
-        @out_stream.flush
-      end
-      
-      if results.include?("F")
-        1
-      else
-        0
-      end
+      return results.include?("F") ? 1 : 0
     end
     
     def count_steps(feature_files)
@@ -77,6 +78,10 @@ module Commands
       end
       
       return features
+    end
+    
+    def local_slave_count
+      [@feature_files_count, 2].min
     end
     
     def parser

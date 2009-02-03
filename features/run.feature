@@ -16,5 +16,5 @@ Feature: Run Features
   
   Scenario: Distribute runs
     When I run `testjour run --profile=slow`
-    Then this is pending
-    Then it should run in less than 2 seconds
+    Then it should pass with ".."
+    And it should run in less than 6 seconds

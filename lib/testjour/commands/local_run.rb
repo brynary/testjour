@@ -1,6 +1,8 @@
 require "testjour/commands/command"
 require "cucumber"
+require "daemons/daemonize"
 require "testjour/cucumber_extensions/http_formatter"
+require "stringio"
 
 module Testjour
 module Commands
@@ -8,6 +10,9 @@ module Commands
   class LocalRun < Command
     
     def execute
+      daemonize
+      
+      Testjour.logger.info "Starting local:run"
       require 'cucumber/cli/main'
       
       cucumber_configuration.load_language
@@ -17,12 +22,24 @@ module Commands
       work
     end
     
+    def daemonize
+      original_working_directory = File.expand_path(".")
+      logfile = File.expand_path("./testjour.log")
+      Daemonize.daemonize(logfile)
+      Dir.chdir(original_working_directory)
+      Testjour.setup_logger
+    end
+    
     def work
       HttpQueue.with_queue do |queue|
         feature_file = true
         
         while feature_file
-          feature_file = queue.pop(:feature_files)
+          begin
+            feature_file = queue.pop(:feature_files)
+          rescue Errno::ECONNRESET, Errno::ECONNREFUSED
+            feature_file = false
+          end
           
           if feature_file
             Testjour.logger.info "Running: #{feature_file}"
@@ -40,6 +57,7 @@ module Commands
     
     def require_files
       cucumber_configuration.files_to_require.each do |lib|
+        Testjour.logger.info "Requiring: #{lib}"
         require lib
       end
     end

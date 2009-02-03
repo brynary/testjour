@@ -1,4 +1,4 @@
 Feature: Second
 
   Scenario: Second Slow
-    Given wait 1 second
+    Given wait 3 seconds

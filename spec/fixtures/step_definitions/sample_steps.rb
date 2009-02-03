@@ -5,6 +5,6 @@ Given /^failing$/ do
   raise "FAIL"
 end
 
-Given /^wait 1 second$/ do
-  sleep 1
+Given /^wait (\d) seconds?$/ do |time|
+  sleep time.to_i
 end
