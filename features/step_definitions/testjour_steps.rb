@@ -1,8 +1,10 @@
-When /^I run testjour (.+)$/ do |args|
+When /^I run `(.+)`$/ do |args|
   full_dir = File.expand_path(File.dirname(__FILE__) + "/../../spec/fixtures")
   
+  args = args.split[1..-1]
+  
   Dir.chdir(full_dir) do
-    @exit_code = Testjour::CLI.execute(args.split, @stdout = StringIO.new, @stderr = StringIO.new)
+    @exit_code = Testjour::CLI.execute(args, @stdout = StringIO.new, @stderr = StringIO.new)
   end
 end
 
