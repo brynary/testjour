@@ -6,7 +6,11 @@ module Commands
   class Run < Command
     
     def execute
-      result = system "cucumber #{@args.first}"
+      result = nil
+      
+      silence_stream(STDOUT) do
+        result = system "cucumber #{@args.first}"
+      end
       
       if result
         @out_stream.puts "Passed"
