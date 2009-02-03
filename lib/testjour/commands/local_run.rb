@@ -1,4 +1,6 @@
 require "testjour/commands/command"
+require "cucumber"
+require "testjour/cucumber_extensions/http_formatter"
 
 module Testjour
 module Commands
@@ -40,7 +42,7 @@ module Commands
     end
     
     def visit_features(features)
-      visitor = configuration.build_formatter_broadcaster(step_mother)
+      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, configuration.options)
       visitor.visit_features(features)
     end
     
