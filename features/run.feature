@@ -14,3 +14,7 @@ Feature: Run Features
     Then it should fail with "Failed"
     And testjour.log should contain "failing.feature"
   
+  Scenario: Distribute runs
+    When I run `testjour run --profile=slow`
+    Then this is pending
+    Then it should run in less than 2 seconds
