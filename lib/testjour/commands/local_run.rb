@@ -14,8 +14,8 @@ module Commands
       
       require 'cucumber/cli/main'
       
-      configuration.load_language
-      step_mother.options = configuration.options
+      cucumber_configuration.load_language
+      step_mother.options = cucumber_configuration.options
 
       require_files
       
@@ -37,26 +37,26 @@ module Commands
     end
     
     def visit_features(features)
-      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, configuration.options)
+      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, cucumber_configuration.options)
       visitor.visit_features(features)
     end
     
-    def configuration
-      return @configuration if @configuration
+    def cucumber_configuration
+      return @cucumber_configuration if @cucumber_configuration
       
-      @configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
-      @configuration.parse!(@args)
-      @configuration
+      @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
+      @cucumber_configuration.parse!(@args)
+      @cucumber_configuration
     end
     
     def require_files
-      configuration.files_to_require.each do |lib|
+      cucumber_configuration.files_to_require.each do |lib|
         require lib
       end
     end
     
     def load_plain_text_features(files)
-      features = Cucumber::Ast::Features.new(configuration.ast_filter)
+      features = Cucumber::Ast::Features.new(cucumber_configuration.ast_filter)
       parser = Cucumber::Parser::FeatureParser.new
 
       files.each do |f|

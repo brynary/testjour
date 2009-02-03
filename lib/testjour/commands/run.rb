@@ -10,10 +10,10 @@ module Commands
     def execute
       HttpQueue.with_queue do
         require 'cucumber/cli/main'
-        configuration.load_language
+        cucumber_configuration.load_language
       
         HttpQueue.with_net_http do |http|
-          configuration.feature_files.each do |feature_file|
+          cucumber_configuration.feature_files.each do |feature_file|
             post = Net::HTTP::Post.new("/feature_files")
             post.form_data = {"data" => feature_file}
             http.request(post)
@@ -33,7 +33,7 @@ module Commands
         results = []
         
         HttpQueue.with_net_http do |http|
-          configuration.feature_files.each do |feature_file|
+          cucumber_configuration.feature_files.each do |feature_file|
             get = Net::HTTP::Get.new("/results")
             results << http.request(get).body
           end
@@ -49,12 +49,12 @@ module Commands
       end
     end
     
-    def configuration
-      return @configuration if @configuration
+    def cucumber_configuration
+      return @cucumber_configuration if @cucumber_configuration
       
-      @configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
-      @configuration.parse!(@args)
-      @configuration
+      @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
+      @cucumber_configuration.parse!(@args)
+      @cucumber_configuration
     end
     
   end
