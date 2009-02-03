@@ -34,14 +34,6 @@ module Commands
       
       require_files
       visit_features(features)
-      
-      if failed?(features)
-        @out_stream.puts "Failed"
-        1
-      else
-        @out_stream.puts "Passed"
-        0
-      end
     end
     
     def visit_features(features)
