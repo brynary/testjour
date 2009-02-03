@@ -4,6 +4,12 @@ Feature: Run Features
   As a software engineer
   I want to run my Cucumber features in parallel
   
-  Scenario: Run features
+  Scenario: Run passing features
     When I run testjour run passing.feature
-    And it should pass with "Passed"
+    Then it should pass with "Passed"
+    
+  Scenario: Run failing features
+    When I run testjour run failing.feature
+    Then it should be pending
+    And it should fail with "Failed"
+  
