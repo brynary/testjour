@@ -18,7 +18,7 @@ module Testjour
         Commands::Help
       elsif args.first == "--version"
         Commands::Version
-      else
+      elsif args.first == "run"
         Commands::Run
       end
     end
