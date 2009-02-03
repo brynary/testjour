@@ -1,6 +1,5 @@
 require "testjour/core_extensions/wait_for_service"
 require "net/http"
-require "json"
 
 module Testjour
   class HttpQueue
@@ -11,7 +10,7 @@ module Testjour
       def push(queue_name, data)
         self.class.with_net_http do |http|
           request = Net::HTTP::Post.new("/" + queue_name.to_s)
-          request.form_data = { "data" => data }
+          request.form_data = { "data" => Marshal.dump(data) }
           response  = http.request(request)
           return response.code.to_i == 200
         end
@@ -23,7 +22,7 @@ module Testjour
           response = http.request(request)
           
           if response.code.to_i == 200
-            return response.body
+            return Marshal.load(response.body)
           else
             return nil
           end
