@@ -8,10 +8,15 @@ module Testjour
     end
     
     def initialize(args, out_stream = STDOUT, err_stream = STDERR)
+      klass = command_class(args)
+      klass.new(out_stream, err_stream).execute
+    end
+    
+    def command_class(args)
       if args.first == "--help"
-        Commands::Help.new(out_stream, err_stream).execute
+        Commands::Help
       else
-        Commands::Version.new(out_stream, err_stream).execute
+        Commands::Version
       end
     end
     
