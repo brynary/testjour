@@ -1,6 +1,10 @@
 module Testjour
   class HttpQueue
-  
+
+    def self.port
+      15434
+    end
+    
     def self.queue
       @queue ||= Queue.new
     end
