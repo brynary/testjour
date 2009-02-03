@@ -1,7 +1,9 @@
+require "testjour/commands/command"
+
 module Testjour
 module Commands
     
-  class Version
+  class Version < Command
     
     def initialize(out_stream = STDOUT, err_stream = STDERR)
       @out_stream = out_stream
