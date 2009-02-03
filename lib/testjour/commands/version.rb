@@ -1,4 +1,6 @@
 module Testjour
+module Commands
+    
   class Version
     
     def initialize(out_stream = STDOUT, err_stream = STDERR)
@@ -11,4 +13,6 @@ module Testjour
     end
     
   end
+  
+end
 end

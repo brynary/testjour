@@ -9,9 +9,9 @@ module Testjour
     
     def initialize(args, out_stream = STDOUT, err_stream = STDERR)
       if args.first == "--help"
-        Help.new(out_stream, err_stream).execute
+        Commands::Help.new(out_stream, err_stream).execute
       else
-        Version.new(out_stream, err_stream).execute
+        Commands::Version.new(out_stream, err_stream).execute
       end
     end
     
