@@ -1,8 +1,8 @@
 Feature: testjour CLI
 
-  In order to write software quicker
+  In order to learn how to use Testjour
   As a software engineer
-  I want to run my Cucumber features in parallel
+  I want to see Testjour help and version information
   
   Scenario: Print version information
 

@@ -1,3 +1,5 @@
+require "testjour/commands"
+
 module Testjour
   class CLI
     
@@ -5,11 +7,11 @@ module Testjour
       new(*args).execute
     end
     
-    def initialize(args, out_stream = STDOUT, error_stream = STDERR)
+    def initialize(args, out_stream = STDOUT, err_stream = STDERR)
       if args.first == "--help"
-        out_stream.puts "testjour help:"
+        Help.new(out_stream, err_stream).execute
       else
-        out_stream.puts "testjour 0.3"
+        Version.new(out_stream, err_stream).execute
       end
     end
     
