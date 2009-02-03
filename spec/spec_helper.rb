@@ -11,7 +11,12 @@ Spec::Runner.configure do |config|
   def start_queue
     $tjqueue_pid = fork do
       Dir.chdir(File.join(File.dirname(__FILE__), "..", "bin"))
-      exec "ruby httpq"
+      
+      silence_stream(STDOUT) do
+        silence_stream(STDERR) do
+          exec "ruby httpq"
+        end
+      end
     end
     
     Testjour::HttpQueue.wait_for_service

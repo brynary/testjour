@@ -17,6 +17,7 @@ Feature: Run Features
   Scenario: Run failing steps
     When I run `testjour run failing.feature`
     Then it should fail with "1 steps failed"
+    And the output should contain "FAIL"
     And testjour.log should include "failing.feature"
     
   Scenario: Run undefined steps

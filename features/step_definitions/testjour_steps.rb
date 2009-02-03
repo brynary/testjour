@@ -34,7 +34,11 @@ Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
   @stdout.should include(text)
 end
 
-Then /^(.+) should include "(.+)"$/ do |filename, text|
+Then /^the output should contain "(.+)"$/ do |text|
+  @stdout.should include(text)
+end
+
+Then /^([a-z\.]+) should include "(.+)"$/ do |filename, text|
   Dir.chdir(@full_dir) do
     IO.read(filename).should include(text)
   end

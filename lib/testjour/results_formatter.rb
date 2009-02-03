@@ -20,7 +20,7 @@ module Testjour
       @progress_bar.inc
     end
   
-    def log_result(dot, message, backtrace)
+    def log_result(dot, message = nil, backtrace = nil)
       case dot
       when "."
         @passed += 1

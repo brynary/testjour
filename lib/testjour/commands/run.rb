@@ -43,8 +43,8 @@ module Commands
       
       HttpQueue.with_queue do |queue|
         step_count.times do
-          result = queue.pop(:results).first
-          results_formatter.result(result, nil, nil)
+          result = queue.pop(:results)
+          results_formatter.result(*result)
         end
       end
       
