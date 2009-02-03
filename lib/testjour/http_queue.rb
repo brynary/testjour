@@ -2,7 +2,12 @@ require "testjour/core_extensions/wait_for_service"
 
 module Testjour
   class HttpQueue
-
+    class ResultOverdueError < StandardError; end
+    
+    def self.timeout_in_seconds
+      60
+    end
+    
     def self.run_on(handler)
       handler.run self, :Port => port
     end
@@ -89,7 +94,10 @@ module Testjour
     end
   
     def pop(queue_name, non_block = true)
-      data = queue(queue_name).pop(non_block)
+      data = Timeout.timeout(self.class.timeout_in_seconds, ResultOverdueError) do
+        queue(queue_name).pop(non_block)
+      end
+      
       [200, { "Content-Type" => "text/plain" }, data]
     rescue ThreadError => ex
       if ex.message =~ /queue empty/
