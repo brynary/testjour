@@ -81,7 +81,11 @@ module Commands
     end
     
     def local_slave_count
-      [@feature_files_count, 2].min
+      [@feature_files_count, max_local_slaves].min
+    end
+    
+    def max_local_slaves
+      2
     end
     
     def parser
