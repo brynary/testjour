@@ -27,7 +27,13 @@ module Testjour
     
     def execute
       klass = command_class(@args)
-      klass.new(@args[1..-1], @out_stream, @err_stream).execute || 0
+      
+      if klass
+        klass.new(@args[1..-1], @out_stream, @err_stream).execute || 0
+      else
+        @out_stream.puts "testjour: '#{@args.first}' is not a valid testjour command. See 'testjour --help'"
+        1
+      end
     end
     
   end
