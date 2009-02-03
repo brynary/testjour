@@ -5,6 +5,5 @@ Feature: Run Features
   I want to run my Cucumber features in parallel
   
   Scenario: Run features
-    When I run testjour run
-    Then this is pending
-    And it should pass with "foo"
+    When I run testjour run passing.feature
+    And it should pass with "Passed"

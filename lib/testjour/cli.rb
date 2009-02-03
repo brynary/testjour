@@ -15,8 +15,10 @@ module Testjour
     def command_class(args)
       if args.first == "--help"
         Commands::Help
-      else
+      elsif args.first == "--version"
         Commands::Version
+      else
+        Commands::Run
       end
     end
     
