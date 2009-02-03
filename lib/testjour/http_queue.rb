@@ -17,15 +17,13 @@ module Testjour
       end
       
       def pop(queue_name)
-        self.class.with_net_http do |http|
-          request = Net::HTTP::Get.new("/" + queue_name.to_s)
-          response = http.request(request)
-          
-          if response.code.to_i == 200
-            return Marshal.load(response.body)
-          else
-            return nil
-          end
+        c = Curl::Easy.new("http://0.0.0.0:#{Testjour::HttpQueue.port}/" + queue_name.to_s)
+        c.perform
+        
+        if c.response_code == 200
+          return Marshal.load(c.body_str)
+        else
+          return nil
         end
       end
       
@@ -126,8 +124,14 @@ module Testjour
     end
   
     def pop(queue_name, non_block = true)
-      data = Timeout.timeout(self.class.timeout_in_seconds, ResultOverdueError) do
-        queue(queue_name).pop(non_block)
+      data = nil
+      
+      begin
+        data = Timeout.timeout(self.class.timeout_in_seconds, ResultOverdueError) do
+          queue(queue_name).pop(non_block)
+        end
+      rescue ResultOverdueError
+        return error
       end
       
       [200, { "Content-Type" => "text/plain" }, data]
@@ -135,7 +139,7 @@ module Testjour
       if ex.message =~ /queue empty/
         missing
       else
-        raise
+        error
       end
     end
   
