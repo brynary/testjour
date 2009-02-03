@@ -11,13 +11,8 @@ module Commands
     
     def execute
       daemonize
-      
       Testjour.logger.info "Starting local:run"
-      require 'cucumber/cli/main'
-      
-      cucumber_configuration.load_language
-      step_mother.options = cucumber_configuration.options
-
+      initialize_cucumber
       require_files
       work
     end
@@ -28,6 +23,13 @@ module Commands
       Daemonize.daemonize(logfile)
       Dir.chdir(original_working_directory)
       Testjour.setup_logger
+    end
+    
+    def initialize_cucumber
+      require 'cucumber/cli/main'
+      
+      cucumber_configuration.load_language
+      step_mother.options = cucumber_configuration.options
     end
     
     def work
