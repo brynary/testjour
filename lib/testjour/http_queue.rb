@@ -88,8 +88,8 @@ module Testjour
       ok
     end
   
-    def pop(queue_name)
-      data = queue(queue_name).pop(true)
+    def pop(queue_name, non_block = true)
+      data = queue(queue_name).pop(non_block)
       [200, { "Content-Type" => "text/plain" }, data]
     rescue ThreadError => ex
       if ex.message =~ /queue empty/
