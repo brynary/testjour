@@ -15,7 +15,17 @@ module Commands
       configuration.load_language
       step_mother.options = configuration.options
 
-      features = load_plain_text_features(configuration.feature_files)
+      feature_files = []
+      
+      HttpQueue.with_net_http do |http|
+        configuration.feature_files.each do |feature_file|
+          get = Net::HTTP::Get.new("/")
+          response = http.request(get)
+          feature_files << response.body
+        end
+      end
+      
+      features = load_plain_text_features(feature_files)
       
       require_files
       visit_features(features)
