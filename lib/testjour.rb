@@ -17,7 +17,9 @@ end
 def detached_exec(command)
   pid = fork do
     silence_stream(STDOUT) do
-      exec(command)
+      silence_stream(STDERR) do
+        exec(command)
+      end
     end
   end
 
