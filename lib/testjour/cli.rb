@@ -9,7 +9,7 @@ module Testjour
     
     def initialize(args, out_stream = STDOUT, err_stream = STDERR)
       klass = command_class(args)
-      klass.new(out_stream, err_stream).execute
+      klass.new(args[1..-1], out_stream, err_stream).execute
     end
     
     def command_class(args)
