@@ -30,20 +30,21 @@ module Commands
     end
     
     def start_slaves
-      testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
-      cmd = "#{testjour_path} local:run #{@args.join(' ')}"
-      
       local_slave_count.times do
-        Testjour.logger.info "Starting slave: #{cmd}"
-        
-        pid = fork do
-          silence_stream(STDOUT) do
-            exec(cmd)
-          end
-        end
-      
-        Process.detach(pid)
+        start_slave
       end
+    end
+    
+    def start_slave
+      Testjour.logger.info "Starting slave: #{local_run_command}"
+      
+      pid = fork do
+        silence_stream(STDOUT) do
+          exec(local_run_command)
+        end
+      end
+    
+      Process.detach(pid)
     end
     
     def print_results
@@ -70,30 +71,20 @@ module Commands
       return visitor.count
     end
     
-    def load_plain_text_features(files)
-      features = Cucumber::Ast::Features.new(cucumber_configuration.ast_filter)
-      
-      Array(files).each do |file|
-        features.add_feature(parser.parse_file(file))
-      end
-      
-      return features
-    end
-    
     def local_slave_count
       [@feature_files_count, max_local_slaves].min
     end
     
+    def local_run_command
+      "#{testjour_path} local:run #{@args.join(' ')}"
+    end
+    
+    def testjour_path
+      File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
+    end
+    
     def max_local_slaves
       2
-    end
-    
-    def parser
-      @parser ||= Cucumber::Parser::FeatureParser.new
-    end
-    
-    def step_mother
-      Cucumber::Cli::Main.instance_variable_get("@step_mother")
     end
     
   end

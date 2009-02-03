@@ -43,14 +43,14 @@ module Commands
           
           if feature_file
             Testjour.logger.info "Running: #{feature_file}"
-            features = load_plain_text_feature(feature_file)
-            visit_features(features)
+            features = load_plain_text_features(feature_file)
+            execute_features(features)
           end
         end
       end
     end
     
-    def visit_features(features)
+    def execute_features(features)
       visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, cucumber_configuration.options)
       visitor.visit_features(features)
     end
@@ -60,20 +60,6 @@ module Commands
         Testjour.logger.info "Requiring: #{lib}"
         require lib
       end
-    end
-    
-    def load_plain_text_feature(file)
-      features = Cucumber::Ast::Features.new(cucumber_configuration.ast_filter)
-      features.add_feature(parser.parse_file(file))
-      return features
-    end
-    
-    def parser
-      @parser ||= Cucumber::Parser::FeatureParser.new
-    end
-    
-    def step_mother
-      Cucumber::Cli::Main.instance_variable_get("@step_mother")
     end
     
   end
