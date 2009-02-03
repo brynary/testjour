@@ -21,7 +21,7 @@ Then /^it should (pass|fail) with "(.+)"$/ do |pass_or_fail, text|
     @exit_code.should_not == 0
   end
   
-  @stdout.should be_like(text)
+  @stdout.should include(text)
 end
 
 Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
@@ -31,7 +31,7 @@ Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
     @exit_code.should_not == 0
   end
   
-  @stdout.should be_like(text)
+  @stdout.should include(text)
 end
 
 Then /^(.+) should include "(.+)"$/ do |filename, text|

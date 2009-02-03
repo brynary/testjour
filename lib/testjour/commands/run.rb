@@ -1,6 +1,7 @@
 require "testjour/commands/command"
 require "testjour/http_queue"
 require "testjour/cucumber_extensions/step_counter"
+require "testjour/results_formatter"
 
 module Testjour
 module Commands
@@ -38,20 +39,18 @@ module Commands
     end
     
     def print_results
-      results = []
+      results_formatter = ResultsFormatter.new(step_count)
       
       HttpQueue.with_queue do |queue|
         step_count.times do
           result = queue.pop(:results)
-          
-          @out_stream.print result
-          @out_stream.flush
-          
-          results << result
+          results_formatter.result(result, nil, nil)
         end
       end
       
-      return results.include?("F") ? 1 : 0
+      results_formatter.finish
+      
+      return results_formatter.failed? ? 1 : 0
     end
     
     def count_steps(feature_files)
