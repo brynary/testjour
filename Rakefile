@@ -12,6 +12,9 @@ end
 Cucumber::Rake::Task.new do |t|
 end
 
+desc "Run the specs and the features"
+task :default => ["spec", "features"]
+
 spec = Gem::Specification.new do |s|
   s.name         = "testjour"
   s.version      = Testjour::VERSION
