@@ -8,10 +8,6 @@ module Commands
   class LocalRun < Command
     
     def execute
-      File.open("testjour.log", "w") do |log|
-        log.puts @args.first
-      end
-      
       require 'cucumber/cli/main'
       
       cucumber_configuration.load_language
@@ -29,7 +25,12 @@ module Commands
           
           if code == 200
             feature_file = response.body
-            features = load_plain_text_features(feature_file)
+            
+            File.open("testjour.log", "w") do |log|
+              log.puts feature_file
+            end
+            
+            features = load_plain_text_feature(feature_file)
             visit_features(features)
           end
         end
@@ -47,15 +48,14 @@ module Commands
       end
     end
     
-    def load_plain_text_features(files)
+    def load_plain_text_feature(file)
       features = Cucumber::Ast::Features.new(cucumber_configuration.ast_filter)
-      parser = Cucumber::Parser::FeatureParser.new
-
-      files.each do |f|
-        features.add_feature(parser.parse_file(f))
-      end
-      
+      features.add_feature(parser.parse_file(file))
       return features
+    end
+    
+    def parser
+      @parser ||= Cucumber::Parser::FeatureParser.new
     end
     
     def step_mother
