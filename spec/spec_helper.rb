@@ -3,7 +3,7 @@ require "spec"
 require "fileutils"
 require "net/http"
 
-require File.expand_path(File.dirname(__FILE__) + "/../lib/core_extensions/wait_for_service")
+require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour/core_extensions/wait_for_service")
 
 Spec::Runner.configure do |config|
 
