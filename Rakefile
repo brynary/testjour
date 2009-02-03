@@ -2,10 +2,14 @@ require 'rubygems'
 require "rake/gempackagetask"
 require "rake/clean"
 require "spec/rake/spectask"
+require "cucumber/rake/task"
 require './lib/testjour.rb'
 
 Spec::Rake::SpecTask.new do |t|
   t.spec_opts == ["--color"]
+end
+
+Cucumber::Rake::Task.new do |t|
 end
 
 spec = Gem::Specification.new do |s|
