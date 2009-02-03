@@ -1,5 +1,5 @@
 require "testjour/core_extensions/wait_for_service"
-require "net/http"
+require "curb"
 
 module Testjour
   class HttpQueue
@@ -8,12 +8,10 @@ module Testjour
     class QueueProxy
       
       def push(queue_name, data)
-        self.class.with_net_http do |http|
-          request = Net::HTTP::Post.new("/" + queue_name.to_s)
-          request.form_data = { "data" => Marshal.dump(data) }
-          response  = http.request(request)
-          return response.code.to_i == 200
-        end
+        c = Curl::Easy.http_post("http://0.0.0.0:#{Testjour::HttpQueue.port}/" + queue_name.to_s,
+          Curl::PostField.content("data",  Marshal.dump(data)))
+          
+        c.response_code == 200
       end
       
       def pop(queue_name)
