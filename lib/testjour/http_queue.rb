@@ -34,12 +34,11 @@ module Testjour
       15434
     end
     
-    def self.feature_files_queue
-      @feature_files_queue ||= Queue.new
-    end
-    
-    def self.results_queue
-      @results_queue ||= Queue.new
+    def self.queues
+      @queues ||= {
+        :feature_files  => Queue.new,
+        :results        => Queue.new
+      }
     end
 
     def self.call(env)
@@ -66,40 +65,31 @@ module Testjour
   
     def handle_get
       case request.path_info
-      when "/reset" then reset
-      when "/feature_files" then pop
-      when "/results" then pop_results
+      when "/reset"         then reset
+      when "/feature_files" then pop(:feature_files)
+      when "/results"       then pop(:results)
       else error
       end
     end
   
     def handle_post
       case request.path_info
-      when "/feature_files" then push
-      when "/results" then push_results
+      when "/feature_files" then push(:feature_files)
+      when "/results"       then push(:results)
       else error
       end
     end
   
     def reset
-      feature_files.clear
-      results.clear
+      self.class.queues.each do |name, queue|
+        queue.clear
+      end
+      
       ok
     end
   
-    def pop
-      feature = feature_files.pop(true)
-      [200, { "Content-Type" => "text/plain" }, feature]
-    rescue ThreadError => ex
-      if ex.message =~ /queue empty/
-        missing
-      else
-        raise
-      end
-    end
-    
-    def pop_results
-      data = results.pop(true)
+    def pop(queue_name)
+      data = queue(queue_name).pop(true)
       [200, { "Content-Type" => "text/plain" }, data]
     rescue ThreadError => ex
       if ex.message =~ /queue empty/
@@ -109,22 +99,13 @@ module Testjour
       end
     end
   
-    def push
-      feature_files.push(request.POST["data"])
-      ok
-    end
-    
-    def push_results
-      results.push(request.POST["data"])
+    def push(queue_name)
+      queue(queue_name).push(request.POST["data"])
       ok
     end
   
-    def feature_files
-      self.class.feature_files_queue
-    end
-    
-    def results
-      self.class.results_queue
+    def queue(name)
+      self.class.queues[name]
     end
     
     def ok
