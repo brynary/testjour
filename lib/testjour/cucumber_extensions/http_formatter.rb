@@ -37,7 +37,7 @@ module Testjour
 
     def progress(status)
       HttpQueue.with_queue do |queue|
-        queue.push(:results, CHARS[status])
+        queue.push(:results, [CHARS[status]])
       end
     end
     
