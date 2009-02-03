@@ -6,8 +6,8 @@ require "webrick"
 
 class HttpQueue
   
-  class << self
-    attr_accessor :feature
+  def self.queue
+    @queue ||= Queue.new
   end
 
   def self.call(env)
@@ -15,16 +15,7 @@ class HttpQueue
   end
   
   def initialize(env)
-    @env = env
     @request = Rack::Request.new(env)
-  end
-  
-  def env
-    @env
-  end
-  
-  def request
-    @request
   end
   
   def call
@@ -36,6 +27,10 @@ class HttpQueue
   end
   
 protected
+  
+  def request
+    @request
+  end
   
   def handle_get
     case request.path_info
@@ -52,32 +47,37 @@ protected
     end
   end
   
-  def error
-    [500, { "Content-Type" => "text/plain" }, "Server error"]
-  end
-  
   def reset
-    self.class.feature = nil
-    success
+    self.class.queue.clear
+    ok
   end
   
   def pop
-    if self.class.feature
-      response = [200, { "Content-Type" => "text/plain" }, self.class.feature]
-      self.class.feature = nil
-      response
+    feature = self.class.queue.pop(true)
+    [200, { "Content-Type" => "text/plain" }, feature]
+  rescue ThreadError => ex
+    if ex.message =~ /queue empty/
+      missing
     else
-      [404, { "Content-Type" => "text/plain" }, "Empty"]
+      raise
     end
   end
   
   def push
-    self.class.feature = request.POST["feature_file"]
-    success
+    self.class.queue.push(request.POST["feature_file"])
+    ok
   end
   
-  def success
+  def ok
     [200, { "Content-Type" => "text/plain" }, "OK"]
+  end
+  
+  def missing
+    [404, { "Content-Type" => "text/plain" }, "Not Found"]
+  end
+  
+  def error
+    [500, { "Content-Type" => "text/plain" }, "Server error"]
   end
   
 end
