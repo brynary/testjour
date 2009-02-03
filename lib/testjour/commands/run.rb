@@ -1,4 +1,5 @@
 require "testjour/commands/command"
+require "systemu"
 
 module Testjour
 module Commands
@@ -8,7 +9,12 @@ module Commands
     def execute
       testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
       cmd = "#{testjour_path} local:run #{@args.join(' ')}"
-      exec cmd
+
+      status, stdout, stderr = systemu(cmd)
+      
+      @out_stream.write stdout
+      @err_stream.write stderr
+      status.exitstatus
     end
     
   end
