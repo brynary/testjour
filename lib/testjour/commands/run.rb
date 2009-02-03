@@ -9,9 +9,6 @@ module Commands
   class Run < Command
     
     def execute
-      testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
-      cmd = "#{testjour_path} local:run #{@args.join(' ')}"
-
       HttpQueue.with_queue do
         require 'cucumber/cli/main'
         configuration.load_language
@@ -24,11 +21,26 @@ module Commands
           end
         end
         
-        status, stdout, stderr = systemu(cmd)
+        testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
+        cmd = "#{testjour_path} local:run #{@args.join(' ')}"
+        systemu(cmd)
       
-        @out_stream.write stdout
-        @err_stream.write stderr
-        status.exitstatus
+        results = []
+        
+        HttpQueue.with_net_http do |http|
+          configuration.feature_files.each do |feature_file|
+            get = Net::HTTP::Get.new("/results")
+            results << http.request(get).body
+          end
+        end
+        
+        if results.include?("F")
+          @out_stream.write "Failed"
+          1
+        else
+          @out_stream.write "Passed"
+          0
+        end
       end
     end
     
