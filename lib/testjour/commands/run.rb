@@ -18,9 +18,6 @@ module Commands
     def queue_features
       require 'cucumber/cli/main'
       cucumber_configuration.load_language
-    
-      @step_count = count_steps(cucumber_configuration.feature_files)
-      @feature_files_count = cucumber_configuration.feature_files.size
       
       HttpQueue.with_queue do |queue|
         cucumber_configuration.feature_files.each do |feature_file|
@@ -37,21 +34,14 @@ module Commands
     
     def start_slave
       Testjour.logger.info "Starting slave: #{local_run_command}"
-      
-      pid = fork do
-        silence_stream(STDOUT) do
-          exec(local_run_command)
-        end
-      end
-    
-      Process.detach(pid)
+      detached_exec(local_run_command)
     end
     
     def print_results
       results = []
       
       HttpQueue.with_queue do |queue|
-        @step_count.times do
+        step_count.times do
           result = queue.pop(:results)
           
           @out_stream.print result
@@ -71,8 +61,16 @@ module Commands
       return visitor.count
     end
     
+    def step_count
+      @step_count ||= count_steps(cucumber_configuration.feature_files)
+    end
+    
     def local_slave_count
-      [@feature_files_count, max_local_slaves].min
+      [feature_files_count, max_local_slaves].min
+    end
+    
+    def feature_files_count
+      cucumber_configuration.feature_files.size
     end
     
     def local_run_command

@@ -54,18 +54,17 @@ module Testjour
     end
     
     def self.with_queue_server
-      pid = fork do
-        exec File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq")
-      end
-      
-      Process.detach(pid)
-      at_exit do
-        Process.kill("INT", pid)
-      end
-      
+      pid = detached_exec(File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq"))
+      kill_at_exit(pid)
       wait_for_service
       
       yield
+    end
+    
+    def self.kill_at_exit(pid)
+      at_exit do
+        Process.kill("INT", pid)
+      end
     end
     
     def self.port

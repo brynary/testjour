@@ -13,6 +13,18 @@ ensure
   stream.reopen(old_stream)
 end
 
+
+def detached_exec(command)
+  pid = fork do
+    silence_stream(STDOUT) do
+      exec(command)
+    end
+  end
+
+  Process.detach(pid)
+  return pid
+end
+
 module Testjour
   VERSION = "0.3.0"
   
