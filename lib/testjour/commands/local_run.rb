@@ -20,10 +20,13 @@ module Commands
       feature_files = []
       
       HttpQueue.with_net_http do |http|
-        configuration.feature_files.each do |feature_file|
+        code = 200
+        
+        while code == 200
           get = Net::HTTP::Get.new("/feature_files")
           response = http.request(get)
-          feature_files << response.body
+          code = response.code.to_i
+          feature_files << response.body if code == 200
         end
       end
       
