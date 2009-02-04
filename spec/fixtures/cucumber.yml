@@ -1,3 +1,2 @@
 default: .
-slow: slow
 failing: failing.feature

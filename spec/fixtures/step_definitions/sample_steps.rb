@@ -8,7 +8,3 @@ end
 Given /^undefined$/ do
   pending
 end
-
-Given /^wait (\d) seconds?$/ do |time|
-  sleep time.to_i
-end
