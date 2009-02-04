@@ -31,6 +31,8 @@ Feature: Run Features
     And testjour.log should include "undefined.feature"
   
   Scenario: Distribute runs
-    When I run `testjour -r step_definitions slow`
-    Then it should pass with "2 steps passed"
-    And it should run in less than 6 seconds
+    When I run `testjour failing.feature passing.feature`
+    Then it should fail with "1 steps passed"
+    And the output should contain "FAIL"
+    And the output should contain "1 steps failed"
+    And it should run on two slaves

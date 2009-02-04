@@ -44,6 +44,12 @@ Then /^([a-z\.]+) should include "(.+)"$/ do |filename, text|
   end
 end
 
-Then /^it should run in less than (\d+) seconds?$/ do |seconds|
-  @run_time.should < seconds.to_f
+Then /^it should run on two slaves$/ do
+  Dir.chdir(@full_dir) do
+    log = IO.read("testjour.log")
+    pids = log.scan(/\[\d+\]/).uniq
+    
+    # One master process and two slaves
+    pids.size.should == 3
+  end
 end
