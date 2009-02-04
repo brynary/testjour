@@ -12,7 +12,7 @@ module Testjour
       @progress_bar = ProgressBar.new("0 failures", step_count)
     end
   
-    def result(dot, message, backtrace)
+    def result(dot, message = nil, backtrace = nil)
       log_result(dot, message, backtrace)
     
       @progress_bar.colorer = colorer
