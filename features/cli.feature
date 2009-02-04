@@ -15,10 +15,3 @@ Feature: testjour CLI
       """
       testjour help:
       """
-      
-  Scenario: Reject unknown commands
-    When I run `testjour blah`
-    Then it should fail with
-      """
-      testjour: 'blah' is not a valid testjour command. See 'testjour --help'
-      """

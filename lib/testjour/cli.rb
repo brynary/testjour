@@ -15,25 +15,23 @@ module Testjour
     
     def command_class(args)
       if args.first == "--help"
+        @args_for_command = @args[1..-1]
         Commands::Help
       elsif args.first == "--version"
+        @args_for_command = @args[1..-1]
         Commands::Version
-      elsif args.first == "run"
-        Commands::Run
       elsif args.first == "local:run"
+        @args_for_command = @args[1..-1]
         Commands::LocalRun
+      else
+        @args_for_command = @args.dup
+        Commands::Run
       end
     end
     
     def execute
       klass = command_class(@args)
-      
-      if klass
-        klass.new(@args[1..-1], @out_stream, @err_stream).execute || 0
-      else
-        @out_stream.puts "testjour: '#{@args.first}' is not a valid testjour command. See 'testjour --help'"
-        1
-      end
+      klass.new(@args_for_command, @out_stream, @err_stream).execute || 0
     end
     
   end
