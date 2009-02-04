@@ -13,7 +13,6 @@ module Testjour
       def visit_step(step)
         @count += 1
       end
-      
     end
 
 end

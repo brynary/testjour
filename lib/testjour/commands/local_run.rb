@@ -39,7 +39,7 @@ module Commands
         while feature_file
           begin
             feature_file = queue.pop(:feature_files)
-          rescue Errno::ECONNRESET, Errno::ECONNREFUSED
+          rescue Curl::Err::ConnectionFailedError
             feature_file = false
           end
           
