@@ -2,6 +2,7 @@ require "testjour/commands/command"
 require "cucumber"
 require "daemons/daemonize"
 require "testjour/cucumber_extensions/http_formatter"
+require "testjour/mysql"
 require "stringio"
 
 module Testjour
@@ -12,6 +13,19 @@ module Commands
     def execute
       daemonize
       Testjour.logger.info "Starting local:run"
+      
+      mysql = MysqlDatabaseSetup.new
+      mysql.create_database
+      ENV["TESTJOUR_DB"] = mysql.runner_database_name
+      
+      silence_stream(STDOUT) do
+        system schema_load_command(mysql.runner_database_name)
+      end
+      
+      at_exit do
+        mysql.drop_database
+      end
+      
       initialize_cucumber
       require_files
       work
@@ -62,6 +76,10 @@ module Commands
         Testjour.logger.info "Requiring: #{lib}"
         require lib
       end
+    end
+    
+    def schema_load_command(database_name)
+      "#{testjour_path} mysql:load_schema #{database_name}"
     end
     
   end

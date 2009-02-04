@@ -15,6 +15,7 @@ module Commands
       return @cucumber_configuration if @cucumber_configuration
       
       @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
+      Testjour.logger.info "Arguments for Cucumber: #{@args.inspect}"
       @cucumber_configuration.parse!(@args.dup)
       @cucumber_configuration
     end
@@ -35,6 +36,10 @@ module Commands
     
     def step_mother
       Cucumber::Cli::Main.instance_variable_get("@step_mother")
+    end
+    
+    def testjour_path
+      File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
     end
     
   end

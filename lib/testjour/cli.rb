@@ -23,6 +23,9 @@ module Testjour
       elsif args.first == "local:run"
         @args_for_command = @args[1..-1]
         Commands::LocalRun
+      elsif args.first == "mysql:load_schema"
+        @args_for_command = @args[1..-1]
+        Commands::LoadSchema
       else
         @args_for_command = @args.dup
         Commands::Run
