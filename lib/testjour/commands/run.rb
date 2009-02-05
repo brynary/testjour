@@ -20,7 +20,7 @@ module Commands
       require 'cucumber/cli/main'
       cucumber_configuration.load_language
       
-      HttpQueue.with_queue do |queue|
+      HttpQueue.with_queue(queue_uri) do |queue|
         cucumber_configuration.feature_files.each do |feature_file|
           queue.push(:feature_files, feature_file)
         end
@@ -41,7 +41,7 @@ module Commands
     def print_results
       results_formatter = ResultsFormatter.new(step_count)
       
-      HttpQueue.with_queue do |queue|
+      HttpQueue.with_queue(queue_uri) do |queue|
         step_count.times do
           result = queue.pop(:results)
           results_formatter.result(*result)
@@ -73,7 +73,11 @@ module Commands
     end
     
     def local_run_command
-      "#{testjour_path} local:run http://localhost:#{Testjour::HttpQueue.port}/ #{@args.join(' ')}"
+      "#{testjour_path} local:run #{queue_uri} #{@args.join(' ')}"
+    end
+    
+    def queue_uri
+      "http://localhost:#{Testjour::HttpQueue.port}/"
     end
     
     def testjour_path

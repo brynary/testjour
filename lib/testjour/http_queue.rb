@@ -7,15 +7,23 @@ module Testjour
     
     class QueueProxy
       
+      def initialize(uri = nil)
+        @uri = uri
+      end
+      
+      def uri
+        @uri || "http://0.0.0.0:#{Testjour::HttpQueue.port}/"
+      end
+      
       def push(queue_name, data)
-        c = Curl::Easy.http_post("http://0.0.0.0:#{Testjour::HttpQueue.port}/" + queue_name.to_s,
+        c = Curl::Easy.http_post(uri + queue_name.to_s,
           Curl::PostField.content("data",  Marshal.dump(data)))
           
         c.response_code == 200
       end
       
       def pop(queue_name)
-        c = Curl::Easy.new("http://0.0.0.0:#{Testjour::HttpQueue.port}/" + queue_name.to_s)
+        c = Curl::Easy.new(uri + queue_name.to_s)
         c.perform
         
         if c.response_code == 200
@@ -45,8 +53,8 @@ module Testjour
       TCPSocket.wait_for_service :host => "0.0.0.0", :port => port
     end
     
-    def self.with_queue(&block)
-      yield QueueProxy.new
+    def self.with_queue(uri = nil, &block)
+      yield QueueProxy.new(uri)
     end
     
     def self.with_queue_server
