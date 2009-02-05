@@ -63,7 +63,7 @@ module Commands
     end
     
     def work
-      HttpQueue.with_queue do |queue|
+      HttpQueue.with_queue(@queue_uri) do |queue|
         feature_file = true
         
         while feature_file
