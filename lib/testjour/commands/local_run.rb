@@ -14,11 +14,17 @@ module Commands
       daemonize
       Testjour.logger.info "Starting local:run"
       
+      parse_options
+      
       setup_mysql if mysql_mode?
       
       initialize_cucumber
       require_files
       work
+    end
+    
+    def parse_options
+      @queue_uri = @args.shift
     end
     
     def setup_mysql

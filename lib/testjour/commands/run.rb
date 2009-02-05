@@ -73,7 +73,7 @@ module Commands
     end
     
     def local_run_command
-      "#{testjour_path} local:run #{@args.join(' ')}"
+      "#{testjour_path} local:run http://localhost:#{Testjour::HttpQueue.port}/ #{@args.join(' ')}"
     end
     
     def testjour_path
