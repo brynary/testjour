@@ -44,12 +44,12 @@ Then /^([a-z\.]+) should include "(.+)"$/ do |filename, text|
   end
 end
 
-Then /^it should run on two slaves$/ do
+Then /^it should run on (\d+) slaves?$/ do |count|
   Dir.chdir(@full_dir) do
     log = IO.read("testjour.log")
     pids = log.scan(/\[\d+\]/).uniq
     
-    # One master process and two slaves
-    pids.size.should == 3
+    # One master process and the slaves
+    pids.size.should == count.to_i + 1
   end
 end

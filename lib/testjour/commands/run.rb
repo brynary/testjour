@@ -9,10 +9,28 @@ module Commands
   class Run < Command
     
     def execute
+      parse_options
+      
+      if @max_local_slaves.zero?
+        puts "No processes"
+        return 1
+      end
+      
       HttpQueue.with_queue_server do
         queue_features
         start_slaves
         print_results
+      end
+    end
+    
+    def parse_options
+      @max_local_slaves = 2
+      
+      @args.each do |arg|
+        if arg =~ /--local/
+          @max_local_slaves = arg.split("=").last.to_i
+          @args.delete(arg)
+        end
       end
     end
     
@@ -65,7 +83,7 @@ module Commands
     end
     
     def local_slave_count
-      [feature_files_count, max_local_slaves].min
+      [feature_files_count, @max_local_slaves].min
     end
     
     def feature_files_count
@@ -82,10 +100,6 @@ module Commands
     
     def testjour_path
       File.expand_path(File.dirname(__FILE__) + "/../../../bin/testjour")
-    end
-    
-    def max_local_slaves
-      2
     end
     
   end
