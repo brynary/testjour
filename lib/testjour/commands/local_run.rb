@@ -14,33 +14,31 @@ module Commands
       daemonize
       Testjour.logger.info "Starting local:run"
       
-      mysql = false
-      
-      if File.exist?("testjour.yml")
-        testjour_yml = File.read("testjour.yml")
-        
-        if testjour_yml.include?("--mysql")
-          mysql = true
-        end
-      end
-      
-      if mysql
-        mysql = MysqlDatabaseSetup.new
-        mysql.create_database
-        ENV["TESTJOUR_DB"] = mysql.runner_database_name
-      
-        silence_stream(STDOUT) do
-          system schema_load_command(mysql.runner_database_name)
-        end
-      
-        at_exit do
-          mysql.drop_database
-        end
-      end
+      setup_mysql if mysql_mode?
       
       initialize_cucumber
       require_files
       work
+    end
+    
+    def setup_mysql
+      mysql = MysqlDatabaseSetup.new
+      mysql.create_database
+      ENV["TESTJOUR_DB"] = mysql.runner_database_name
+    
+      silence_stream(STDOUT) do
+        system schema_load_command(mysql.runner_database_name)
+      end
+    
+      at_exit do
+        mysql.drop_database
+      end
+    end
+    
+    def mysql_mode?
+      return false unless File.exist?("testjour.yml")
+      testjour_yml = File.read("testjour.yml")
+      testjour_yml.include?("--mysql")
     end
     
     def daemonize
