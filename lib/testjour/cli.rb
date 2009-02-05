@@ -20,9 +20,9 @@ module Testjour
       elsif args.first == "--version"
         @args_for_command = @args[1..-1]
         Commands::Version
-      elsif args.first == "local:run"
+      elsif args.first == "run:slave"
         @args_for_command = @args[1..-1]
-        Commands::LocalRun
+        Commands::RunSlave
       elsif args.first == "mysql:load_schema"
         @args_for_command = @args[1..-1]
         Commands::LoadSchema

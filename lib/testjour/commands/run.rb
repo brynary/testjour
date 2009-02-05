@@ -79,7 +79,7 @@ module Commands
     end
     
     def local_run_command
-      "#{testjour_path} local:run #{queue_uri} #{@args.join(' ')}"
+      "#{testjour_path} run:slave #{queue_uri} #{@args.join(' ')}"
     end
     
     def queue_uri

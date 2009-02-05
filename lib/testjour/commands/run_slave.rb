@@ -8,11 +8,11 @@ require "stringio"
 module Testjour
 module Commands
     
-  class LocalRun < Command
+  class RunSlave < Command
     
     def execute
       daemonize
-      Testjour.logger.info "Starting local:run"
+      Testjour.logger.info "Starting run:slave"
       
       parse_options
       
