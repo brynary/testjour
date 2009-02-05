@@ -29,17 +29,6 @@ Feature: Run Features
     When I run `testjour -r support/env.rb -r step_definitions undefined.feature`
     Then it should pass with "1 steps pending"
     And testjour.log should include "undefined.feature"
-
-  Scenario: Reject zero workers
-    When I run `testjour --local=0 -r support/env.rb -r step_definitions undefined.feature`
-    Then it should fail with "No processes"
-    
-  Scenario: Respect max local workers
-    When I run `testjour --local=1 failing.feature passing.feature`
-    Then it should fail with "1 steps passed"
-    And the output should contain "FAIL"
-    And the output should contain "1 steps failed"
-    And it should run on 1 slave
     
   Scenario: Distribute runs
     When I run `testjour failing.feature passing.feature`

@@ -11,11 +11,6 @@ module Commands
     def execute
       parse_options
       
-      if @max_local_slaves.zero?
-        puts "No processes"
-        return 1
-      end
-      
       HttpQueue.with_queue_server do
         queue_features
         start_slaves
@@ -25,13 +20,6 @@ module Commands
     
     def parse_options
       @max_local_slaves = 2
-      
-      @args.each do |arg|
-        if arg =~ /--local/
-          @max_local_slaves = arg.split("=").last.to_i
-          @args.delete(arg)
-        end
-      end
     end
     
     def queue_features
