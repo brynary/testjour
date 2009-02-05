@@ -83,7 +83,7 @@ module Commands
     end
     
     def execute_features(features)
-      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, cucumber_configuration.options)
+      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, cucumber_configuration.options, @queue_uri)
       visitor.visit_features(features)
     end
     

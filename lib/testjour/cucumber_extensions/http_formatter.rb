@@ -5,10 +5,11 @@ module Testjour
   class HttpFormatter < Cucumber::Ast::Visitor
     include Cucumber::Formatter::Console
 
-    def initialize(step_mother, io, options)
+    def initialize(step_mother, io, options, queue_uri)
       super(step_mother)
       @io = io
       @options = options
+      @queue_uri = queue_uri
     end
     
     def visit_multiline_arg(multiline_arg, status)
@@ -48,7 +49,7 @@ module Testjour
     }
 
     def progress(status, message = nil, backtrace = nil)
-      HttpQueue.with_queue do |queue|
+      HttpQueue.with_queue(@queue_uri) do |queue|
         queue.push(:results, [CHARS[status], message, backtrace])
       end
     end
