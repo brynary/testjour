@@ -25,18 +25,20 @@ module Commands
     
     def parse_options
       @queue_uri = @args.shift
-      @msyql_mode = @args.delete("--create-mysql-db")
+      @mysql_mode = @args.delete("--create-mysql-db")
     end
     
     def setup_mysql
       mysql = MysqlDatabaseSetup.new
       mysql.create_database
       ENV["TESTJOUR_DB"] = mysql.runner_database_name
-    
-      silence_stream(STDOUT) do
-        system schema_load_command(mysql.runner_database_name)
+      
+      if File.exist?(File.expand_path("./db/schema.rb"))
+        silence_stream(STDOUT) do
+          system schema_load_command(mysql.runner_database_name)
+        end
       end
-    
+          
       at_exit do
         mysql.drop_database
       end

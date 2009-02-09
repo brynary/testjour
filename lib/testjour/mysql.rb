@@ -11,11 +11,15 @@ module Testjour
     end
     
     def create_database
-      system "mysqladmin create -uroot #{runner_database_name}"
+      cmd = "mysqladmin create -uroot #{runner_database_name}"
+      Testjour.logger.info "Creating DB: #{cmd}"
+      system cmd
     end
     
     def drop_database
-      system "echo y | mysqladmin drop -uroot #{runner_database_name}"
+      cmd = "echo y | mysqladmin drop -uroot #{runner_database_name}"
+      Testjour.logger.info "Dropping DB: #{cmd}"
+      system cmd
     end
 
     def load_schema

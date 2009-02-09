@@ -15,8 +15,12 @@ module Commands
       return @cucumber_configuration if @cucumber_configuration
       
       @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
-      Testjour.logger.info "Arguments for Cucumber: #{@args.inspect}"
-      @cucumber_configuration.parse!(@args.dup)
+      
+      cuc_args = @args.dup
+      cuc_args.delete("--create-mysql-db")
+      Testjour.logger.info "Arguments for Cucumber: #{cuc_args.inspect}"
+      
+      @cucumber_configuration.parse!(cuc_args)
       @cucumber_configuration
     end
     
