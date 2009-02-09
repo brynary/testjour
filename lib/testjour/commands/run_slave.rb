@@ -25,6 +25,7 @@ module Commands
     
     def parse_options
       @queue_uri = @args.shift
+      @msyql_mode = @args.delete("--create-mysql-db")
     end
     
     def setup_mysql
@@ -42,6 +43,7 @@ module Commands
     end
     
     def mysql_mode?
+      return true if @mysql_mode
       return false unless File.exist?("testjour.yml")
       testjour_yml = File.read("testjour.yml")
       testjour_yml.include?("--create-mysql-db")
