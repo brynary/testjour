@@ -44,7 +44,7 @@ module Commands
     def mysql_mode?
       return false unless File.exist?("testjour.yml")
       testjour_yml = File.read("testjour.yml")
-      testjour_yml.include?("--mysql")
+      testjour_yml.include?("--create-mysql-db")
     end
     
     def daemonize
