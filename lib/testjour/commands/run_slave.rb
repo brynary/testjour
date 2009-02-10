@@ -1,5 +1,6 @@
 require "testjour/commands/command"
 require "cucumber"
+require "uri"
 require "daemons/daemonize"
 require "testjour/cucumber_extensions/http_formatter"
 require "testjour/mysql"
@@ -11,34 +12,60 @@ module Commands
   class RunSlave < Command
     
     def execute
-      daemonize
+      # daemonize
       Testjour.logger.info "Starting run:slave"
       
       parse_options
       
-      setup_mysql if mysql_mode?
+      Dir.chdir(@current_dir) do
+        setup_mysql if mysql_mode?
       
-      initialize_cucumber
-      require_files
-      work
+        initialize_cucumber
+        require_files
+        work
+      end
     end
     
     def parse_options
       @unknown_args = []
+      
+      
       
       Testjour.logger.info "Parsing options: #{@args.inspect}"
       begin
         option_parser.parse!(@args)
       rescue OptionParser::InvalidOption => e
         e.recover @args
-        @unknown_args << @args.shift
-        if @args.any? && @args.first[0..0] != "-"
+        saved_arg = @args.shift
+        @unknown_args << saved_arg
+        if @args.any? && !saved_arg.include?("=") && @args.first[0..0] != "-"
           @unknown_args << @args.shift
         end
         retry
       end
       
-      @queue_uri = @args.shift
+      raise "Hell" if @args.empty?
+      
+      begin
+        uri = @args.shift
+        full_uri = URI.parse(uri)
+      rescue URI::InvalidURIError
+        raise "Invalid URI: #{uri.inspect}"
+      end
+      @current_dir = full_uri.path
+      full_uri.path = "/"
+      @queue_uri = full_uri.to_s
+    end
+    
+    def cucumber_configuration
+      return @cucumber_configuration if @cucumber_configuration
+      
+      @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
+      cuc_args = @unknown_args + @args
+      cuc_args << "dummy.feature"
+      Testjour.logger.info "Arguments for Cucumber: #{cuc_args.inspect}"
+      @cucumber_configuration.parse!(cuc_args)
+      @cucumber_configuration
     end
     
     def setup_mysql
@@ -74,9 +101,14 @@ module Commands
     
     def initialize_cucumber
       require 'cucumber/cli/main'
-      
-      cucumber_configuration.load_language
-      step_mother.options = cucumber_configuration.options
+      Cucumber.class_eval do
+        def language_incomplete?
+          false
+        end
+      end
+      Cucumber.load_language("en")
+      foo = cucumber_configuration.options
+      step_mother.options = foo
     end
     
     def work

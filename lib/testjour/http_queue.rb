@@ -28,8 +28,10 @@ module Testjour
         
         if c.response_code == 200
           return Marshal.load(c.body_str)
-        else
+        elsif c.response_code == 404
           return nil
+        else
+          raise "Bad response: #{c.body_str}"
         end
       end
       
@@ -109,7 +111,7 @@ module Testjour
       when "/reset"         then reset
       when "/feature_files" then pop(:feature_files)
       when "/results"       then pop(:results, false)
-      else error
+      else error("unknown path: #{request.path_info}")
       end
     end
   
@@ -117,7 +119,7 @@ module Testjour
       case request.path_info
       when "/feature_files" then push(:feature_files)
       when "/results"       then push(:results)
-      else error
+      else error("unknown path: #{request.path_info}")
       end
     end
   
@@ -137,7 +139,7 @@ module Testjour
           queue(queue_name).pop(non_block)
         end
       rescue ResultOverdueError
-        return error
+        return error("result overdue")
       end
       
       [200, { "Content-Type" => "text/plain" }, data]
@@ -145,7 +147,7 @@ module Testjour
       if ex.message =~ /queue empty/
         missing
       else
-        error
+        error("uncaught exception")
       end
     end
   
@@ -166,8 +168,8 @@ module Testjour
       [404, { "Content-Type" => "text/plain" }, "Not Found"]
     end
   
-    def error
-      [500, { "Content-Type" => "text/plain" }, "Server error"]
+    def error(message = nil)
+      [500, { "Content-Type" => "text/plain" }, "Server error: #{message}"]
     end
   
   end

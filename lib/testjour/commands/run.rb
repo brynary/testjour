@@ -101,7 +101,7 @@ module Commands
     end
     
     def local_run_command
-      "#{testjour_path} run:slave #{[args_from_options + @unknown_args].join(' ')} #{queue_uri}"
+      "testjour run:slave #{[args_from_options + @unknown_args].join(' ')} #{testjour_uri}".squeeze(" ")
     end
     
     def args_from_options
@@ -114,6 +114,10 @@ module Commands
     
     def queue_uri
       "http://localhost:#{Testjour::HttpQueue.port}/"
+    end
+    
+    def testjour_uri
+      "http://localhost:#{Testjour::HttpQueue.port}" + File.expand_path(".")
     end
     
     def testjour_path
