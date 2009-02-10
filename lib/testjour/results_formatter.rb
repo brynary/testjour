@@ -60,12 +60,17 @@ module Testjour
     def print_summary
       puts
       puts
-      puts Colorer.passed("#{@passed} steps passed")      unless @passed.zero?
+      print_summary_line(:passed)
       puts Colorer.failed("#{@errors.size} steps failed") unless @errors.empty?
-      puts Colorer.skipped("#{@skipped} steps skipped")   unless @skipped.zero?
-      puts Colorer.pending("#{@pending} steps pending")   unless @pending.zero?
-      puts Colorer.failed("#{@undefined} steps undefined")   unless @undefined.zero?
+      print_summary_line(:skipped)
+      print_summary_line(:pending)
+      print_summary_line(:undefined)
       puts
+    end
+    
+    def print_summary_line(step_type)
+      count = instance_variable_get("@#{step_type}")
+      puts Colorer.send(step_type, "#{count} steps #{step_type}") unless count.zero?
     end
   
     def finish
