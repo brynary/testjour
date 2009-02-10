@@ -13,9 +13,9 @@ module Commands
     
     def execute
       # daemonize
-      Testjour.logger.info "Starting run:slave"
-      
       parse_options
+      Testjour.setup_logger(@current_dir)
+      Testjour.logger.info "Starting run:slave"
       
       Dir.chdir(@current_dir) do
         setup_mysql if mysql_mode?

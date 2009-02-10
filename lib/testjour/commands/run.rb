@@ -101,7 +101,7 @@ module Commands
     end
     
     def local_run_command
-      "testjour run:slave #{[args_from_options + @unknown_args].join(' ')} #{testjour_uri}".squeeze(" ")
+      "ssh localhost testjour run:slave #{[args_from_options + @unknown_args].join(' ')} #{testjour_uri}".squeeze(" ")
     end
     
     def args_from_options
