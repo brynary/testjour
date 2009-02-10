@@ -13,7 +13,6 @@ ensure
   stream.reopen(old_stream)
 end
 
-
 def detached_exec(command)
   pid = fork do
     silence_stream(STDOUT) do

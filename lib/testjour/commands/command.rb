@@ -12,27 +12,15 @@ module Commands
     
   protected
     
-    def option_parser
-      OptionParser.new do |opts|
-        opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
-          @options[:create_mysql_db] = true
-        end
-      end
-    end
-    
-    def cucumber_configuration
-      return @cucumber_configuration if @cucumber_configuration
-      
-      @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
-      
-      cuc_args = @unknown_args + @args
-      Testjour.logger.info "Arguments for Cucumber: #{cuc_args.inspect}"
-      @cucumber_configuration.parse!(cuc_args)
-      @cucumber_configuration
+    def configuration
+      return @configuration if @configuration
+      @configuration = Configuration.new(@args)
+      @configuration.parse!
+      @configuration
     end
     
     def load_plain_text_features(files)
-      features = Cucumber::Ast::Features.new(cucumber_configuration.ast_filter)
+      features = Cucumber::Ast::Features.new(configuration.ast_filter)
       
       Array(files).each do |file|
         features.add_feature(parser.parse_file(file))

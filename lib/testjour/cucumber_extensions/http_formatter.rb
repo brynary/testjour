@@ -5,10 +5,10 @@ module Testjour
   class HttpFormatter < Cucumber::Ast::Visitor
     include Cucumber::Formatter::Console
 
-    def initialize(step_mother, io, options, queue_uri)
+    def initialize(step_mother, io, queue_uri)
       super(step_mother)
+      @options = {}
       @io = io
-      @options = options
       @queue_uri = queue_uri
     end
     
