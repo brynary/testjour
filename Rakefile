@@ -34,7 +34,7 @@ end
 CLEAN.include ["pkg", "*.gem", "doc", "ri", "coverage"]
 
 desc 'Install the package as a gem.'
-task :install_gem => [:clean, :package] do
+task :install => [:clean, :package] do
   gem = Dir['pkg/*.gem'].first
   sh "sudo gem install --local #{gem}"
 end
