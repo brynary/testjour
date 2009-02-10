@@ -30,7 +30,7 @@ Feature: Run Features
     Then it should pass with "1 steps pending"
     And testjour.log should include "undefined.feature"
     
-  Scenario: Distribute runs
+  Scenario: Parallel runs
     When I run `testjour failing.feature passing.feature`
     Then it should fail with "1 steps passed"
     And the output should contain "FAIL"
