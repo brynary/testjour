@@ -120,6 +120,11 @@ module Testjour
   
     def option_parser
       OptionParser.new do |opts|
+        opts.on("--on=SLAVE", "Specify a slave URI") do |slave|
+          @options[:slaves] ||= []
+          @options[:slaves] << slave
+        end
+        
         opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
           @options[:create_mysql_db] = true
         end

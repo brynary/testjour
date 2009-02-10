@@ -1,16 +1,20 @@
 require "systemu"
 
-When /^I run `(.+)`$/ do |args|
-  args = args.split[1..-1]
+Given /^Testjour is configured to run on localhost in a (\w+) directory$/ do |dir_name|
+  @args ||= []
+  @args << "--on=testjour://localhost/#{dir_name}"
+end
+
+When /^I run `testjour (.+)`$/ do |args|
+  @args ||= []
+  @args += args.split
   
   Dir.chdir(@full_dir) do
-    @start_time = Time.now
-    
     testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../../bin/testjour")
-    status, @stdout, @stderr = systemu "#{testjour_path} #{args.join(' ')}"
+    cmd = "#{testjour_path} #{@args.join(" ")}"
+    puts cmd
+    status, @stdout, @stderr = systemu(cmd)
     @exit_code = status.exitstatus
-    
-    @run_time = Time.now - @start_time
   end
 end
 
@@ -51,5 +55,11 @@ Then /^it should run on (\d+) slaves?$/ do |count|
     
     # One master process and the slaves
     pids.size.should == count.to_i + 1
+  end
+end
+
+Then /^it should run on 2 remote slaves$/ do
+  Dir.chdir(@full_dir) do
+    puts IO.read("testjour.log")
   end
 end
