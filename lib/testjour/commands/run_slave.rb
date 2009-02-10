@@ -24,8 +24,21 @@ module Commands
     end
     
     def parse_options
+      @unknown_args = []
+      
+      Testjour.logger.info "Parsing options: #{@args.inspect}"
+      begin
+        option_parser.parse!(@args)
+      rescue OptionParser::InvalidOption => e
+        e.recover @args
+        @unknown_args << @args.shift
+        if @args.any? && @args.first[0..0] != "-"
+          @unknown_args << @args.shift
+        end
+        retry
+      end
+      
       @queue_uri = @args.shift
-      @mysql_mode = @args.delete("--create-mysql-db")
     end
     
     def setup_mysql
@@ -45,7 +58,7 @@ module Commands
     end
     
     def mysql_mode?
-      return true if @mysql_mode
+      return true if @options[:create_mysql_db]
       return false unless File.exist?("testjour.yml")
       testjour_yml = File.read("testjour.yml")
       testjour_yml.include?("--create-mysql-db")

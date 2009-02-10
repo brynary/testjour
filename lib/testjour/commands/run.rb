@@ -1,3 +1,5 @@
+require "optparse"
+
 require "testjour/commands/command"
 require "testjour/http_queue"
 require "testjour/cucumber_extensions/step_counter"
@@ -9,6 +11,7 @@ module Commands
   class Run < Command
     
     def execute
+      @max_local_slaves = 2
       parse_options
       
       HttpQueue.with_queue_server do
@@ -18,8 +21,27 @@ module Commands
       end
     end
     
+    def cucumber_options
+    end
+    
     def parse_options
-      @max_local_slaves = 2
+      @unknown_args = []
+      
+      Testjour.logger.info "Parsing options: #{@args.inspect}"
+      
+      begin
+        option_parser.parse!(@args)
+      rescue OptionParser::InvalidOption => e
+        e.recover @args
+        
+        @unknown_args << @args.shift
+        
+        if @args.any? && @args.first[0..0] != "-"
+          @unknown_args << @args.shift
+        end
+        
+        retry
+      end
     end
     
     def queue_features
@@ -79,7 +101,15 @@ module Commands
     end
     
     def local_run_command
-      "#{testjour_path} run:slave #{queue_uri} #{@args.join(' ')}"
+      "#{testjour_path} run:slave #{[args_from_options + @unknown_args].join(' ')} #{queue_uri}"
+    end
+    
+    def args_from_options
+      args_from_options = []
+      if @options[:create_mysql_db]
+        args_from_options << "--create-mysql-db"
+      end
+      return args_from_options
     end
     
     def queue_uri

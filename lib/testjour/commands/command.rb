@@ -4,20 +4,29 @@ module Commands
   class Command
     
     def initialize(args = [], out_stream = STDOUT, err_stream = STDERR)
+      @options = {}
       @args = args
       @out_stream = out_stream
       @err_stream = err_stream
     end
     
   protected
-  
+    
+    def option_parser
+      OptionParser.new do |opts|
+        opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
+          @options[:create_mysql_db] = true
+        end
+      end
+    end
+    
     def cucumber_configuration
       return @cucumber_configuration if @cucumber_configuration
       
       @cucumber_configuration = Cucumber::Cli::Configuration.new(StringIO.new, StringIO.new)
       
-      cuc_args = @args.dup
-      cuc_args.delete("--create-mysql-db")
+      cuc_args = @unknown_args + @args
+      # cuc_args.delete("--create-mysql-db")
       Testjour.logger.info "Arguments for Cucumber: #{cuc_args.inspect}"
       
       @cucumber_configuration.parse!(cuc_args)
