@@ -23,6 +23,10 @@ module Testjour
       setup_mysql if mysql_mode?
     end
     
+    def remote_slaves
+      @options[:slaves] || []
+    end
+    
     def setup_mysql
       mysql = MysqlDatabaseSetup.new
       mysql.create_database
@@ -59,6 +63,7 @@ module Testjour
     end
     
     def local_slave_count
+      return 0 if remote_slaves.any?
       [feature_files.size, @max_local_slaves].min
     end
     
@@ -123,6 +128,10 @@ module Testjour
         opts.on("--on=SLAVE", "Specify a slave URI") do |slave|
           @options[:slaves] ||= []
           @options[:slaves] << slave
+        end
+        
+        opts.on("--in=DIR", "Working directory to use (for run:remote only)") do |directory|
+          @options[:in] = directory
         end
         
         opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|

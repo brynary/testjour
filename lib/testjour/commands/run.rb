@@ -31,9 +31,31 @@ module Commands
     end
     
     def start_slaves
+      start_local_slaves
+      start_remote_slaves
+    end
+    
+    def start_local_slaves
       configuration.local_slave_count.times do
         start_slave
       end
+    end
+    
+    def start_remote_slaves
+      configuration.remote_slaves.each do |remote_slave|
+        start_remote_slave(remote_slave)
+      end
+    end
+    
+    def start_remote_slave(remote_slave)
+      uri = URI.parse(remote_slave)
+      cmd = remote_slave_run_command(uri.host, uri.path)
+      Testjour.logger.info "Starting remote slave: #{cmd}"
+      detached_exec(cmd)
+    end
+    
+    def remote_slave_run_command(host, path)
+      "ssh #{host} testjour run:remote --in=#{path} #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
     end
     
     def start_slave

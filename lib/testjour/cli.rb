@@ -23,6 +23,9 @@ module Testjour
       elsif args.first == "run:slave"
         @args_for_command = @args[1..-1]
         Commands::RunSlave
+      elsif args.first == "run:remote"
+        @args_for_command = @args[1..-1]
+        Commands::RunRemote
       elsif args.first == "mysql:load_schema"
         @args_for_command = @args[1..-1]
         Commands::LoadSchema
