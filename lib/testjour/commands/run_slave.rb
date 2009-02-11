@@ -62,10 +62,6 @@ module Commands
       end
     end
     
-    def schema_load_command(database_name)
-      "#{testjour_path} mysql:load_schema #{database_name}"
-    end
-    
   end
   
 end

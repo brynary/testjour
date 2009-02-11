@@ -52,6 +52,10 @@ module Testjour
       end
     end
     
+    def schema_load_command(database_name)
+      "testjour mysql:load_schema #{database_name}"
+    end
+    
     def files_to_require
       cucumber_configuration.files_to_require
     end
