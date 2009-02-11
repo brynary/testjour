@@ -38,10 +38,14 @@ module Testjour
     
     def setup_mysql
       mysql = MysqlDatabaseSetup.new
+      
+      Testjour.logger.info "Creating mysql db"
+      
       mysql.create_database
       ENV["TESTJOUR_DB"] = mysql.runner_database_name
       
       if File.exist?(File.expand_path("./db/schema.rb"))
+        Testjour.logger.info "Loading schema"
         silence_stream(STDOUT) do
           system schema_load_command(mysql.runner_database_name)
         end
