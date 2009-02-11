@@ -1,4 +1,5 @@
 require "optparse"
+require "socket"
 
 require "testjour/commands/command"
 require "testjour/http_queue"
@@ -99,7 +100,8 @@ module Commands
     
     def testjour_uri
       user = `whoami`.strip
-      "http://#{user}@localhost:#{Testjour::HttpQueue.port}" + File.expand_path(".")
+      host = Socket.gethostname
+      "http://#{user}@#{host}:#{Testjour::HttpQueue.port}" + File.expand_path(".")
     end
     
     def testjour_path
