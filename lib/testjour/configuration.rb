@@ -49,6 +49,8 @@ module Testjour
         silence_stream(STDOUT) do
           system schema_load_command(mysql.runner_database_name)
         end
+      else
+        Testjour.logger.info "Skipping load schema. #{File.expand_path("./db/schema.rb")} doesn't exist"
       end
           
       at_exit do
