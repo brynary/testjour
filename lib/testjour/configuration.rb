@@ -29,7 +29,7 @@ module Testjour
     
     def rsync_uri
       # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
-      full_uri.host + ":" + full_uri.path
+      full_uri.user + "@" + full_uri.host + ":" + full_uri.path
     end
     
     def remote_slaves

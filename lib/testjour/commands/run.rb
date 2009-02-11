@@ -98,7 +98,8 @@ module Commands
     end
     
     def testjour_uri
-      "http://localhost:#{Testjour::HttpQueue.port}" + File.expand_path(".")
+      user = `whoami`.strip
+      "http://#{user}@localhost:#{Testjour::HttpQueue.port}" + File.expand_path(".")
     end
     
     def testjour_path
