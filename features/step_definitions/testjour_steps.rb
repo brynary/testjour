@@ -1,8 +1,13 @@
 require "systemu"
+require "fileutils"
 
 Given /^Testjour is configured to run on localhost in a (\w+) directory$/ do |dir_name|
   @args ||= []
-  @args << "--on=testjour://localhost/#{dir_name}"
+  full_path = File.expand_path("./tmp/#{dir_name}")
+  @args << "--on=testjour://localhost#{full_path}"
+  
+  FileUtils.rm_rf full_path
+  FileUtils.mkdir_p full_path
 end
 
 When /^I run `testjour (.+)`$/ do |args|

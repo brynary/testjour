@@ -18,10 +18,15 @@ module Commands
       Dir.chdir(configuration.path) do
         Testjour.setup_logger(configuration.path)
         Testjour.logger.info "Starting run:slave"
-        
-        configuration.setup
-        require_files
-        work
+      
+        begin
+          configuration.setup
+          require_files
+          work
+        rescue Object => ex
+          Testjour.logger.error "run:slave error: #{ex.message}"
+          Testjour.logger.error ex.backtrace.join("\n")
+        end
       end
     end
 

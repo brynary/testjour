@@ -1,5 +1,3 @@
-RAILS_ROOT = File.expand_path(".") unless defined?(RAILS_ROOT)
-
 module Testjour
   
   # Stolen from deep-test
@@ -24,7 +22,9 @@ module Testjour
 
     def load_schema
       ActiveRecord::Base.establish_connection(database_configuration)
-      load File.join(RAILS_ROOT, "db", "schema.rb")
+      
+      dir = defined?(RAILS_ROOT) ? RAILS_ROOT : "."
+      load File.join(dir, "db", "schema.rb")
     end
     
     def runner_database_name

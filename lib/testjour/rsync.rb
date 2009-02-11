@@ -1,4 +1,5 @@
 require "uri"
+require "systemu"
 
 module Testjour
   
@@ -16,17 +17,26 @@ module Testjour
     end
 
     def copy_with_retry
-      retryable :tries => 2, :on => RsyncFailed do
+      # retryable :tries => 2, :on => RsyncFailed do
         Testjour.logger.info "Rsyncing: #{command}"
         copy
-        Testjour.logger.debug("Rsync finished in %.2fs" % elapsed_time)
-        raise RsyncFailed.new unless successful?
-      end
+        
+        if successful?
+          Testjour.logger.debug("Rsync finished in %.2fs" % elapsed_time)
+        else
+          Testjour.logger.debug("Rsync failed in %.2fs" % elapsed_time)
+          Testjour.logger.debug("Rsync stdout: #{@stdout}")
+          Testjour.logger.debug("Rsync stderr: #{@stderr}")
+          raise RsyncFailed.new 
+        end
+      # end
     end
     
     def copy
       @start_time = Time.now
-      @successful = system(command)
+      
+      status, @stdout, @stderr = systemu(command)
+      @exit_code = status.exitstatus
     end
     
     def elapsed_time
@@ -34,19 +44,15 @@ module Testjour
     end
     
     def successful?
-      @successful
+      @exit_code.zero?
     end
     
     def command
-      "rsync -az --delete --exclude=.git --exclude=*.log --exclude=*.pid #{uri.user}@#{uri.host}:#{uri.path}/ #{destination_dir}"
+      "rsync -az --delete --exclude=.git --exclude=*.log --exclude=*.pid #{@source_uri}/ #{destination_dir}"
     end
     
     def destination_dir
       File.expand_path(".")
-    end
-      
-    def uri
-      URI.parse(@source_uri)
     end
     
   end

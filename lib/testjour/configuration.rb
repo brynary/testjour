@@ -1,7 +1,7 @@
 module Testjour
   
   class Configuration
-    attr_reader :unknown_args, :options, :path, :queue_uri
+    attr_reader :unknown_args, :options, :path, :queue_uri, :full_uri
   
     def initialize(args)
       @max_local_slaves = 2
@@ -21,6 +21,15 @@ module Testjour
       step_mother.options = cucumber_configuration.options
       
       setup_mysql if mysql_mode?
+    end
+    
+    def in
+      @options[:in]
+    end
+    
+    def rsync_uri
+      # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
+      full_uri.host + ":" + full_uri.path
     end
     
     def remote_slaves
@@ -100,7 +109,7 @@ module Testjour
     def parse_uri!
       full_uri = URI.parse(@args.shift)
       @path = full_uri.path
-      
+      @full_uri = full_uri.dup
       full_uri.path = "/"
       @queue_uri = full_uri.to_s
     end
