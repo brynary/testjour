@@ -25,6 +25,7 @@ module Commands
         rsync
         Testjour.logger.info "Setup"
         configuration.setup
+        configuration.setup_mysql
         Testjour.logger.info "Requirign"
         require_files
         Testjour.logger.info "Working"
