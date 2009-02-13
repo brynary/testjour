@@ -11,7 +11,8 @@ module Testjour
     def create_database
       cmd = "mysqladmin create -uroot #{runner_database_name}"
       Testjour.logger.info "Creating DB: #{cmd}"
-      system cmd
+      res = system cmd
+      raise "Mysql create failed" unless res
     end
     
     def drop_database
