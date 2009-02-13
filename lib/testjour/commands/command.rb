@@ -15,7 +15,6 @@ module Commands
     def configuration
       return @configuration if @configuration
       @configuration = Configuration.new(@args)
-      @configuration.parse!
       @configuration
     end
     

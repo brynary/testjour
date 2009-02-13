@@ -116,6 +116,8 @@ module Testjour
 
         retry
       end
+      
+      Testjour.logger.info "Options: #{@options.inspect}"
     end
   
     def parse_uri!
