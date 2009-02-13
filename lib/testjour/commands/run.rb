@@ -13,6 +13,7 @@ module Commands
   class Run < Command
     
     def execute
+      configuration.unshift_args(testjour_yml_args)
       configuration.parse!
       
       HttpQueue.with_queue_server do
@@ -64,6 +65,16 @@ module Commands
       detached_exec(local_run_command)
     end
     
+    def testjour_yml_args
+      @testjour_yml_args ||= begin
+        if File.exist?("testjour.yml")
+          File.read("testjour.yml").strip.split
+        else
+          []
+        end
+      end
+    end
+    
     def print_results
       results_formatter = ResultsFormatter.new(step_count)
       
@@ -91,7 +102,7 @@ module Commands
     end
     
     def local_run_command
-      "ssh localhost testjour run:slave #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
+      "testjour run:slave #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
     end
     
     def queue_uri

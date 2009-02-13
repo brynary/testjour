@@ -75,16 +75,11 @@ module Testjour
     end
     
     def mysql_mode?
-      Testjour.logger.info "Checking options: #{@options.inspect}"
-      return true if @options[:create_mysql_db]
-      return false unless File.exist?("testjour.yml")
-      testjour_yml = File.read("testjour.yml")
-      Testjour.logger.info "Checking testjour.yml for options: #{testjour_yml}"
-      testjour_yml.include?("--create-mysql-db")
+      @options[:create_mysql_db]
     end
     
     def local_slave_count
-      return 0 if remote_slaves.any?
+      # return 0 if remote_slaves.any?
       [feature_files.size, @max_local_slaves].min
     end
     
@@ -100,6 +95,12 @@ module Testjour
       @cucumber_configuration
     end
   
+    def unshift_args(pushed_args)
+      pushed_args.each do |pushed_arg|
+        @args.unshift(pushed_arg)
+      end
+    end
+    
     def parse!
       Testjour.logger.info "Parsing options: #{@args.inspect}"
       
@@ -119,7 +120,7 @@ module Testjour
       
       Testjour.logger.info "Options: #{@options.inspect}"
     end
-  
+    
     def parse_uri!
       full_uri = URI.parse(@args.shift)
       @path = full_uri.path
