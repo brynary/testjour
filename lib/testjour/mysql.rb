@@ -25,9 +25,18 @@ module Testjour
     end
     
     def drop_database
-      cmd = "echo y | mysqladmin drop -uroot #{runner_database_name}"
+      cmd = "testjour mysql:drop #{runner_database_name}"
       Testjour.logger.info "Dropping DB: #{cmd}"
-      system cmd
+      status, stdout, stderr = systemu(cmd)
+      exit_code = status.exitstatus
+      
+      if exit_code.zero?
+        Testjour.logger.info "Success"
+      else
+        Testjour.logger.info "Failed: #{exit_code}"
+        Testjour.logger.info stderr
+        Testjour.logger.info stdout
+      end
     end
 
     def load_schema

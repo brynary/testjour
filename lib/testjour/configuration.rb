@@ -53,9 +53,9 @@ module Testjour
         Testjour.logger.info "Skipping load schema. #{File.expand_path("./db/schema.rb")} doesn't exist"
       end
           
-      # at_exit do
-      #   mysql.drop_database
-      # end
+      at_exit do
+        mysql.drop_database
+      end
     end
     
     def schema_load_command(database_name)
