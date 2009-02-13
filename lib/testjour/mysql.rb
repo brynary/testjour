@@ -14,7 +14,7 @@ module Testjour
       status, stdout, stderr = systemu(cmd)
       exit_code = status.exitstatus
       
-      if exitcode.zero?
+      if exit_code.zero?
         Testjour.logger.info "Success"
       else
         Testjour.logger.info "Failed: #{exit_code}"
