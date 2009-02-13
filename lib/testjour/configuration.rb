@@ -22,7 +22,12 @@ module Testjour
     end
 
     def setup_mysql
-      setup_mysql if mysql_mode?
+      if mysql_mode?
+        Testjour.logger.info "Setting up mysql"
+        setup_mysql 
+      else
+        Testjour.logger.info "Skipping mysql setup"
+      end
     end
     
     def in
