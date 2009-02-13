@@ -7,8 +7,12 @@ module Commands
   class LoadSchema < Command
     
     def execute
+      Testjour.logger.info "Starting load:schema"
+      ENV["RAILS_ENV"] = "test"
       require File.expand_path("./config/environment")
+      Testjour.logger.info "Loaded env"
       database_name = @args.first
+      Testjour.logger.info "loading schema into: #{database_name}"
       mysql = MysqlDatabaseSetup.new(database_name)
       mysql.load_schema
       return 0

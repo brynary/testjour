@@ -52,7 +52,8 @@ module Testjour
       ENV["TESTJOUR_DB"] = mysql.runner_database_name
       
       if File.exist?(File.expand_path("./db/schema.rb"))
-        Testjour.logger.info "Loading schema"
+        cmd = schema_load_command(mysql.runner_database_name)
+        Testjour.logger.info "Loading schema: #{cmd}"
         silence_stream(STDOUT) do
           system schema_load_command(mysql.runner_database_name)
         end
