@@ -20,15 +20,6 @@ module Testjour
       Cucumber.load_language("en")
       step_mother.options = cucumber_configuration.options
     end
-
-    def setup_mysql
-      if mysql_mode?
-        Testjour.logger.info "Setting up mysql"
-        setup_mysql 
-      else
-        Testjour.logger.info "Skipping mysql setup"
-      end
-    end
     
     def in
       @options[:in]
@@ -44,6 +35,7 @@ module Testjour
     end
     
     def setup_mysql
+      return unless mysql_mode?
       mysql = MysqlDatabaseSetup.new
       
       Testjour.logger.info "Creating mysql db"
@@ -83,9 +75,11 @@ module Testjour
     end
     
     def mysql_mode?
+      Testjour.logger.info "Checking options: #{@options.inspect}"
       return true if @options[:create_mysql_db]
       return false unless File.exist?("testjour.yml")
       testjour_yml = File.read("testjour.yml")
+      Testjour.logger.info "Checking testjour.yml for options: #{testjour_yml}"
       testjour_yml.include?("--create-mysql-db")
     end
     
