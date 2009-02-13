@@ -44,7 +44,7 @@ module Testjour
     end
     
     def self.timeout_in_seconds
-      120
+      180
     end
     
     def self.run_on(handler)
