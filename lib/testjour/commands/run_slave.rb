@@ -21,6 +21,7 @@ module Commands
       
         begin
           configuration.setup
+          configuration.setup_mysql
           require_files
           work
         rescue Object => ex

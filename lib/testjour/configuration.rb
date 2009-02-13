@@ -19,7 +19,9 @@ module Testjour
       end
       Cucumber.load_language("en")
       step_mother.options = cucumber_configuration.options
-      
+    end
+
+    def setup_mysql
       setup_mysql if mysql_mode?
     end
     
