@@ -1,5 +1,6 @@
 require "uri"
 require "systemu"
+require "testjour/core_extensions/retryable"
 
 module Testjour
   
@@ -17,7 +18,7 @@ module Testjour
     end
 
     def copy_with_retry
-      # retryable :tries => 2, :on => RsyncFailed do
+      retryable :tries => 2, :on => RsyncFailed do
         Testjour.logger.info "Rsyncing: #{command}"
         copy
         
@@ -29,7 +30,7 @@ module Testjour
           Testjour.logger.debug("Rsync stderr: #{@stderr}")
           raise RsyncFailed.new 
         end
-      # end
+      end
     end
     
     def copy
