@@ -60,6 +60,13 @@ module Testjour
     end
     
     def self.with_queue_server
+      existing_pid = `ps | grep httpq | grep -v grep`.strip.split.first
+      
+      if existing_pid
+        Testjour.logger.info "Killing running httpq"
+        Process.kill("INT", existing_pid.to_i)
+      end
+      
       pid = detached_exec(File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq"))
       kill_at_exit(pid)
       wait_for_service
