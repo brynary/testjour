@@ -29,7 +29,7 @@ Then /^it should (pass|fail) with "(.+)"$/ do |pass_or_fail, text|
   else
     @exit_code.should_not == 0
   end
-  
+
   @stdout.should include(text)
 end
 
