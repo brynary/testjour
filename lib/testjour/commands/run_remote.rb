@@ -26,7 +26,7 @@ module Commands
         Testjour.logger.info "Setup"
         configuration.setup
         configuration.setup_mysql
-        Testjour.logger.info "Requirign"
+        Testjour.logger.info "Requiring"
         require_files
         Testjour.logger.info "Working"
         work

@@ -8,7 +8,7 @@ module Commands
     
     def execute
       Testjour.logger.info "Starting load:schema"
-      ENV["RAILS_ENV"] = "test"
+      ENV["RAILS_ENV"] = "integration"
       require File.expand_path("./config/environment")
       Testjour.logger.info "Loaded env"
       database_name = @args.first
