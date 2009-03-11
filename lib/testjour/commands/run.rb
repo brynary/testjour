@@ -18,16 +18,22 @@ module Commands
       
       HttpQueue.with_queue_server do
         configuration.setup
-        queue_features
-        start_slaves
-        print_results
+        
+        if configuration.feature_files.any?
+          queue_features
+          start_slaves
+          print_results
+        end
       end
     end
     
     def queue_features
+      Testjour.logger.info("Queuing features...")
+      
       HttpQueue.with_queue(queue_uri) do |queue|
         configuration.feature_files.each do |feature_file|
           queue.push(:feature_files, feature_file)
+          Testjour.logger.info "Queued: #{feature_file}"
         end
       end
     end
