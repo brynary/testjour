@@ -1,3 +1,5 @@
+require 'socket'
+require 'english'
 require 'cucumber/formatter/console'
 
 module Testjour
@@ -19,19 +21,21 @@ module Testjour
     end
     
     def visit_step(step)
-      exception = step.accept(self)
+      @step_start = Time.now
+      exception = super
       
       unless @last_status == :outline
         if @last_status == :failed
-          progress(@last_status, exception.message.to_s, exception.backtrace.join("\n"))
+          progress(@last_time, @last_status, exception.message.to_s, exception.backtrace.join("\n"))
         else
-          progress(@last_status)
+          progress(@last_time, @last_status)
         end
       end
     end
     
     def visit_step_name(keyword, step_name, status, step_definition, source_indent)
       @last_status = status
+      @last_time = Time.now - @step_start
     end
 
     def visit_table_cell_value(value, width, status)
@@ -48,10 +52,14 @@ module Testjour
       :skipped   => 'S'
     }
 
-    def progress(status, message = nil, backtrace = nil)
+    def progress(time, status, message = nil, backtrace = nil)
       HttpQueue.with_queue(@queue_uri) do |queue|
-        queue.push(:results, [CHARS[status], message, backtrace])
+        queue.push(:results, [time, hostname, $PID, CHARS[status], message, backtrace])
       end
+    end
+    
+    def hostname
+      @hostname ||= Socket.gethostname
     end
     
   end

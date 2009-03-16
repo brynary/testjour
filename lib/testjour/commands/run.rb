@@ -21,7 +21,12 @@ module Commands
         
         if configuration.feature_files.any?
           queue_features
+          @started_slaves = 0
           start_slaves
+          
+          puts "Requested build from #{@started_slaves} slaves..."
+          puts
+          
           print_results
         end
       end
@@ -45,12 +50,14 @@ module Commands
     
     def start_local_slaves
       configuration.local_slave_count.times do
+        @started_slaves += 1
         start_slave
       end
     end
     
     def start_remote_slaves
       configuration.remote_slaves.each do |remote_slave|
+        @started_slaves += 1
         start_remote_slave(remote_slave)
       end
     end

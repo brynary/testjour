@@ -9,10 +9,19 @@ module Testjour
       @pending = 0
       @undefined = 0
       @errors  = []
+      @servers = []
       @progress_bar = ProgressBar.new("0 failures", step_count)
+      
+      @times = Hash.new { |h,server_id| h[server_id] = [] }
     end
   
-    def result(dot, message = nil, backtrace = nil)
+    def result(time, hostname, pid, dot, message = nil, backtrace = nil)
+      server_id = "#{hostname} [#{pid}]"
+      @servers << server_id
+      @servers.uniq!
+      
+      @times[server_id] << time
+      
       log_result(dot, message, backtrace)
     
       @progress_bar.colorer = colorer
@@ -50,7 +59,7 @@ module Testjour
     end
   
     def title
-      "#{@errors.size} failures"
+      "#{@servers.size} slaves, #{@errors.size} failures"
     end
   
     def erase_current_line
@@ -65,6 +74,16 @@ module Testjour
       print_summary_line(:skipped)
       print_summary_line(:pending)
       print_summary_line(:undefined)
+      puts
+      
+      @times.each do |server_id, times|
+        total_time = times.inject(0) { |memo, time| time + memo }
+        steps_per_second = times.size.to_f / total_time
+        
+        puts "#{server_id} ran #{times.size} steps in %.2fs (%.2f steps/s)" % [total_time, steps_per_second]
+      end
+      
+      # puts @times.inspect
       puts
     end
     
