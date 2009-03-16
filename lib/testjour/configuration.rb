@@ -4,7 +4,6 @@ module Testjour
     attr_reader :unknown_args, :options, :path, :queue_uri, :full_uri
   
     def initialize(args)
-      @max_local_slaves = 2
       @options = {}
       @args = args
       @unknown_args = []
@@ -19,6 +18,10 @@ module Testjour
       end
       Cucumber.load_language("en")
       step_mother.options = cucumber_configuration.options
+    end
+    
+    def max_local_slaves
+      @options[:max_local_slaves] || 2
     end
     
     def in
@@ -79,8 +82,7 @@ module Testjour
     end
     
     def local_slave_count
-      # return 0 if remote_slaves.any?
-      [feature_files.size, @max_local_slaves].min
+      [feature_files.size, max_local_slaves].min
     end
     
     def feature_files
@@ -160,6 +162,10 @@ module Testjour
         
         opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
           @options[:create_mysql_db] = true
+        end
+        
+        opts.on("--max-local-slaves=MAX", "Maximum number of local slaves") do |max|
+          @options[:max_local_slaves] = max.to_i
         end
       end
     end
