@@ -76,14 +76,13 @@ module Testjour
       print_summary_line(:undefined)
       puts
       
-      @times.each do |server_id, times|
+      @times.sort_by { |server_id, times| server_id }.each do |server_id, times|
         total_time = times.inject(0) { |memo, time| time + memo }
         steps_per_second = times.size.to_f / total_time
         
         puts "#{server_id} ran #{times.size} steps in %.2fs (%.2f steps/s)" % [total_time, steps_per_second]
       end
       
-      # puts @times.inspect
       puts
     end
     
