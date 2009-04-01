@@ -55,6 +55,7 @@ module Commands
     
     def execute_features(features)
       visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, configuration.queue_uri)
+      visitor.options = configuration.cucumber_configuration.options
       visitor.visit_features(features)
     end
     

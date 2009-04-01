@@ -19,7 +19,7 @@ module Commands
     end
     
     def load_plain_text_features(files)
-      features = Cucumber::Ast::Features.new(configuration.ast_filter)
+      features = Cucumber::Ast::Features.new
       
       Array(files).each do |file|
         features.add_feature(parser.parse_file(file))

@@ -5,6 +5,7 @@ require "testjour/commands/command"
 require "testjour/http_queue"
 require "testjour/configuration"
 require "testjour/cucumber_extensions/step_counter"
+require "testjour/cucumber_extensions/feature_file_finder"
 require "testjour/results_formatter"
 
 module Testjour
@@ -21,10 +22,11 @@ module Commands
         
         if configuration.feature_files.any?
           queue_features
+          
           @started_slaves = 0
           start_slaves
           
-          puts "Requested build from #{@started_slaves} slaves..."
+          puts "Requested build from #{@started_slaves} slaves... (Waiting for #{step_count} results)"
           puts
           
           print_results
@@ -106,6 +108,7 @@ module Commands
     def count_steps(feature_files)
       features = load_plain_text_features(feature_files)
       visitor = Testjour::StepCounter.new(step_mother)
+      visitor.options = configuration.cucumber_configuration.options
       visitor.visit_features(features)
       return visitor.count
     end

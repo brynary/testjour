@@ -72,10 +72,6 @@ module Testjour
     def step_mother
       Cucumber::Cli::Main.instance_variable_get("@step_mother")
     end
-  
-    def ast_filter
-      cucumber_configuration.ast_filter
-    end
     
     def mysql_mode?
       @options[:create_mysql_db]
@@ -85,8 +81,26 @@ module Testjour
       [feature_files.size, max_local_slaves].min
     end
     
+    def parser
+      @parser ||= Cucumber::Parser::FeatureParser.new
+    end
+    
+    def load_plain_text_features(files)
+      features = Cucumber::Ast::Features.new
+      
+      Array(files).each do |file|
+        features.add_feature(parser.parse_file(file))
+      end
+      
+      return features
+    end
+    
     def feature_files
-      cucumber_configuration.feature_files
+      features = load_plain_text_features(cucumber_configuration.feature_files)
+      visitor = Testjour::FeatureFileFinder.new(step_mother)
+      visitor.options = cucumber_configuration.options
+      visitor.visit_features(features)
+      return visitor.feature_files
     end
     
     def cucumber_configuration
