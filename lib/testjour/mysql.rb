@@ -9,11 +9,11 @@ module Testjour
     end
     
     def create_database
-      run "mysqladmin create #{runner_database_name}"
+      run "/usr/local/mysql/bin/mysqladmin create #{runner_database_name}"
     end
     
     def drop_database
-      run "mysqladmin -f drop #{runner_database_name}"
+      run "/usr/local/mysql/bin/mysqladmin -f drop #{runner_database_name}"
     end
 
     def load_schema
@@ -22,7 +22,7 @@ module Testjour
       unless File.exist?(schema_file)
       end
       
-      run "mysql #{runner_database_name} < #{schema_file}"
+      run "/usr/local/mysql/bin/mysql #{runner_database_name} < #{schema_file}"
     end
     
     def runner_database_name
