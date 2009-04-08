@@ -39,30 +39,16 @@ module Testjour
     
     def setup_mysql
       return unless mysql_mode?
+      
       mysql = MysqlDatabaseSetup.new
       
-      Testjour.logger.info "Creating mysql db"
-      
       mysql.create_database
-      ENV["TESTJOUR_DB"] = mysql.runner_database_name
-      
-      if File.exist?(File.expand_path("./db/schema.rb"))
-        cmd = schema_load_command(mysql.runner_database_name)
-        Testjour.logger.info "Loading schema: #{cmd}"
-        silence_stream(STDOUT) do
-          system schema_load_command(mysql.runner_database_name)
-        end
-      else
-        Testjour.logger.info "Skipping load schema. #{File.expand_path("./db/schema.rb")} doesn't exist"
-      end
-          
       at_exit do
         mysql.drop_database
       end
-    end
-    
-    def schema_load_command(database_name)
-      "testjour mysql:load_schema #{database_name}"
+      
+      ENV["TESTJOUR_DB"] = mysql.runner_database_name
+      mysql.load_schema
     end
     
     def files_to_require
@@ -118,8 +104,6 @@ module Testjour
     end
     
     def parse!
-      Testjour.logger.info "Parsing options: #{@args.inspect}"
-      
       begin
         option_parser.parse!(@args)
       rescue OptionParser::InvalidOption => e
@@ -133,8 +117,6 @@ module Testjour
 
         retry
       end
-      
-      Testjour.logger.info "Options: #{@options.inspect}"
     end
     
     def parse_uri!

@@ -9,41 +9,20 @@ module Testjour
     end
     
     def create_database
-      # cmd = "mysqladmin create -uroot #{runner_database_name}"
-      cmd = "testjour mysql:create #{runner_database_name}"
-      Testjour.logger.info "Creating DB: #{cmd}"
-      status, stdout, stderr = systemu(cmd)
-      exit_code = status.exitstatus
-      
-      if exit_code.zero?
-        Testjour.logger.info "Success"
-      else
-        Testjour.logger.info "Failed: #{exit_code}"
-        Testjour.logger.info stderr
-        Testjour.logger.info stdout
-      end
+      run "mysqladmin create #{runner_database_name}"
     end
     
     def drop_database
-      cmd = "testjour mysql:drop #{runner_database_name}"
-      Testjour.logger.info "Dropping DB: #{cmd}"
-      status, stdout, stderr = systemu(cmd)
-      exit_code = status.exitstatus
-      
-      if exit_code.zero?
-        Testjour.logger.info "Success"
-      else
-        Testjour.logger.info "Failed: #{exit_code}"
-        Testjour.logger.info stderr
-        Testjour.logger.info stdout
-      end
+      run "mysqladmin -f drop #{runner_database_name}"
     end
 
     def load_schema
-      ActiveRecord::Base.establish_connection(database_configuration)
+      schema_file = File.expand_path("./db/development_structure.sql")
       
-      dir = defined?(RAILS_ROOT) ? RAILS_ROOT : "."
-      load File.join(dir, "db", "schema.rb")
+      unless File.exist?(schema_file)
+      end
+      
+      run "mysql #{runner_database_name} < #{schema_file}"
     end
     
     def runner_database_name
@@ -52,13 +31,16 @@ module Testjour
     
   protected
   
-    def database_configuration
-      {
-        :adapter  => "mysql",
-        :host     => "localhost",
-        :username => "root",
-        :database => runner_database_name
-      }
+    def run(cmd)
+      Testjour.logger.info "Executing: #{cmd}"
+      status, stdout, stderr = systemu(cmd)
+      exit_code = status.exitstatus
+    
+      unless exit_code.zero?
+        Testjour.logger.info "Failed: #{exit_code}"
+        Testjour.logger.info stderr
+        Testjour.logger.info stdout
+      end
     end
     
   end
