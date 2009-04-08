@@ -22,11 +22,11 @@ module Testjour
     
     def visit_step(step)
       @step_start = Time.now
-      exception = super
+      super
       
       unless @last_status == :outline
-        if @last_status == :failed
-          progress(@last_time, @last_status, exception.message.to_s, exception.backtrace.join("\n"))
+        if step.exception
+          progress(@last_time, @last_status, step.exception.message.to_s, step.exception.backtrace.join("\n"))
         else
           progress(@last_time, @last_status)
         end

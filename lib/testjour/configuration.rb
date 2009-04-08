@@ -89,7 +89,7 @@ module Testjour
       features = Cucumber::Ast::Features.new
       
       Array(files).each do |file|
-        features.add_feature(parser.parse_file(file))
+        features.add_feature(parser.parse_file(file, cucumber_configuration.options))
       end
       
       return features

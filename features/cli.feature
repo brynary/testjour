@@ -7,11 +7,13 @@ Feature: testjour CLI
   Scenario: Print version information
 
     When I run `testjour --version`
-    Then it should pass with "testjour 0.3"
+    Then it should not print to stderr
+    And it should pass with "testjour 0.3"
   
   Scenario: Print help information
     When I run `testjour --help`
-    Then it should pass with
+    Then it should not print to stderr
+    And it should pass with
       """
       testjour help:
       """

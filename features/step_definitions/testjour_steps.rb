@@ -23,6 +23,10 @@ When /^I run `testjour (.+)`$/ do |args|
   end
 end
 
+Then "it should not print to stderr" do
+  @stderr.should == ""
+end
+
 Then /^it should (pass|fail) with "(.+)"$/ do |pass_or_fail, text|
   if pass_or_fail == "pass"
     @exit_code.should == 0
@@ -39,7 +43,7 @@ Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
   else
     @exit_code.should_not == 0
   end
-  
+
   @stdout.should include(text)
 end
 

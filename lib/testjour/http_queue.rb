@@ -56,7 +56,7 @@ module Testjour
     end
     
     def self.wait_for_no_service
-      TCPSocket.wait_for_service :host => "0.0.0.0", :port => port
+      TCPSocket.wait_for_no_service :host => "0.0.0.0", :port => port
     end
     
     def self.with_queue(uri = nil, &block)
@@ -67,11 +67,12 @@ module Testjour
       existing_pid = `ps | grep httpq | grep -v grep`.strip.split.first
       
       if existing_pid
-        Testjour.logger.info "Killing running httpq"
+        Testjour.logger.info "Killing running httpq PID #{existing_pid}..."
         Process.kill("INT", existing_pid.to_i)
         HttpQueue.wait_for_no_service
       end
       
+      Testjour.logger.info "Starting httpq..."
       pid = detached_exec(File.expand_path(File.dirname(__FILE__) + "/../../bin/httpq"))
       kill_at_exit(pid)
       wait_for_service
