@@ -77,6 +77,8 @@ module Testjour
       kill_at_exit(pid)
       wait_for_service
       
+      Testjour.logger.info "Started httpq."
+      
       yield
     end
     

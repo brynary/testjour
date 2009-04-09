@@ -31,6 +31,8 @@ module Commands
           puts
           
           print_results
+        else
+          Testjour.logger.info("No feature files. Quitting.")
         end
       end
     end

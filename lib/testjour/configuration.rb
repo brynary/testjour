@@ -29,7 +29,6 @@ module Testjour
     end
     
     def rsync_uri
-      # require "rubygems"; require "ruby-debug"; Debugger.start; debugger
       full_uri.user + "@" + full_uri.host + ":" + full_uri.path
     end
     
@@ -75,6 +74,7 @@ module Testjour
       features = Cucumber::Ast::Features.new
       
       Array(files).each do |file|
+        # Testjour.logger.info "Configuration adding feature #{file}..."
         features.add_feature(parser.parse_file(file, cucumber_configuration.options))
       end
       
@@ -82,11 +82,15 @@ module Testjour
     end
     
     def feature_files
+      return @feature_files if @feature_files
+      
       features = load_plain_text_features(cucumber_configuration.feature_files)
       visitor = Testjour::FeatureFileFinder.new(step_mother)
       visitor.options = cucumber_configuration.options
       visitor.visit_features(features)
-      return visitor.feature_files
+      @feature_files = visitor.feature_files
+      
+      return @feature_files
     end
     
     def cucumber_configuration
