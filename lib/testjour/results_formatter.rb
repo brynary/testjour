@@ -5,12 +5,15 @@ require "testjour/result_set"
 module Testjour
   class ResultsFormatter
     
-    def initialize(step_count)
-      @step_count   = step_count
-      @progress_bar = ProgressBar.new("0 failures", @step_count)
-      @result_set   = ResultSet.new
+    def initialize(step_counter)
+      @progress_bar = ProgressBar.new("0 failures", step_counter.count)
+      @result_set   = ResultSet.new(step_counter)
     end
   
+    def missing_backtrace_lines
+      @result_set.missing_backtrace_lines
+    end
+    
     def result(result)
       @result_set.record(result)
       log_result(result)

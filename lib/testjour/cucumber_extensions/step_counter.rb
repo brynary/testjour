@@ -3,16 +3,23 @@ require 'cucumber/ast/visitor'
 module Testjour
   
     class StepCounter < Cucumber::Ast::Visitor
-      attr_reader :count
+      attr_reader :backtrace_lines
       
       def initialize(step_mother)
         super
-        @count = 0
+        @backtrace_lines = []
       end
       
-      def visit_step(step)
-        @count += 1
+      def visit_step(step_invocation)
+        unless step_invocation.status == :outline
+          @backtrace_lines << step_invocation.backtrace_line
+        end
       end
+      
+      def count
+        @backtrace_lines.size
+      end
+      
     end
 
 end

@@ -1,14 +1,19 @@
 module Testjour
   class ResultSet
     
-    def initialize
+    def initialize(step_counter)
+      @step_counter = step_counter
+      
       @counts   = Hash.new { |h, result|    h[result]    = 0 }
       @results  = Hash.new { |h, server_id| h[server_id] = [] }
+      
+      @backtrace_lines_seen = []
     end
     
     def record(result)
       @results[result.server_id] << result
       @counts[result.status] += 1
+      @backtrace_lines_seen << result.backtrace_line
     end
     
     def count(result)
@@ -32,10 +37,15 @@ module Testjour
       @results.keys.size
     end
     
+    def missing_backtrace_lines
+      @step_counter.backtrace_lines - @backtrace_lines_seen
+    end
+    
   protected
   
     def total_time(results)
       results.inject(0) { |memo, r| r.time + memo }
     end
+    
   end
 end

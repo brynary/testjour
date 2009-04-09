@@ -6,10 +6,9 @@ module Testjour
   class Result
     attr_reader :time
     attr_reader :status
-    # attr_reader :hostname
-    # attr_reader :pid
     attr_reader :message
     attr_reader :backtrace
+    attr_reader :backtrace_line
     
     CHARS = {
       :undefined => 'U',
@@ -19,13 +18,14 @@ module Testjour
       :skipped   => 'S'
     }
     
-    def initialize(time, status, exception)
-      @time   = time
-      @status = status
+    def initialize(time, step_invocation)
+      @time           = time
+      @status         = step_invocation.status
+      @backtrace_line = step_invocation.backtrace_line
       
-      if exception
-        @message    = exception.message.to_s
-        @backtrace  = exception.backtrace.join("\n")
+      if step_invocation.exception
+        @message    = step_invocation.exception.message.to_s
+        @backtrace  = step_invocation.exception.backtrace.join("\n")
       end
       
       @pid        = $PID
