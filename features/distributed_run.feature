@@ -1,4 +1,4 @@
-Feature: Run Features
+Feature: Distributed runs
 
   In order to write software quicker
   As a software engineer

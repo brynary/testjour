@@ -6,8 +6,8 @@ module Testjour
   class Result
     attr_reader :time
     attr_reader :status
-    attr_reader :hostname
-    attr_reader :pid
+    # attr_reader :hostname
+    # attr_reader :pid
     attr_reader :message
     attr_reader :backtrace
     
@@ -38,6 +38,10 @@ module Testjour
     
     def char
       CHARS[@status]
+    end
+    
+    def failed?
+      status == :failed
     end
     
   end

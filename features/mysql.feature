@@ -1,4 +1,4 @@
-Feature: Run Features
+Feature: MySQL databases
 
   In order to avoid MySQL deadlocks
   As a software engineer
