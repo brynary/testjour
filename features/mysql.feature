@@ -7,7 +7,7 @@ Feature: Run Features
   Scenario: Create MySQL databases
     When I run `testjour --create-mysql-db mysql_db.feature`
     Then it should pass with "1 steps passed"
-    And testjour.log should include "Executing: mysqladmin create testjour_runner_"
+    And testjour.log should include "mysqladmin create testjour_runner_"
     And testjour.log should include "mysql_db.feature"
   
   Scenario: Don't create MySQL databases by default

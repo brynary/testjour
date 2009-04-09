@@ -7,6 +7,7 @@ require "testjour/configuration"
 require "testjour/cucumber_extensions/step_counter"
 require "testjour/cucumber_extensions/feature_file_finder"
 require "testjour/results_formatter"
+require "testjour/result"
 
 module Testjour
 module Commands
@@ -95,8 +96,7 @@ module Commands
       
       HttpQueue.with_queue(queue_uri) do |queue|
         step_count.times do
-          result = queue.pop(:results)
-          results_formatter.result(*result)
+          results_formatter.result(queue.pop(:results))
         end
       end
       

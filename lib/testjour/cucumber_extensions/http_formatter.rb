@@ -1,6 +1,7 @@
 require 'socket'
 require 'english'
 require 'cucumber/formatter/console'
+require 'testjour/result'
 
 module Testjour
   
@@ -25,11 +26,7 @@ module Testjour
       super
       
       unless @last_status == :outline
-        if step.exception
-          progress(@last_time, @last_status, step.exception.message.to_s, step.exception.backtrace.join("\n"))
-        else
-          progress(@last_time, @last_status)
-        end
+        progress(@last_time, @last_status, step.exception)
       end
     end
     
@@ -44,17 +41,9 @@ module Testjour
     
     private
 
-    CHARS = {
-      :undefined => 'U',
-      :passed    => '.',
-      :failed    => 'F',
-      :pending   => 'P',
-      :skipped   => 'S'
-    }
-
-    def progress(time, status, message = nil, backtrace = nil)
+    def progress(time, status, exception)
       HttpQueue.with_queue(@queue_uri) do |queue|
-        queue.push(:results, [time, hostname, $PID, CHARS[status], message, backtrace])
+        queue.push(:results, Result.new(time, status, exception))
       end
     end
     
