@@ -19,30 +19,30 @@ module Testjour
     end
 
     def visit_features(features)
-      Testjour.logger.log "visit_features..."
+      Testjour.logger.info "visit_features..."
       features.accept(self)
-      Testjour.logger.log "visit_features done"
+      Testjour.logger.info "visit_features done"
     end
 
     def visit_feature(feature)
-      Testjour.logger.log "visit_feature..."
+      Testjour.logger.info "visit_feature..."
       feature.accept(self)
-      Testjour.logger.log "visit_feature done"
+      Testjour.logger.info "visit_feature done"
     end
 
     def visit_comment(comment)
-      Testjour.logger.log "visit_comment"
+      Testjour.logger.info "visit_comment"
       comment.accept(self)
-      Testjour.logger.log "visit_comment done"
+      Testjour.logger.info "visit_comment done"
     end
 
     def visit_comment_line(comment_line)
     end
 
     def visit_tags(tags)
-      Testjour.logger.log "visit_tags"
+      Testjour.logger.info "visit_tags"
       tags.accept(self)
-      Testjour.logger.log "visit_tags done"
+      Testjour.logger.info "visit_tags done"
     end
 
     def visit_tag_name(tag_name)
@@ -53,66 +53,66 @@ module Testjour
 
     # +feature_element+ is either Scenario or ScenarioOutline
     def visit_feature_element(feature_element)
-      Testjour.logger.log "visit_feature element..."
+      Testjour.logger.info "visit_feature element..."
       feature_element.accept(self)
-      Testjour.logger.log "visit_feature element done"
+      Testjour.logger.info "visit_feature element done"
     end
 
     def visit_background(background)
-      Testjour.logger.log "visit_background"
+      Testjour.logger.info "visit_background"
       background.accept(self)
-      Testjour.logger.log "visit_background done"
+      Testjour.logger.info "visit_background done"
     end
 
     def visit_background_name(keyword, name, file_colon_line, source_indent)
     end
 
     def visit_examples(examples)
-      Testjour.logger.log "visit_examples"
+      Testjour.logger.info "visit_examples"
       examples.accept(self)
-      Testjour.logger.log "visit_examples done"
+      Testjour.logger.info "visit_examples done"
     end
 
     def visit_examples_name(keyword, name)
     end
 
     def visit_outline_table(outline_table)
-      Testjour.logger.log "visit_outline_table"
+      Testjour.logger.info "visit_outline_table"
       outline_table.accept(self)
-      Testjour.logger.log "visit_outline_table done"
+      Testjour.logger.info "visit_outline_table done"
     end
 
     def visit_scenario_name(keyword, name, file_colon_line, source_indent)
     end
 
     def visit_steps(steps)
-      Testjour.logger.log "visit_steps..."
+      Testjour.logger.info "visit_steps..."
       steps.accept(self)
-      Testjour.logger.log "visit_steps done"
+      Testjour.logger.info "visit_steps done"
     end
 
     def visit_step(step)
-      Testjour.logger.log "visit_step"
+      Testjour.logger.info "visit_step"
       step.accept(self)
-      Testjour.logger.log "visit_step done"
+      Testjour.logger.info "visit_step done"
     end
 
     def visit_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background)
-      Testjour.logger.log "visit_step_result"
+      Testjour.logger.info "visit_step_result"
       visit_step_name(keyword, step_match, status, source_indent, background)
       visit_multiline_arg(multiline_arg) if multiline_arg
       visit_exception(exception, status) if exception
-      Testjour.logger.log "visit_step_result done"
+      Testjour.logger.info "visit_step_result done"
     end
 
     def visit_step_name(keyword, step_match, status, source_indent, background) #:nodoc:
-      Testjour.logger.log "visit_step name."
+      Testjour.logger.info "visit_step name."
     end
 
     def visit_multiline_arg(multiline_arg) #:nodoc:
-      Testjour.logger.log "visit_multiline_arg"
+      Testjour.logger.info "visit_multiline_arg"
       multiline_arg.accept(self)
-      Testjour.logger.log "visit_multiline_arg done"
+      Testjour.logger.info "visit_multiline_arg done"
     end
 
     def visit_exception(exception, status) #:nodoc:
@@ -122,15 +122,15 @@ module Testjour
     end
 
     def visit_table_row(table_row)
-      Testjour.logger.log "visit_table_row"
+      Testjour.logger.info "visit_table_row"
       table_row.accept(self)
-      Testjour.logger.log "visit_table_row done"
+      Testjour.logger.info "visit_table_row done"
     end
 
     def visit_table_cell(table_cell)
-      Testjour.logger.log "visit_table_cell"
+      Testjour.logger.info "visit_table_cell"
       table_cell.accept(self)
-      Testjour.logger.log "visit_table_cell done"
+      Testjour.logger.info "visit_table_cell done"
     end
 
     def visit_table_cell_value(value, width, status)

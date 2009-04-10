@@ -68,7 +68,7 @@ module Testjour
       
       if existing_pid
         Testjour.logger.info "Killing running httpq PID #{existing_pid}..."
-        Process.kill("INT", existing_pid.to_i)
+        Process.kill(9, existing_pid.to_i)
         HttpQueue.wait_for_no_service
       end
       
