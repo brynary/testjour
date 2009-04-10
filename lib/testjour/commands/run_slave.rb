@@ -46,6 +46,7 @@ module Commands
             Testjour.logger.info "Running: #{feature_file}"
             features = load_plain_text_features(feature_file)
             execute_features(features)
+            Testjour.logger.info "Finished running: #{feature_file}"
           else
             Testjour.logger.info "No feature file found. Finished"
           end
