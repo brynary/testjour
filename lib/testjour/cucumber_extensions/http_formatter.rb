@@ -21,23 +21,23 @@ module Testjour
     def visit_step(step)
       step_start = Time.now
       super
-      
-      unless step.status == :outline
+
+      if step.respond_to?(:status)
         progress(Time.now - step_start, step)
       end
     end
 
     def visit_table_cell_value(value, width, status)
-      if (status != :thead) && !@multiline_arg
-        raise "Table cells not supported by testjour yet."
+      if (status != :skipped_param) && !@multiline_arg
+        progress(0.0, nil, status)
       end
     end
     
   private
 
-    def progress(time, step_invocation)
+    def progress(time, step_invocation, status = nil)
       HttpQueue.with_queue(@queue_uri) do |queue|
-        queue.push(:results, Result.new(time, step_invocation))
+        queue.push(:results, Result.new(time, step_invocation, status))
       end
     end
     

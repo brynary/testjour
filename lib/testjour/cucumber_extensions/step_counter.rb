@@ -11,9 +11,15 @@ module Testjour
       end
       
       def visit_step(step_invocation)
-        unless step_invocation.status == :outline
+        if step_invocation.respond_to?(:status) #&& step_invocation.status != :outline
           @backtrace_lines << step_invocation.backtrace_line
         end
+      end
+      
+      def visit_table_cell_value(value, width, status)
+        # Testjour.logger.info "#{value.inspect}, #{status.inspect}"
+        super
+        @backtrace_lines << "Table cell value: #{value}" unless status == :skipped_param
       end
       
       def count
