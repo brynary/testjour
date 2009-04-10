@@ -43,6 +43,7 @@ module Testjour
       
       mysql.create_database
       at_exit do
+        Testjour.logger.info caller.join("\n")
         mysql.drop_database
       end
       
