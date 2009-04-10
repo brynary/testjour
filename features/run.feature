@@ -14,6 +14,11 @@ Feature: Run Features
     Then it should pass with "9 steps passed"
     And testjour.log should include "table.feature"
     
+  Scenario: Run inline tables
+    When I run `testjour inline_table.feature`
+    Then it should pass with "2 steps passed"
+    And testjour.log should include "inline_table.feature"
+    
   Scenario: Run files from a profile
     When I run `testjour --profile=failing`
     Then it should fail with "1 steps failed"
