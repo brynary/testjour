@@ -12,7 +12,7 @@ module Testjour
       @queue_uri = queue_uri
     end
     
-    def visit_multiline_arg(multiline_arg, status)
+    def visit_multiline_arg(multiline_arg)
       @multiline_arg = true
       super
       @multiline_arg = false
