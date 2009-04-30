@@ -12,14 +12,6 @@ module Commands
   class RunSlave < Command
     
     def execute
-      Signal.list.each do |name, code|
-        next if name == "VTALRM"
-
-        Signal.trap(code) do
-          Testjour.logger.info "Received signal: #{code}"
-        end
-      end
-      
       configuration.parse!
       configuration.parse_uri!
       
