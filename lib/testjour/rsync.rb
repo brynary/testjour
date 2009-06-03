@@ -49,7 +49,7 @@ module Testjour
     end
     
     def command
-      "rsync -az --delete --exclude=.git --exclude=*.log --exclude=*.pid #{@source_uri}/ #{destination_dir}"
+      "rsync -az -e \"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" --delete --exclude=.git --exclude=*.log --exclude=*.pid #{@source_uri}/ #{destination_dir}"
     end
     
     def destination_dir
