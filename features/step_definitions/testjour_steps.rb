@@ -37,6 +37,11 @@ Then /^it should (pass|fail) with "(.+)"$/ do |pass_or_fail, text|
   @stdout.should include(text)
 end
 
+Then /^it should pass with no output$/ do
+  @exit_code.should == 0
+  @stdout.should == ""
+end
+
 Then /^it should (pass|fail) with$/ do |pass_or_fail, text|
   if pass_or_fail == "pass"
     @exit_code.should == 0
