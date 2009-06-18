@@ -24,7 +24,7 @@ Feature: Run Features
     And testjour.log should include "inline_table.feature"
 
   Scenario: Run files from a profile
-    When I run `testjour --profile=failing`
+    When I run `testjour -p failing`
     Then it should fail with "1 steps failed"
     And testjour.log should include "failing.feature"
 
