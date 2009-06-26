@@ -21,11 +21,11 @@ module Commands
     def load_plain_text_features(files)
       features = Cucumber::Ast::Features.new
 
-      Array(files).each do |file|
-        parsed_feature = parser.parse_file(file, configuration.cucumber_configuration.options)
-
-        if parsed_feature
-          features.add_feature(parsed_feature)
+      Array(files).each do |f|
+        feature_file = Cucumber::FeatureFile.new(f)
+        feature = feature_file.parse(configuration.cucumber_configuration.options)
+        if feature
+          features.add_feature(feature)
         end
       end
 
