@@ -1,5 +1,5 @@
 require 'socket'
-require 'english'
+require 'English'
 require 'cucumber/formatter/console'
 require 'testjour/result'
 
