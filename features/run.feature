@@ -7,12 +7,10 @@ Feature: Run Features
   Scenario: Run passing steps
     When I run `testjour passing.feature`
     Then it should pass with "1 steps passed"
-    And testjour.log should include "passing.feature"
 
   Scenario: Run scenario outline tables
     When I run `testjour table.feature`
     Then it should pass with "9 steps passed"
-    And testjour.log should include "table.feature"
 
   Scenario: Only run scenarios matching tags
     When I run `testjour --tags foo passing.feature`
@@ -21,28 +19,24 @@ Feature: Run Features
   Scenario: Run inline tables
     When I run `testjour inline_table.feature`
     Then it should pass with "2 steps passed"
-    And testjour.log should include "inline_table.feature"
 
   Scenario: Run files from a profile
     When I run `testjour -p failing`
     Then it should fail with "1 steps failed"
-    And testjour.log should include "failing.feature"
 
   Scenario: Run failing steps
     When I run `testjour failing.feature`
     Then it should fail with "1 steps failed"
-    And the output should contain "FAIL"
-    And testjour.log should include "failing.feature"
+    And the output should contain "F1) FAIL"
 
   Scenario: Run undefined steps
-    When I run `testjour -r support/env.rb undefined.feature`
+    When I run `testjour -r support/env undefined.feature`
     Then it should pass with "1 steps undefined"
-    And testjour.log should include "undefined.feature"
+    And the output should contain "U1) undefined.feature:4:in `Given undefined'"
 
   Scenario: Run pending steps
-    When I run `testjour -r support/env.rb -r step_definitions undefined.feature`
+    When I run `testjour -r support/env -r step_definitions undefined.feature`
     Then it should pass with "1 steps pending"
-    And testjour.log should include "undefined.feature"
 
   Scenario: Parallel runs
     When I run `testjour failing.feature passing.feature`
