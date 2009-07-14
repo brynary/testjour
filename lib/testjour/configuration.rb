@@ -164,6 +164,10 @@ module Testjour
           @options[:in] = directory
         end
 
+        opts.on("--strict", "Fail if there are any undefined steps") do
+          @options[:strict] = true
+        end
+
         opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
           @options[:create_mysql_db] = true
         end

@@ -34,6 +34,11 @@ Feature: Run Features
     Then it should pass with "1 steps undefined"
     And the output should contain "U1) undefined.feature:4:in `Given undefined'"
 
+  Scenario: Strict mode
+    When I run `testjour --strict -r support/env undefined.feature`
+    Then it should fail with "1 steps undefined"
+    And the output should contain "U1) undefined.feature:4:in `Given undefined'"
+
   Scenario: Run pending steps
     When I run `testjour -r support/env -r step_definitions undefined.feature`
     Then it should pass with "1 steps pending"

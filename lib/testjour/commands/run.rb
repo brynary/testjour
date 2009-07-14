@@ -94,7 +94,7 @@ module Commands
     end
     
     def print_results
-      results_formatter = ResultsFormatter.new(step_counter)
+      results_formatter = ResultsFormatter.new(step_counter, configuration.options)
       
       HttpQueue.with_queue(queue_uri) do |queue|
         step_counter.count.times do
