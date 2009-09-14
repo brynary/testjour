@@ -35,13 +35,7 @@ module Commands
       feature_file = true
 
       while feature_file
-        begin
-          feature_file = queue.pop(:feature_files)
-        rescue Curl::Err::ConnectionFailedError
-          feature_file = false
-        end
-
-        if feature_file
+        if (feature_file = queue.pop(:feature_files))
           Testjour.logger.info "Running: #{feature_file}"
           features = load_plain_text_features(feature_file)
           Testjour.logger.info "Loaded: #{feature_file}"
