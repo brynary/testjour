@@ -31,31 +31,30 @@ module Commands
     end
 
     def work
-      HttpQueue.with_queue(configuration.queue_uri) do |queue|
-        feature_file = true
+      queue = RedisQueue.new
+      feature_file = true
 
-        while feature_file
-          begin
-            feature_file = queue.pop(:feature_files)
-          rescue Curl::Err::ConnectionFailedError
-            feature_file = false
-          end
+      while feature_file
+        begin
+          feature_file = queue.pop(:feature_files)
+        rescue Curl::Err::ConnectionFailedError
+          feature_file = false
+        end
 
-          if feature_file
-            Testjour.logger.info "Running: #{feature_file}"
-            features = load_plain_text_features(feature_file)
-            Testjour.logger.info "Loaded: #{feature_file}"
-            execute_features(features)
-            Testjour.logger.info "Finished running: #{feature_file}"
-          else
-            Testjour.logger.info "No feature file found. Finished"
-          end
+        if feature_file
+          Testjour.logger.info "Running: #{feature_file}"
+          features = load_plain_text_features(feature_file)
+          Testjour.logger.info "Loaded: #{feature_file}"
+          execute_features(features)
+          Testjour.logger.info "Finished running: #{feature_file}"
+        else
+          Testjour.logger.info "No feature file found. Finished"
         end
       end
     end
 
     def execute_features(features)
-      visitor = Testjour::HttpFormatter.new(step_mother, StringIO.new, configuration.queue_uri)
+      visitor = Testjour::HttpFormatter.new(step_mother)
       visitor.options = configuration.cucumber_configuration.options
       Testjour.logger.info "Visiting..."
       visitor.visit_features(features)

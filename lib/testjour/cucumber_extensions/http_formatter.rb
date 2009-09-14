@@ -7,11 +7,6 @@ module Testjour
 
   class HttpFormatter < ::Cucumber::Ast::Visitor
 
-    def initialize(step_mother, io, queue_uri)
-      super(step_mother)
-      @queue_uri = queue_uri
-    end
-
     def visit_multiline_arg(multiline_arg)
       @multiline_arg = true
       super
@@ -36,9 +31,8 @@ module Testjour
   private
 
     def progress(time, step_invocation, status = nil)
-      HttpQueue.with_queue(@queue_uri) do |queue|
-        queue.push(:results, Result.new(time, step_invocation, status))
-      end
+      queue = RedisQueue.new
+      queue.push(:results, Result.new(time, step_invocation, status))
     end
 
   end
