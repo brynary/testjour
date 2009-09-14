@@ -11,7 +11,7 @@ module Testjour
     end
 
     def self.redis
-      @redis ||= Redis.new
+      @redis ||= Redis.new(:db => 11)
     end
 
     def redis
