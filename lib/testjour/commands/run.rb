@@ -93,17 +93,9 @@ module Commands
     def print_results
       results_formatter = ResultsFormatter.new(step_counter, configuration.options)
       queue = RedisQueue.new
-      results_count = 0
 
-      Timeout.timeout(180) do
-        while results_count < step_counter.count
-          if (result = queue.pop(:results))
-            results_formatter.result(result)
-            results_count += 1
-          else
-            sleep 0.1
-          end
-        end
+      step_counter.count.times do
+        results_formatter.result(queue.blocking_pop(:results))
       end
 
       results_formatter.finish

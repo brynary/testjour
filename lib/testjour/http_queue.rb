@@ -27,6 +27,19 @@ module Testjour
       result ? Marshal.load(result) : nil
     end
 
+    def blocking_pop(queue_name)
+      Timeout.timeout(180) do
+        result = nil
+
+        while result.nil?
+          result = pop(queue_name)
+          sleep 0.1 unless result
+        end
+
+        result
+      end
+    end
+
   end
 
 end
