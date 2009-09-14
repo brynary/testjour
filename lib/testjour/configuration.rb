@@ -51,12 +51,8 @@ module Testjour
       mysql.load_schema
     end
 
-    def files_to_require
-      cucumber_configuration.files_to_require
-    end
-
     def step_mother
-      Cucumber::Cli::Main.instance_variable_get("@step_mother")
+      Cucumber::Cli::Main.step_mother
     end
 
     def mysql_mode?
@@ -76,7 +72,7 @@ module Testjour
 
       Array(files).each do |f|
         feature_file = Cucumber::FeatureFile.new(f)
-        feature = feature_file.parse(cucumber_configuration.options)
+        feature = feature_file.parse(step_mother, cucumber_configuration.options)
         if feature
           features.add_feature(feature)
         end

@@ -27,7 +27,7 @@ module Testjour
       end
     end
 
-    def visit_table_cell_value(value, width, status)
+    def visit_table_cell_value(value, status)
       if (status != :skipped_param) && !@multiline_arg
         progress(0.0, nil, status)
       end

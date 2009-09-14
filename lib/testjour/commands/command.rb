@@ -23,7 +23,7 @@ module Commands
 
       Array(files).each do |f|
         feature_file = Cucumber::FeatureFile.new(f)
-        feature = feature_file.parse(configuration.cucumber_configuration.options)
+        feature = feature_file.parse(step_mother, configuration.cucumber_configuration.options)
         if feature
           features.add_feature(feature)
         end
@@ -37,7 +37,7 @@ module Commands
     end
 
     def step_mother
-      Cucumber::Cli::Main.instance_variable_get("@step_mother")
+      Cucumber::Cli::Main.step_mother
     end
 
     def testjour_path
