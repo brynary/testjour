@@ -1,5 +1,3 @@
-require 'cucumber/ast/visitor'
-
 module Testjour
 
     class StepCounter

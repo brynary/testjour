@@ -86,9 +86,9 @@ module Testjour
 
       features = load_plain_text_features(cucumber_configuration.feature_files)
       finder = Testjour::FeatureFileFinder.new
-      visitor = Cucumber::Ast::TreeWalker.new(step_mother, [finder])
-      visitor.options = cucumber_configuration.options
-      visitor.visit_features(features)
+      walker = Cucumber::Ast::TreeWalker.new(step_mother, [finder])
+      walker.options = cucumber_configuration.options
+      walker.visit_features(features)
       @feature_files = finder.feature_files
 
       return @feature_files
