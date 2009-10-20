@@ -106,9 +106,10 @@ module Commands
       return @step_counter if @step_counter
 
       features = load_plain_text_features(configuration.feature_files)
-      @step_counter = Testjour::StepCounter.new(step_mother)
-      @step_counter.options = configuration.cucumber_configuration.options
-      @step_counter.visit_features(features)
+      @step_counter = Testjour::StepCounter.new
+      tree_walker = Cucumber::Ast::TreeWalker.new(step_mother, [@step_counter])
+      tree_walker.options = configuration.cucumber_configuration.options
+      tree_walker.visit_features(features)
       return @step_counter
     end
 

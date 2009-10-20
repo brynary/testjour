@@ -5,24 +5,27 @@ require 'testjour/result'
 
 module Testjour
 
-  class HttpFormatter < ::Cucumber::Ast::Visitor
+  class HttpFormatter
 
-    def visit_multiline_arg(multiline_arg)
+    def before_multiline_arg(multiline_arg)
       @multiline_arg = true
-      super
+    end
+    
+    def after_multiline_arg(multiline_arg)
       @multiline_arg = false
     end
 
-    def visit_step(step)
-      step_start = Time.now
-      super
-
+    def before_step(step)
+      @step_start = Time.now
+    end
+    
+    def after_step(step)
       if step.respond_to?(:status)
-        progress(Time.now - step_start, step)
+        progress(Time.now - @step_start, step)
       end
     end
 
-    def visit_table_cell_value(value, status)
+    def table_cell_value(value, status)
       if (status != :skipped_param) && !@multiline_arg
         progress(0.0, nil, status)
       end

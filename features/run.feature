@@ -13,7 +13,7 @@ Feature: Run Features
     Then it should pass with "9 steps passed"
 
   Scenario: Only run scenarios matching tags
-    When I run `testjour --tags foo passing.feature`
+    When I run `testjour --tags @foo passing.feature`
     Then it should pass with no output
 
   Scenario: Run inline tables

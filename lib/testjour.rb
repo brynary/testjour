@@ -27,7 +27,7 @@ def detached_exec(command)
 end
 
 module Testjour
-  VERSION = "0.3.0"
+  VERSION = "0.3.1"
   
   def self.logger
     return @logger if @logger

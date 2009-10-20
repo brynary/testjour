@@ -48,10 +48,11 @@ module Commands
     end
 
     def execute_features(features)
-      visitor = Testjour::HttpFormatter.new(step_mother)
-      visitor.options = configuration.cucumber_configuration.options
+      http_formatter = Testjour::HttpFormatter.new
+      tree_walker = Cucumber::Ast::TreeWalker.new(step_mother, [http_formatter])
+      tree_walker.options = configuration.cucumber_configuration.options
       Testjour.logger.info "Visiting..."
-      visitor.visit_features(features)
+      tree_walker.visit_features(features)
     end
 
     def require_files

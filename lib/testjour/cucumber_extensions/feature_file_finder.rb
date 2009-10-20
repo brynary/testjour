@@ -1,21 +1,17 @@
-require 'cucumber/ast/visitor'
-
 module Testjour
   
-  class FeatureFileFinder < Cucumber::Ast::Visitor
+  class FeatureFileFinder
     attr_reader :feature_files
     
-    def initialize(step_mother)
-      super
+    def initialize
       @feature_files = []
     end
     
-    def visit_feature(feature)
+    def before_feature(feature)
       @current_feature = feature
-      super
     end
     
-    def visit_step(step)
+    def before_step(step)
       @feature_files << @current_feature.file
       @feature_files.uniq!
     end
