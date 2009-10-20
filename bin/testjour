@@ -5,5 +5,5 @@ require "rubygems"
 require File.expand_path(File.dirname(__FILE__) + "/../lib/testjour")
 require "testjour/cli"
 
-result = Testjour::CLI.execute(ARGV.dup)
+result = Testjour::CLI.execute(ARGV)
 Kernel.exit(result)
