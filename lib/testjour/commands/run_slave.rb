@@ -31,7 +31,7 @@ module Commands
     end
 
     def work
-      queue = RedisQueue.new
+      queue = RedisQueue.new(configuration.queue_host)
       feature_file = true
 
       while feature_file
@@ -48,7 +48,7 @@ module Commands
     end
 
     def execute_features(features)
-      http_formatter = Testjour::HttpFormatter.new
+      http_formatter = Testjour::HttpFormatter.new(configuration)
       tree_walker = Cucumber::Ast::TreeWalker.new(step_mother, [http_formatter])
       tree_walker.options = configuration.cucumber_configuration.options
       Testjour.logger.info "Visiting..."

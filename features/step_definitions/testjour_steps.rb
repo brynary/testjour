@@ -10,6 +10,15 @@ Given /^Testjour is configured to run on localhost in a (\w+) directory$/ do |di
   FileUtils.mkdir_p full_path
 end
 
+Given /^Testjour is configured to run on this machine in a (\w+) directory$/ do |dir_name|
+  @args ||= []
+  full_path = File.expand_path("./tmp/#{dir_name}")
+  @args << "--on=testjour://#{`hostname`.chomp}#{full_path}"
+  
+  FileUtils.rm_rf full_path
+  FileUtils.mkdir_p full_path
+end
+
 When /^I run `testjour (.+)`$/ do |args|
   @args ||= []
   @args += args.split
@@ -17,7 +26,7 @@ When /^I run `testjour (.+)`$/ do |args|
   Dir.chdir(@full_dir) do
     testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../../bin/testjour")
     cmd = "#{testjour_path} #{@args.join(" ")}"
-    # puts cmd
+    #puts cmd
     status, @stdout, @stderr = systemu(cmd)
     @exit_code = status.exitstatus
   end

@@ -6,6 +6,10 @@ require 'testjour/result'
 module Testjour
 
   class HttpFormatter
+    
+    def initialize(configuration)
+      @configuration = configuration
+    end
 
     def before_multiline_arg(multiline_arg)
       @multiline_arg = true
@@ -39,7 +43,7 @@ module Testjour
   private
 
     def progress(time, status, step_match = nil, exception = nil)
-      queue = RedisQueue.new
+      queue = RedisQueue.new(@configuration.queue_host)
       queue.push(:results, Result.new(time, status, step_match, exception))
     end
 

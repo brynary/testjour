@@ -1,7 +1,7 @@
 module Testjour
 
   class Configuration
-    attr_reader :unknown_args, :options, :path, :queue_uri, :full_uri
+    attr_reader :unknown_args, :options, :path, :full_uri
 
     def initialize(args)
       @options = {}
@@ -30,6 +30,10 @@ module Testjour
 
     def rsync_uri
       full_uri.user + "@" + full_uri.host + ":" + full_uri.path
+    end
+    
+    def queue_host
+      @queue_host || `hostname`.chomp
     end
 
     def remote_slaves
@@ -128,8 +132,7 @@ module Testjour
       full_uri = URI.parse(@args.shift)
       @path = full_uri.path
       @full_uri = full_uri.dup
-      full_uri.path = "/"
-      @queue_uri = full_uri.to_s
+      @queue_host = full_uri.host
     end
 
     def run_slave_args

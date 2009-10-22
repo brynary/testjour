@@ -37,7 +37,7 @@ module Commands
 
     def queue_features
       Testjour.logger.info("Queuing features...")
-      queue = RedisQueue.new
+      queue = RedisQueue.new(configuration.queue_host)
 
       configuration.feature_files.each do |feature_file|
         queue.push(:feature_files, feature_file)
@@ -92,7 +92,7 @@ module Commands
 
     def print_results
       results_formatter = ResultsFormatter.new(step_counter, configuration.options)
-      queue = RedisQueue.new
+      queue = RedisQueue.new(configuration.queue_host)
 
       step_counter.count.times do
         results_formatter.result(queue.blocking_pop(:results))
