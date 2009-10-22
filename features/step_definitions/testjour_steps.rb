@@ -13,7 +13,7 @@ end
 Given /^Testjour is configured to run on this machine in a (\w+) directory$/ do |dir_name|
   @args ||= []
   full_path = File.expand_path("./tmp/#{dir_name}")
-  @args << "--on=testjour://#{`hostname`.chomp}#{full_path}"
+  @args << "--on=testjour://#{Socket.gethostname}#{full_path}"
   
   FileUtils.rm_rf full_path
   FileUtils.mkdir_p full_path

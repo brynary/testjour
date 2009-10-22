@@ -31,9 +31,9 @@ module Testjour
     def rsync_uri
       full_uri.user + "@" + full_uri.host + ":" + full_uri.path
     end
-    
+
     def queue_host
-      @queue_host || `hostname`.chomp
+      @queue_host || Testjour.socket_hostname
     end
 
     def remote_slaves

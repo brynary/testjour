@@ -32,7 +32,7 @@ module Testjour
       end
 
       @pid        = $PID
-      @hostname   = Socket.gethostname
+      @hostname   = Testjour.socket_hostname
     end
 
     def server_id

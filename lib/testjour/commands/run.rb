@@ -119,7 +119,7 @@ module Commands
 
     def testjour_uri
       user = `whoami`.strip
-      host = Socket.gethostname
+      host = Testjour.socket_hostname
       "http://#{user}@#{host}" + File.expand_path(".")
     end
 

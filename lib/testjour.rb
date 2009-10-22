@@ -28,20 +28,24 @@ end
 
 module Testjour
   VERSION = "0.3.1"
-  
+
+  def self.socket_hostname
+    @socket_hostname ||= Socket.gethostname
+  end
+
   def self.logger
     return @logger if @logger
     setup_logger
     @logger
   end
-  
+
   def self.setup_logger(dir = "./")
     @logger = Logger.new(File.expand_path(File.join(dir, "testjour.log")))
-    
+
     @logger.formatter = proc do |severity, time, progname, msg|
       "#{time.strftime("%b %d %H:%M:%S")} [#{$PID}]: #{msg}\n"
     end
-    
+
     @logger.level = Logger::DEBUG
   end
 end
