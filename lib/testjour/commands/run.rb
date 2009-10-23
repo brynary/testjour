@@ -3,7 +3,7 @@ require "socket"
 require "etc"
 
 require "testjour/commands/command"
-require "testjour/http_queue"
+require "testjour/redis_queue"
 require "testjour/configuration"
 require "testjour/cucumber_extensions/step_counter"
 require "testjour/cucumber_extensions/feature_file_finder"
