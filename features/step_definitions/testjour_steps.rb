@@ -19,6 +19,12 @@ Given /^Testjour is configured to run on this machine in a (\w+) directory$/ do 
   FileUtils.mkdir_p full_path
 end
 
+Given /^a file testjour_preload.rb at the root of the project that logs "Hello, world"$/ do
+  File.open(File.join(@full_dir, 'testjour_preload.rb'), 'w') do |file|
+    file.puts "Testjour.logger.info 'Hello, world'"
+  end
+end
+
 When /^I run `testjour (.+)`$/ do |args|
   @args ||= []
   @args += args.split

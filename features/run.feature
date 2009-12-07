@@ -49,3 +49,8 @@ Feature: Run Features
     And the output should contain "FAIL"
     And the output should contain "1 steps failed"
     And it should run on 2 slaves
+    
+  Scenario: Preload application
+    Given a file testjour_preload.rb at the root of the project that logs "Hello, world"
+    When I run `testjour passing.feature`
+    And testjour.log should include "Hello, world"

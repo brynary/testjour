@@ -27,6 +27,7 @@ module Commands
           configuration.setup
           configuration.setup_mysql
           require_cucumber_files
+          preload_app
           work
         rescue Object => ex
           Testjour.logger.error "run:slave error: #{ex.message}"
@@ -45,7 +46,7 @@ module Commands
           features = load_plain_text_features(feature_file)
           parent_pid = $PID
           if @child = fork
-            Testjour.logger.info "Forked #{@child} at #{Time.now.to_i}"
+            Testjour.logger.info "Forked #{@child} to run #{feature_file}"
             Process.wait
             Testjour.logger.info "Finished running: #{feature_file}"
           else
@@ -72,6 +73,13 @@ module Commands
       step_mother.load_code_files(configuration.cucumber_configuration.support_to_load)
       step_mother.after_configuration(configuration.cucumber_configuration)
       step_mother.load_code_files(configuration.cucumber_configuration.step_defs_to_load)
+    end
+    
+    def preload_app
+      if File.exist?('./testjour_preload.rb')
+        Testjour.logger.info 'Requiring ./testjour_preload.rb'
+        require './testjour_preload.rb'
+      end
     end
     
     # Not every platform supports fork. Here we do our magic to
