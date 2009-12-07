@@ -27,7 +27,7 @@ def detached_exec(command)
 end
 
 module Testjour
-  VERSION = "0.3.1"
+  VERSION = "0.3.2"
 
   def self.socket_hostname
     @socket_hostname ||= Socket.gethostname
