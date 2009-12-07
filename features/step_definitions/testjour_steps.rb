@@ -77,7 +77,9 @@ Then /^it should run on (\d+) slaves?$/ do |count|
     pids = log.scan(/\[\d+\]/).uniq
     
     # One master process and the slaves
-    pids.size.should == count.to_i + 1
+    if pids.size != count.to_i + 1
+      raise("Expected #{count} slave PIDs, got #{pids.size - 1}:\nLog is:\n#{log}")
+    end
   end
 end
 
