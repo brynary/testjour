@@ -18,22 +18,34 @@ module Commands
     def execute
       configuration.parse!
       configuration.parse_uri!
-      enable_gc_optimizations
 
-      Dir.chdir(configuration.path) do
-        Testjour.setup_logger(configuration.path)
-        Testjour.logger.info "Starting run:slave"
+      Dir.chdir(dir) do
+        Testjour.setup_logger(dir)
+        Testjour.logger.info "Starting #{self.class.name}"
+        
+        before_require
+        
         begin
           configuration.setup
           configuration.setup_mysql
+          
           require_cucumber_files
           preload_app
+          
           work
         rescue Object => ex
-          Testjour.logger.error "run:slave error: #{ex.message}"
+          Testjour.logger.error "#{self.class.name} error: #{ex.message}"
           Testjour.logger.error ex.backtrace.join("\n")
         end
       end
+    end
+    
+    def dir
+      configuration.path
+    end
+    
+    def before_require
+      enable_gc_optimizations
     end
 
     def work
