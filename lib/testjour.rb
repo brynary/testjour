@@ -42,12 +42,16 @@ module Testjour
   def self.override_logger_pid(pid)
     @overridden_logger_pid = pid
   end
+  
+  def self.effective_pid
+    @overridden_logger_pid || $PID
+  end
 
   def self.setup_logger(dir = "./")
     @logger = Logger.new(File.expand_path(File.join(dir, "testjour.log")))
 
     @logger.formatter = proc do |severity, time, progname, msg|
-      "#{time.strftime("%b %d %H:%M:%S")} [#{@overridden_logger_pid || $PID}]: #{msg}\n"
+      "#{time.strftime("%b %d %H:%M:%S")} [#{Testjour.effective_pid}]: #{msg}\n"
     end
 
     @logger.level = Logger::DEBUG

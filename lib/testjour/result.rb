@@ -31,7 +31,7 @@ module Testjour
         @backtrace  = exception.backtrace.join("\n")
       end
 
-      @pid        = $PID
+      @pid        = Testjour.effective_pid
       @hostname   = Testjour.socket_hostname
     end
 
