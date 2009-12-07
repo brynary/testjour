@@ -8,7 +8,7 @@ Feature: testjour CLI
 
     When I run `testjour --version`
     Then it should not print to stderr
-    And it should pass with "testjour 0.3.1"
+    And it should pass with "testjour 0.3.2"
   
   Scenario: Print help information
     When I run `testjour --help`
