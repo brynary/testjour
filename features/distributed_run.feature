@@ -16,6 +16,7 @@ Feature: Distributed runs
   Scenario: Distribute runs (using named host)
     Given Testjour is configured to run on this machine in a temp1 directory
     And Testjour is configured to run on this machine in a temp2 directory
+    And Testjour is configured to use this machine as the queue host
     When I run `testjour sleep1.feature sleep2.feature`
     Then it should fail with "2 steps passed"
     And the output should contain "FAIL"

@@ -33,7 +33,7 @@ module Testjour
     end
 
     def queue_host
-      @queue_host || Testjour.socket_hostname
+      @queue_host || @options[:queue_host] || Testjour.socket_hostname
     end
 
     def remote_slaves
@@ -170,6 +170,10 @@ module Testjour
 
         opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
           @options[:create_mysql_db] = true
+        end
+
+        opts.on("--queue-host=QUEUE_HOST", "Use another server to host the main redis queue") do |queue_host|
+          @options[:queue_host] = queue_host
         end
 
         opts.on("--max-local-slaves=MAX", "Maximum number of local slaves") do |max|
