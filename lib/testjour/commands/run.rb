@@ -59,9 +59,14 @@ module Commands
     end
 
     def start_remote_slaves
-      configuration.remote_slaves.each do |remote_slave|
-        @started_slaves += 1
-        start_remote_slave(remote_slave)
+      if configuration.remote_slaves.any?
+        if configuration.external_rsync_uri
+          Rsync.copy_from_current_directory_to(configuration.external_rsync_uri)
+        end
+        configuration.remote_slaves.each do |remote_slave|
+          @started_slaves += 1
+          start_remote_slave(remote_slave)
+        end
       end
     end
 

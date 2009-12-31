@@ -10,11 +10,16 @@ module Testjour
   class Rsync
     
     def self.copy_to_current_directory_from(source_uri)
-      new(source_uri).copy_with_retry
+      new(source_uri, File.expand_path(".")).copy_with_retry
     end
     
-    def initialize(source_uri)
+    def self.copy_from_current_directory_to(destination_uri)
+      new(File.expand_path("."), destination_uri).copy_with_retry
+    end
+    
+    def initialize(source_uri, destination_uri)
       @source_uri = source_uri
+      @destination_uri = destination_uri
     end
 
     def copy_with_retry
@@ -49,12 +54,7 @@ module Testjour
     end
     
     def command
-      "rsync -az -e \"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" --delete --exclude=.git --exclude=*.log --exclude=*.pid #{@source_uri}/ #{destination_dir}"
+      "rsync -az -e \"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" --delete --exclude=.git --exclude=*.log --exclude=*.pid #{@source_uri}/ #{@destination_uri}"
     end
-    
-    def destination_dir
-      File.expand_path(".")
-    end
-    
   end
 end

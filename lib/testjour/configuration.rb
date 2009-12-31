@@ -29,7 +29,13 @@ module Testjour
     end
 
     def rsync_uri
-      full_uri.user + "@" + full_uri.host + ":" + full_uri.path
+      external_rsync_uri || (full_uri.user + "@" + full_uri.host + ":" + full_uri.path)
+    end
+    
+    def external_rsync_uri
+      if @options[:rsync_host]
+        @options[:rsync_host] + ":/tmp/testjour"
+      end
     end
 
     def queue_host
@@ -174,6 +180,10 @@ module Testjour
 
         opts.on("--queue-host=QUEUE_HOST", "Use another server to host the main redis queue") do |queue_host|
           @options[:queue_host] = queue_host
+        end
+
+        opts.on("--rsync-host=RSYNC_HOST", "Use another server to host the codebase for slave rsync") do |rsync_host|
+          @options[:rsync_host] = rsync_host
         end
 
         opts.on("--max-local-slaves=MAX", "Maximum number of local slaves") do |max|
