@@ -26,7 +26,7 @@ end
 
 Given /^Testjour is configured to use this machine as the rsync host$/ do
   @args ||= []
-  @args << "--rsync-host=#{Socket.gethostname}"
+  @args << "--rsync-uri=#{Socket.gethostname}:/tmp/testjour_feature_run"
 end
 
 Given /^a file testjour_preload.rb at the root of the project that logs "Hello, world"$/ do
@@ -42,10 +42,11 @@ When /^I run `testjour (.+)`$/ do |args|
   Dir.chdir(@full_dir) do
     testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../../bin/testjour")
     cmd = "#{testjour_path} #{@args.join(" ")}"
-    puts cmd
+    # puts cmd
+    
     status, @stdout, @stderr = systemu(cmd)
     @exit_code = status.exitstatus
-    puts @stderr.to_s
+    # puts @stderr.to_s
   end
 end
 

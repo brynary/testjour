@@ -33,9 +33,7 @@ module Testjour
     end
     
     def external_rsync_uri
-      if @options[:rsync_host]
-        @options[:rsync_host] + ":/tmp/testjour"
-      end
+      @options[:rsync_uri]
     end
 
     def queue_host
@@ -182,8 +180,8 @@ module Testjour
           @options[:queue_host] = queue_host
         end
 
-        opts.on("--rsync-host=RSYNC_HOST", "Use another server to host the codebase for slave rsync") do |rsync_host|
-          @options[:rsync_host] = rsync_host
+        opts.on("--rsync-uri=RSYNC_URI", "Use another location to host the codebase for slave rsync (master will rsync to this URI first)") do |rsync_uri|
+          @options[:rsync_uri] = rsync_uri
         end
 
         opts.on("--max-local-slaves=MAX", "Maximum number of local slaves") do |max|
