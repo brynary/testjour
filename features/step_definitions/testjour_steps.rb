@@ -43,7 +43,6 @@ When /^I run `testjour (.+)`$/ do |args|
     testjour_path = File.expand_path(File.dirname(__FILE__) + "/../../../../bin/testjour")
     cmd = "#{testjour_path} #{@args.join(" ")}"
     # puts cmd
-    
     status, @stdout, @stderr = systemu(cmd)
     @exit_code = status.exitstatus
     # puts @stderr.to_s

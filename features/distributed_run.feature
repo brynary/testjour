@@ -22,7 +22,7 @@ Feature: Distributed runs
     And the output should contain "1 steps failed"
     And it should run on 2 remote slaves
     
-  Scenario: Distribute runs (using named host, queue_host and rsync_host)
+  Scenario: Distribute runs (using named host, queue host and rsync uri)
     Given Testjour is configured to run on this machine in a temp1 directory
     And Testjour is configured to run on this machine in a temp2 directory
     And Testjour is configured to use this machine as the queue host

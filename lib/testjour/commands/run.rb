@@ -124,9 +124,13 @@ module Commands
     end
 
     def testjour_uri
-      user = Etc.getpwuid.name
-      host = Testjour.socket_hostname
-      "http://#{user}@#{host}" + File.expand_path(".")
+      if configuration.external_rsync_uri
+        "rsync://#{configuration.external_rsync_uri}"
+      else
+        user = Etc.getpwuid.name
+        host = Testjour.socket_hostname
+        "rsync://#{user}@#{host}" + File.expand_path(".")
+      end
     end
 
     def testjour_path

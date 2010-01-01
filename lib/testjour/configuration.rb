@@ -29,7 +29,7 @@ module Testjour
     end
 
     def rsync_uri
-      external_rsync_uri || (full_uri.user + "@" + full_uri.host + ":" + full_uri.path)
+      external_rsync_uri || "#{full_uri.user}#{'@' if full_uri.user}#{full_uri.host}:#{full_uri.path}"
     end
     
     def external_rsync_uri
@@ -147,6 +147,9 @@ module Testjour
       args_from_options = []
       if @options[:create_mysql_db]
         args_from_options << "--create-mysql-db"
+      end
+      if @options[:queue_host]
+        args_from_options << "--queue-host=#{@options[:queue_host]}"
       end
       return args_from_options
     end
