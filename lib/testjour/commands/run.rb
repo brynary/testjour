@@ -16,7 +16,7 @@ module Commands
   class Run < Command
 
     def execute
-      configuration.unshift_args(testjour_yml_args)
+      configuration.load_additional_args_from_external_file
       configuration.parse!
       configuration.setup
 
@@ -84,16 +84,6 @@ module Commands
     def start_slave
       Testjour.logger.info "Starting slave: #{local_run_command}"
       detached_exec(local_run_command)
-    end
-
-    def testjour_yml_args
-      @testjour_yml_args ||= begin
-        if File.exist?("testjour.yml")
-          File.read("testjour.yml").strip.split
-        else
-          []
-        end
-      end
     end
 
     def print_results

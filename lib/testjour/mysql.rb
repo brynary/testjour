@@ -18,10 +18,6 @@ module Testjour
 
     def load_schema
       schema_file = File.expand_path("./db/development_structure.sql")
-      
-      unless File.exist?(schema_file)
-      end
-      
       run "/usr/local/mysql/bin/mysql #{runner_database_name} < #{schema_file}"
     end
     

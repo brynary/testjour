@@ -19,7 +19,7 @@ module Testjour
       # Cucumber.load_language("en")
       step_mother.options = cucumber_configuration.options
     end
-
+    
     def max_local_slaves
       @options[:max_local_slaves] || 2
     end
@@ -115,6 +115,28 @@ module Testjour
         @args.unshift(pushed_arg)
       end
     end
+    
+    def load_additional_args_from_external_file
+      args_from_file = begin
+        if File.exist?(args_file)
+          File.read(args_file).strip.split
+        else
+          []
+        end
+      end
+      unshift_args(args_from_file)
+    end
+    
+    def args_file
+      # We need to know about this CLI option prior to OptParse's parse
+      args_file_option = @args.detect{|arg| arg =~ /^--testjour-config=/}
+      if args_file_option
+        args_file_option =~ /^--testjour-config=(.*)/
+        $1
+      else
+        'testjour.yml'
+      end
+    end
 
     def parse!
       begin
@@ -162,6 +184,10 @@ module Testjour
 
     def option_parser
       OptionParser.new do |opts|
+        opts.on("--testjour-config=ARGS_FILE", "Load additional testjour args from the specified file (defaults to testjour.yml)") do |args_file|
+          @options[:args_file] = args_file
+        end
+
         opts.on("--on=SLAVE", "Specify a slave URI") do |slave|
           @options[:slaves] ||= []
           @options[:slaves] << slave
