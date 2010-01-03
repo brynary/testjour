@@ -39,6 +39,10 @@ module Testjour
     def queue_host
       @queue_host || @options[:queue_host] || Testjour.socket_hostname
     end
+    
+    def queue_prefix
+      @options[:queue_prefix] || 'default'
+    end
 
     def remote_slaves
       @options[:slaves] || []
@@ -173,6 +177,9 @@ module Testjour
       if @options[:queue_host]
         args_from_options << "--queue-host=#{@options[:queue_host]}"
       end
+      if @options[:queue_prefix]
+        args_from_options << "--queue-prefix=#{@options[:queue_prefix]}"
+      end
       return args_from_options
     end
 
@@ -207,6 +214,10 @@ module Testjour
 
         opts.on("--queue-host=QUEUE_HOST", "Use another server to host the main redis queue") do |queue_host|
           @options[:queue_host] = queue_host
+        end
+
+        opts.on("--queue-prefix=QUEUE_PREFIX", "Provide a prefix to uniquely identify this testjour run (Default is 'default')") do |queue_prefix|
+          @options[:queue_prefix] = queue_prefix
         end
 
         opts.on("--rsync-uri=RSYNC_URI", "Use another location to host the codebase for slave rsync (master will rsync to this URI first)") do |rsync_uri|

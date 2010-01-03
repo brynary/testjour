@@ -21,7 +21,7 @@ module Commands
       configuration.setup
 
       if configuration.feature_files.any?
-        RedisQueue.reset_all
+        RedisQueue.new(configuration.queue_host, configuration.queue_prefix).reset_all
         queue_features
 
         @started_slaves = 0
@@ -38,7 +38,7 @@ module Commands
 
     def queue_features
       Testjour.logger.info("Queuing features...")
-      queue = RedisQueue.new(configuration.queue_host)
+      queue = RedisQueue.new(configuration.queue_host, configuration.queue_prefix)
 
       configuration.feature_files.each do |feature_file|
         queue.push(:feature_files, feature_file)
@@ -88,7 +88,7 @@ module Commands
 
     def print_results
       results_formatter = ResultsFormatter.new(step_counter, configuration.options)
-      queue = RedisQueue.new(configuration.queue_host)
+      queue = RedisQueue.new(configuration.queue_host, configuration.queue_prefix)
 
       step_counter.count.times do
         results_formatter.result(queue.blocking_pop(:results))

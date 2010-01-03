@@ -43,7 +43,7 @@ module Testjour
   private
 
     def progress(time, status, step_match = nil, exception = nil)
-      queue = RedisQueue.new(@configuration.queue_host)
+      queue = RedisQueue.new(@configuration.queue_host, @configuration.queue_prefix)
       queue.push(:results, Result.new(time, status, step_match, exception))
     end
 
