@@ -49,7 +49,9 @@ module Commands
     end
 
     def work
-      queue = RedisQueue.new(configuration.queue_host, configuration.queue_prefix)
+      queue = RedisQueue.new(configuration.queue_host,
+                             configuration.queue_prefix,
+                             configuration.queue_timeout)
       feature_file = true
 
       while feature_file

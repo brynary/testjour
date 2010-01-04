@@ -19,7 +19,7 @@ module Testjour
       # Cucumber.load_language("en")
       step_mother.options = cucumber_configuration.options
     end
-    
+
     def max_local_slaves
       @options[:max_local_slaves] || 2
     end
@@ -31,7 +31,7 @@ module Testjour
     def rsync_uri
       external_rsync_uri || "#{full_uri.user}#{'@' if full_uri.user}#{full_uri.host}:#{full_uri.path}"
     end
-    
+
     def external_rsync_uri
       @options[:rsync_uri]
     end
@@ -39,9 +39,13 @@ module Testjour
     def queue_host
       @queue_host || @options[:queue_host] || Testjour.socket_hostname
     end
-    
+
     def queue_prefix
       @options[:queue_prefix] || 'default'
+    end
+    
+    def queue_timeout
+      @options[:queue_timeout].to_i || 270
     end
 
     def remote_slaves
@@ -119,7 +123,7 @@ module Testjour
         @args.unshift(pushed_arg)
       end
     end
-    
+
     def load_additional_args_from_external_file
       args_from_file = begin
         if File.exist?(args_file)
@@ -130,7 +134,7 @@ module Testjour
       end
       unshift_args(args_from_file)
     end
-    
+
     def args_file
       # We need to know about this CLI option prior to OptParse's parse
       args_file_option = @args.detect{|arg| arg =~ /^--testjour-config=/}
@@ -218,6 +222,10 @@ module Testjour
 
         opts.on("--queue-prefix=QUEUE_PREFIX", "Provide a prefix to uniquely identify this testjour run (Default is 'default')") do |queue_prefix|
           @options[:queue_prefix] = queue_prefix
+        end
+
+        opts.on("--queue-timeout=QUEUE_TIMEOUT", "How long to wait for results to appear in the queue before giving up") do |queue_timeout|
+          @options[:queue_timeout] = queue_timeout
         end
 
         opts.on("--rsync-uri=RSYNC_URI", "Use another location to host the codebase for slave rsync (master will rsync to this URI first)") do |rsync_uri|

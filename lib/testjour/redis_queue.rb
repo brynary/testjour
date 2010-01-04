@@ -5,9 +5,10 @@ module Testjour
 
   class RedisQueue
     
-    def initialize(redis_host, queue_namespace)
+    def initialize(redis_host, queue_namespace, queue_timeout)
       @redis = Redis.new(:db => 11, :host => redis_host)
       @queue_namespace = queue_namespace
+      @queue_timeout = queue_timeout
     end
     
     attr_reader :redis
@@ -22,7 +23,7 @@ module Testjour
     end
 
     def blocking_pop(queue_name)
-      Timeout.timeout(180) do
+      Timeout.timeout(@queue_timeout) do
         result = nil
 
         while result.nil?
