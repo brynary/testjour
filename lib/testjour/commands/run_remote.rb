@@ -18,19 +18,21 @@ module Testjour
     
       def before_require
         rsync
-        
+        fork_additional_slaves
+        super
+      end
+      
+      def fork_additional_slaves
         @additional_slaves_launched = 0
         while (launch_additional_slave?) do
           if @child = fork
-            Testjour.logger.info "Forked #{@child} to as additional slave"
+            Testjour.logger.info "Forked #{@child} as an additional slave"
             @additional_slaves_launched += 1
             Process.detach
           else
             @forked_slave = true
           end
         end
-
-        super
       end
     
       def launch_additional_slave?

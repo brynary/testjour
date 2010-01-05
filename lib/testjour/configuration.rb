@@ -212,8 +212,8 @@ module Testjour
           @options[:in] = directory
         end
 
-        opts.on("--max-remote-slaves=NUM", "Number of workers to run (for run:remote only)") do |num|
-          @options[:max_remote_slaves] = num
+        opts.on("--max-remote-slaves=MAX", "Number of workers to run (for run:remote only)") do |max|
+          @options[:max_remote_slaves] = max.to_i
         end
 
         opts.on("--strict", "Fail if there are any undefined steps") do
