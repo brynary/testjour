@@ -21,11 +21,17 @@ module Commands
       configuration.setup
 
       if configuration.feature_files.any?
-        RedisQueue.new(configuration.queue_host,
+        redis_queue = RedisQueue.new(configuration.queue_host,
                        configuration.queue_prefix,
-                       configuration.queue_timeout).reset_all
-
+                       configuration.queue_timeout)
+        redis_queue.reset_all
         queue_features
+        
+        at_exit do
+          Testjour.logger.info caller.join("\n")
+          redis_queue.reset_all
+        end
+        
 
         @started_slaves = 0
         start_slaves

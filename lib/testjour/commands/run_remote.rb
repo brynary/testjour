@@ -28,7 +28,7 @@ module Testjour
           if @child = fork
             Testjour.logger.info "Forked #{@child} as an additional slave"
             @additional_slaves_launched += 1
-            Process.detach
+            Process.detach(@child)
           else
             @forked_slave = true
           end
