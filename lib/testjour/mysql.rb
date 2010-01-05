@@ -22,7 +22,7 @@ module Testjour
     end
     
     def runner_database_name
-      @runner_database_name ||= "testjour_runner_#{rand(1_000)}"
+      @runner_database_name ||= "testjour_runner_#{rand(1_000)}_#{Testjour.effective_pid}"
     end
     
   protected
