@@ -24,6 +24,10 @@ module Testjour
       @options[:max_local_slaves] || 2
     end
 
+    def max_remote_slaves
+      @options[:max_remote_slaves] || 1
+    end
+
     def in
       @options[:in]
     end
@@ -199,13 +203,17 @@ module Testjour
           @options[:args_file] = args_file
         end
 
-        opts.on("--on=SLAVE", "Specify a slave URI") do |slave|
+        opts.on("--on=SLAVE", "Specify a slave URI (testjour://user@host:/path/to/working/dir?workers=3)") do |slave|
           @options[:slaves] ||= []
           @options[:slaves] << slave
         end
 
         opts.on("--in=DIR", "Working directory to use (for run:remote only)") do |directory|
           @options[:in] = directory
+        end
+
+        opts.on("--max-remote-slaves=NUM", "Number of workers to run (for run:remote only)") do |num|
+          @options[:max_remote_slaves] = num
         end
 
         opts.on("--strict", "Fail if there are any undefined steps") do

@@ -19,6 +19,15 @@ Given /^Testjour is configured to run on this machine in a (\w+) directory$/ do 
   FileUtils.mkdir_p full_path
 end
 
+Given /^Testjour is configured to run on this machine in a (\w+) directory with (\d+) slaves$/ do |dir_name, slave_count|
+  @args ||= []
+  full_path = File.expand_path("./tmp/#{dir_name}")
+  @args << "--on=testjour://#{Socket.gethostname}#{full_path}?workers=#{slave_count}"
+  
+  FileUtils.rm_rf full_path
+  FileUtils.mkdir_p full_path
+end
+
 Given /^Testjour is configured to use this machine as the queue host$/ do
   @args ||= []
   @args << "--queue-host=#{Socket.gethostname}"

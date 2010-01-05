@@ -8,24 +8,45 @@ require "testjour/rsync"
 require "stringio"
 
 module Testjour
-module Commands
+  module Commands
     
-  class RunRemote < RunSlave
+    class RunRemote < RunSlave
         
-    def dir
-      configuration.in
-    end
+      def dir
+        configuration.in
+      end
     
-    def before_require
-      rsync
-      super
-    end
+      def before_require
+        rsync
         
-    def rsync
-      Rsync.copy_to_current_directory_from(configuration.rsync_uri)
-    end
+        @additional_slaves_launched = 0
+        while (launch_additional_slave?) do
+          if @child = fork
+            Testjour.logger.info "Forked #{@child} to as additional slave"
+            @additional_slaves_launched += 1
+            Process.detach
+          else
+            @forked_slave = true
+          end
+        end
+
+        super
+      end
     
-  end
+      def launch_additional_slave?
+        return false if @forked_slave
+        configuration.max_remote_slaves > (1 + @additional_slaves_launched)
+      end
+      
+      def number_of_additional_slaves
+        configuration.max_remote_slaves - 1
+      end
+        
+      def rsync
+        Rsync.copy_to_current_directory_from(configuration.rsync_uri)
+      end
+    
+    end
   
-end
+  end
 end
