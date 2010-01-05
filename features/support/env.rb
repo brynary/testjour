@@ -22,5 +22,5 @@ Before do
 end
 
 After do
-  # testjour_cleanup
+  testjour_cleanup
 end
