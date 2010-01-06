@@ -174,7 +174,7 @@ module Testjour
       full_uri = URI.parse(@args.shift)
       @path = full_uri.path
       @full_uri = full_uri.dup
-      @queue_host ||= full_uri.host
+      @queue_host = full_uri.host unless options[:queue_host]
     end
 
     def run_slave_args
