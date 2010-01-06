@@ -15,9 +15,10 @@ class ProgressBar
   attr_accessor :colorer
   attr_writer :title
   
-  def initialize (title, total, out = STDERR)
+  def initialize (title, total, simple, out = STDERR)
     @title = title
     @total = total
+    @simple = simple
     @out = out
     @current = 0
     @previous = 0
@@ -59,7 +60,7 @@ class ProgressBar
   end
 
   def eol
-    if @is_finished then "\n" else "\r" end
+    if (@simple || @is_finished) then "\n" else "\r" end
   end
 
   def bar(percentage)
