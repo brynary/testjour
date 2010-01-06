@@ -44,7 +44,7 @@ module Testjour
       end
 
       def testjour_uri
-        "rsync://#{configuration.external_rsync_uri}"
+        "rsync://#{configuration.rsync_uri}"
       end
       
       

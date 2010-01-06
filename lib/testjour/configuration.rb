@@ -43,6 +43,10 @@ module Testjour
     def queue_host
       @queue_host || @options[:queue_host] || Testjour.socket_hostname
     end
+    
+    def external_queue_host?
+      queue_host != Testjour.socket_hostname
+    end
 
     def queue_prefix
       @options[:queue_prefix] || 'default'
@@ -182,8 +186,8 @@ module Testjour
       if @options[:create_mysql_db]
         args_from_options << "--create-mysql-db"
       end
-      if @options[:queue_host]
-        args_from_options << "--queue-host=#{@options[:queue_host]}"
+      if @options[:queue_host] || external_queue_host?
+        args_from_options << "--queue-host=#{queue_host}"
       end
       if @options[:queue_prefix]
         args_from_options << "--queue-prefix=#{@options[:queue_prefix]}"
