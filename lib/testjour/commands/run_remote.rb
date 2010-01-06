@@ -10,44 +10,47 @@ require "stringio"
 module Testjour
   module Commands
     
-    class RunRemote < RunSlave
+    class RunRemote < Command
         
       def dir
         configuration.in
       end
     
-      def before_require
-        rsync
-        fork_additional_slaves
-        super
-      end
-      
-      def fork_additional_slaves
-        @additional_slaves_launched = 0
-        while (launch_additional_slave?) do
-          if @child = fork
-            Testjour.logger.info "Forked #{@child} as an additional slave"
-            @additional_slaves_launched += 1
-            Process.detach(@child)
-          else
-            @forked_slave = true
-          end
+      def execute
+        configuration.parse!
+        configuration.parse_uri!
+
+        Dir.chdir(dir) do
+          Testjour.setup_logger(dir)
+          Testjour.logger.info "Starting #{self.class.name}"
+          rsync
+          start_additional_slaves
         end
       end
-    
-      def launch_additional_slave?
-        return false if @forked_slave
-        configuration.max_remote_slaves > (1 + @additional_slaves_launched)
+      
+      def start_additional_slaves
+        1.upto(configuration.max_remote_slaves) do |i|
+          start_slave
+        end
       end
       
-      def number_of_additional_slaves
-        configuration.max_remote_slaves - 1
+      def start_slave
+        Testjour.logger.info "Starting slave: #{local_run_command}"
+        detached_exec(local_run_command)
       end
-        
+      
+      def local_run_command
+        "testjour run:slave #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
+      end
+
+      def testjour_uri
+        "rsync://#{configuration.external_rsync_uri}"
+      end
+      
+      
       def rsync
         Rsync.copy_to_current_directory_from(configuration.rsync_uri)
       end
-    
     end
   
   end
