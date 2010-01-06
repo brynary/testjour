@@ -44,7 +44,9 @@ module Testjour
       end
 
       def testjour_uri
-        "rsync://#{configuration.rsync_uri}"
+        user = Etc.getpwuid.name
+        host = Testjour.socket_hostname
+        "rsync://#{user}@#{host}" + File.expand_path(".")
       end
       
       
