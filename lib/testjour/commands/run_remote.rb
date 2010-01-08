@@ -8,24 +8,52 @@ require "testjour/rsync"
 require "stringio"
 
 module Testjour
-module Commands
+  module Commands
     
-  class RunRemote < RunSlave
+    class RunRemote < Command
         
-    def dir
-      configuration.in
-    end
+      def dir
+        configuration.in
+      end
     
-    def before_require
-      rsync
-      super
+      def execute
+        configuration.parse!
+        configuration.parse_uri!
+
+        Dir.chdir(dir) do
+          Testjour.setup_logger(dir)
+          Testjour.logger.info "Starting #{self.class.name}"
+          rsync
+          start_additional_slaves
+        end
+      end
+      
+      def start_additional_slaves
+        1.upto(configuration.max_remote_slaves) do |i|
+          start_slave
+        end
+      end
+      
+      def start_slave
+        Testjour.logger.info "Starting slave: #{local_run_command}"
+        detached_exec(local_run_command)
+      end
+      
+      def local_run_command
+        "testjour run:slave #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
+      end
+
+      def testjour_uri
+        user = Etc.getpwuid.name
+        host = Testjour.socket_hostname
+        "rsync://#{user}@#{host}" + File.expand_path(".")
+      end
+      
+      
+      def rsync
+        Rsync.copy_to_current_directory_from(configuration.rsync_uri)
+      end
     end
-        
-    def rsync
-      Rsync.copy_to_current_directory_from(configuration.rsync_uri)
-    end
-    
-  end
   
-end
+  end
 end

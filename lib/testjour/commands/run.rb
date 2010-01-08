@@ -21,11 +21,17 @@ module Commands
       configuration.setup
 
       if configuration.feature_files.any?
-        RedisQueue.new(configuration.queue_host,
+        redis_queue = RedisQueue.new(configuration.queue_host,
                        configuration.queue_prefix,
-                       configuration.queue_timeout).reset_all
-
+                       configuration.queue_timeout)
+        redis_queue.reset_all
         queue_features
+        
+        at_exit do
+          Testjour.logger.info caller.join("\n")
+          redis_queue.reset_all
+        end
+        
 
         @started_slaves = 0
         start_slaves
@@ -76,14 +82,19 @@ module Commands
     end
 
     def start_remote_slave(remote_slave)
+      num_workers = 1
+      if remote_slave.match(/\?workers=(\d+)/)
+        num_workers = $1.to_i
+        remote_slave.gsub(/\?workers=(\d+)/, '')
+      end
       uri = URI.parse(remote_slave)
-      cmd = remote_slave_run_command(uri.user, uri.host, uri.path)
+      cmd = remote_slave_run_command(uri.user, uri.host, uri.path, num_workers)
       Testjour.logger.info "Starting remote slave: #{cmd}"
       detached_exec(cmd)
     end
 
-    def remote_slave_run_command(user, host, path)
-      "ssh -o StrictHostKeyChecking=no #{user}#{'@' if user}#{host} testjour run:remote --in=#{path} #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
+    def remote_slave_run_command(user, host, path, max_remote_slaves)
+      "ssh -o StrictHostKeyChecking=no #{user}#{'@' if user}#{host} testjour run:remote --in=#{path} --max-remote-slaves=#{max_remote_slaves} #{configuration.run_slave_args.join(' ')} #{testjour_uri}".squeeze(" ")
     end
 
     def start_slave

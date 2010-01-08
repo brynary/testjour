@@ -24,6 +24,10 @@ module Testjour
       @options[:max_local_slaves] || 2
     end
 
+    def max_remote_slaves
+      @options[:max_remote_slaves] || 1
+    end
+
     def in
       @options[:in]
     end
@@ -38,6 +42,10 @@ module Testjour
 
     def queue_host
       @queue_host || @options[:queue_host] || Testjour.socket_hostname
+    end
+    
+    def external_queue_host?
+      queue_host != Testjour.socket_hostname
     end
 
     def queue_prefix
@@ -166,7 +174,7 @@ module Testjour
       full_uri = URI.parse(@args.shift)
       @path = full_uri.path
       @full_uri = full_uri.dup
-      @queue_host = full_uri.host
+      @queue_host = full_uri.host unless options[:queue_host]
     end
 
     def run_slave_args
@@ -178,8 +186,8 @@ module Testjour
       if @options[:create_mysql_db]
         args_from_options << "--create-mysql-db"
       end
-      if @options[:queue_host]
-        args_from_options << "--queue-host=#{@options[:queue_host]}"
+      if @options[:queue_host] || external_queue_host?
+        args_from_options << "--queue-host=#{queue_host}"
       end
       if @options[:queue_prefix]
         args_from_options << "--queue-prefix=#{@options[:queue_prefix]}"
@@ -199,13 +207,17 @@ module Testjour
           @options[:args_file] = args_file
         end
 
-        opts.on("--on=SLAVE", "Specify a slave URI") do |slave|
+        opts.on("--on=SLAVE", "Specify a slave URI (testjour://user@host:/path/to/working/dir?workers=3)") do |slave|
           @options[:slaves] ||= []
           @options[:slaves] << slave
         end
 
         opts.on("--in=DIR", "Working directory to use (for run:remote only)") do |directory|
           @options[:in] = directory
+        end
+
+        opts.on("--max-remote-slaves=MAX", "Number of workers to run (for run:remote only)") do |max|
+          @options[:max_remote_slaves] = max.to_i
         end
 
         opts.on("--strict", "Fail if there are any undefined steps") do

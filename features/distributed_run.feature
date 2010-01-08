@@ -22,9 +22,8 @@ Feature: Distributed runs
     And the output should contain "1 steps failed"
     And it should run on 2 remote slaves
     
-  Scenario: Distribute runs (using named host, queue host and rsync uri)
-    Given Testjour is configured to run on this machine in a temp1 directory
-    And Testjour is configured to run on this machine in a temp2 directory
+  Scenario: Distribute runs (using > 1 remote slave, queue host and rsync uri)
+    Given Testjour is configured to run on this machine in a temp1 directory with 2 slaves
     And Testjour is configured to use this machine as the queue host
     And Testjour is configured to use this machine as the rsync host
     When I run `testjour sleep1.feature sleep2.feature`
