@@ -224,8 +224,12 @@ module Testjour
           @options[:strict] = true
         end
 
-        opts.on("--create-mysql-db", "Create MySQL for each slave") do |server|
+        opts.on("--create-mysql-db", "Create MySQL for each slave") do
           @options[:create_mysql_db] = true
+        end
+
+        opts.on("--simple-progress", "Use a simpler progress bar that may display better in logs") do
+          @options[:simple_progress] = true
         end
 
         opts.on("--queue-host=QUEUE_HOST", "Use another server to host the main redis queue") do |queue_host|
