@@ -75,8 +75,7 @@ module Commands
           Rsync.copy_from_current_directory_to(configuration.external_rsync_uri)
         end
         configuration.remote_slaves.each do |remote_slave|
-          @started_slaves += 1
-          start_remote_slave(remote_slave)
+          @started_slaves += start_remote_slave(remote_slave)
         end
       end
     end
@@ -91,6 +90,7 @@ module Commands
       cmd = remote_slave_run_command(uri.user, uri.host, uri.path, num_workers)
       Testjour.logger.info "Starting remote slave: #{cmd}"
       detached_exec(cmd)
+      num_workers
     end
 
     def remote_slave_run_command(user, host, path, max_remote_slaves)
