@@ -18,7 +18,7 @@ module Testjour
 
     def load_schema
       schema_file = File.expand_path("./db/development_structure.sql")
-      run "/usr/local/mysql/bin/mysql #{runner_database_name} < #{schema_file}"
+      run "/usr/local/mysql/bin/mysql -u root #{runner_database_name} < #{schema_file}"
     end
     
     def runner_database_name
